@@ -1,0 +1,3 @@
+Company_Code,Key,Description,Lower_Abs_INR,Lower_Pct,Upper_Abs_INR,Upper_Pct,Effect
+IN10,PP,Price variance,50000,20,5000,2,Payment block R when either limit is exceeded
+IN10,DQ,Quantity variance (value),,,0,,Payment block R for any quantity invoiced above quantity received

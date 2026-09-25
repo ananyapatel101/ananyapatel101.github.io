@@ -1,0 +1,3 @@
+PO,Item,PO_Date,Vendor,Material,Description,Qty,UoM,Net_Price_INR,Net_Value_INR,Tax_Code,Terms,Plant,Price_Control,Overdelivery_Pct,GR_Based_IV
+4500000118,10,2026-09-03,100001,RM-1001,HR Steel Coil 2 mm,10,MT,58000,580000,I8,NT30,IN11,V,2,X
+4500000121,10,2026-09-22,100002,RM-2001,Red Oxide Primer,2000,L,170,340000,I8,NT30,IN11,V,2,X

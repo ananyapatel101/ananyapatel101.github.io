@@ -1,0 +1,9 @@
+Source,Key,Description,Valuation_Grouping_Code,Valuation_Class,GL_Account
+OBYC,BSX,Inventory posting,0001,3000,131000
+OBYC,WRX,GR/IR clearing,0001,,219100
+OBYC,PRD,Price differences,0001,3000,512000
+OB40,JIC,Input CGST (tax code I8),,,161000
+OB40,JIS,Input SGST (tax code I8),,,161000
+OBWW,Q1,TDS 194Q to be paid over,,,222000
+FBZP,HDFC1/CUR01,Bank sub-account for payment method T,,,171100
+FI12,HDFC1/CUR01,House bank main account,,,171000

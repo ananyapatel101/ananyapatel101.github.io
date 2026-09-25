@@ -7,6 +7,8 @@ Static portfolio site (plain HTML/CSS/JS, no build step) for GitHub Pages.
   - Case study, live Schedule III statements, CSV dataset, Power BI build guide
 - **Project 02, End-to-End Financial Accounting Setup:** [`projects/fi-enterprise-structure/`](projects/fi-enterprise-structure/)
   - Configuration workbook, 12-case unit-test script, interactive posting simulator, CSV configuration data
+- **Project 03, Procure-to-Pay (P2P):** [`projects/procure-to-pay/`](projects/procure-to-pay/)
+  - MM–FI configuration workbook, document flow and journal entries, 12-case unit-test script, interactive P2P simulator, CSV data
 
 All SAP data is fictional (company code IN10).
 

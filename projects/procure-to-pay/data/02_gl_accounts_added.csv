@@ -1,0 +1,3 @@
+GL_Account,Description,GL_Account_Type,Account_Group,Open_Item_Mgmt,Line_Item_Display,Field_Status_Group,Post_Automatically_Only,FSV_Item,OB58_Change
+171100,HDFC Bank - Outgoing Payments,Cash Account,BANK,X,X,G005,,BS.A.CA.CCE,"Add range 0000171100-0000171999, D and C"
+512000,Price Differences,Primary Costs or Revenue,EXP,,X,G004,X,PL.EXP.COMC,None: inside 0000511000-0000519999

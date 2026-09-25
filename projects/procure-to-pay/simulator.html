@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>IN10 P2P Simulator · Ananya Patel</title>
+<meta name="description" content="Run a purchase order item through goods receipt (MIGO), three-way match in invoice verification (MIRO) and the payment run (F110) in company code IN10, and see which control posts, blocks or stops it.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Schibsted+Grotesk:wght@600;700&display=swap">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script src="../../assets/js/main.js"></script>
+<style>
+  :root { --warning-text: #8a5a00; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --warning-text: #fab219; } }
+  :root[data-theme="dark"] { --warning-text: #fab219; }
+
+  .dash { display: grid; gap: var(--s-5); padding-block: var(--s-6) 0; }
+  .panel { background: var(--surface); border: 1px solid var(--rule); border-radius: var(--radius); padding: var(--s-4); display: grid; gap: var(--s-3); min-width: 0; align-content: start; }
+  .panel h2 { font-size: var(--t-lg); }
+  .panel-head { display: flex; justify-content: space-between; align-items: baseline; gap: var(--s-3); flex-wrap: wrap; }
+  .ctl-label { font: 500 var(--t-xs)/1 var(--f-mono); text-transform: uppercase; letter-spacing: .08em; color: var(--ink-3); }
+  .layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr); gap: var(--s-4); align-items: start; }
+  @media (max-width: 960px) { .layout { grid-template-columns: 1fr; } }
+
+  .presets { display: flex; flex-wrap: wrap; gap: .4rem; }
+  .preset { border: 1px solid var(--rule-strong); background: var(--surface); color: var(--ink-2); border-radius: 999px; padding: .35rem .65rem; font: 500 var(--t-xs)/1 var(--f-mono); cursor: pointer; display: inline-flex; gap: .35rem; align-items: center; }
+  .preset::before { content: ""; width: .45rem; height: .45rem; border-radius: 50%; background: var(--ink-3); }
+  .preset.exp-paid::before { background: var(--good); }
+  .preset.exp-blocked::before, .preset.exp-notdue::before { background: var(--warning); }
+  .preset.exp-error::before { background: var(--critical); }
+  .preset[aria-pressed="true"] { border-color: var(--accent); color: var(--ink); background: var(--accent-wash); }
+  .preset-desc { font-size: var(--t-sm); color: var(--ink-2); min-height: 1.4em; }
+
+  .form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-3) var(--s-4); }
+  .field { display: grid; gap: .3rem; }
+  .field label { font-size: var(--t-xs); color: var(--ink-3); font-family: var(--f-mono); text-transform: uppercase; letter-spacing: .06em; }
+  .field select, .field input:not([type="checkbox"]) {
+    font: 400 var(--t-sm)/1.3 var(--f-body); color: var(--ink); background: var(--paper); border: 1px solid var(--rule-strong);
+    border-radius: var(--radius); padding: .55rem .6rem; width: 100%; min-width: 0;
+  }
+  .field input[type="number"], .field input#f-invRef { font-family: var(--f-mono); }
+  .line-head { grid-column: 1 / -1; display: flex; gap: .5rem; align-items: baseline; border-top: 1px solid var(--rule); padding-top: var(--s-3); }
+  .line-head b { font-family: var(--f-mono); color: var(--accent); }
+  .switch { display: flex; gap: .55rem; align-items: flex-start; font-size: var(--t-sm); color: var(--ink-2); cursor: pointer; grid-column: 1 / -1; }
+  .switch input { margin-top: .2rem; accent-color: var(--accent); }
+  .fixed { grid-column: 1 / -1; font-size: var(--t-xs); color: var(--ink-3); font-family: var(--f-mono); }
+  @media (max-width: 520px) { .form { grid-template-columns: 1fr; } }
+
+  .banner { border-radius: var(--radius); padding: var(--s-4); display: grid; gap: .35rem; border: 2px solid; }
+  .banner.ok { border-color: var(--good); }
+  .banner.warn { border-color: var(--warning); }
+  .banner.bad { border-color: var(--critical); }
+  .banner .pill { display: inline-flex; align-items: center; gap: .45rem; font: 700 var(--t-lg)/1.2 var(--f-display); }
+  .banner .ico { width: 1.5rem; height: 1.5rem; border-radius: 50%; display: inline-grid; place-items: center; color: #fff; font-size: .9rem; flex: none; }
+  .banner.ok .ico { background: var(--good); } .banner.ok .pill { color: var(--good-text); }
+  .banner.warn .ico { background: var(--warning); color: #15201e; } .banner.warn .pill { color: var(--warning-text); }
+  .banner.bad .ico { background: var(--critical); } .banner.bad .pill { color: var(--critical); }
+  .banner p { color: var(--ink-2); font-size: var(--t-sm); }
+
+  .tiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s-2); }
+  .tile { border: 1px solid var(--rule); border-radius: var(--radius); padding: var(--s-2) var(--s-3); display: grid; gap: .2rem; }
+  .tile span { font: 500 var(--t-xs)/1.2 var(--f-mono); text-transform: uppercase; letter-spacing: .06em; color: var(--ink-3); }
+  .tile b { font: 600 var(--t-md)/1.2 var(--f-mono); font-variant-numeric: tabular-nums; }
+  @media (max-width: 520px) { .tiles { grid-template-columns: 1fr; } }
+
+  .stage-h { font: 600 var(--t-xs)/1 var(--f-mono); text-transform: uppercase; letter-spacing: .08em; color: var(--accent); margin-top: var(--s-2); }
+  .checks { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; border-top: 1px solid var(--rule); }
+  .checks li { display: grid; grid-template-columns: 1.6rem minmax(0, 1fr); gap: .6rem; padding-block: .55rem; border-bottom: 1px solid var(--rule); }
+  .checks .st { width: 1.3rem; height: 1.3rem; border-radius: 50%; display: grid; place-items: center; font-size: .75rem; color: #fff; margin-top: .1rem; }
+  .checks .pass .st { background: var(--good); }
+  .checks .fail .st { background: var(--critical); }
+  .checks .warn .st { background: var(--warning); color: #15201e; }
+  .checks .skip .st { background: transparent; border: 1.5px dashed var(--rule-strong); color: var(--ink-3); }
+  .checks b { font-weight: 600; font-size: var(--t-sm); }
+  .checks .skip b { color: var(--ink-3); font-weight: 500; }
+  .checks p { font-size: var(--t-sm); color: var(--ink-2); }
+  .checks .fail p, .checks .warn p { color: var(--ink); }
+
+  .docs { display: grid; gap: var(--s-3); }
+  .doc-h { display: flex; justify-content: space-between; gap: var(--s-3); flex-wrap: wrap; font: 500 var(--t-xs)/1.3 var(--f-mono); color: var(--ink-2); padding-bottom: .3rem; border-bottom: 1px solid var(--rule-strong); }
+  .doc-h b { color: var(--ink); }
+  table.stmt { width: 100%; border-collapse: collapse; font-size: var(--t-sm); }
+  table.stmt th, table.stmt td { padding: .4rem .5rem; border-bottom: 1px solid var(--rule); text-align: left; vertical-align: top; }
+  table.stmt thead th { font: 500 var(--t-xs)/1.3 var(--f-mono); text-transform: uppercase; letter-spacing: .06em; color: var(--ink-3); white-space: nowrap; }
+  table.stmt td.num, table.stmt th.num { text-align: right; font-family: var(--f-mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  table.stmt td.mono { font-family: var(--f-mono); white-space: nowrap; }
+  table.stmt td small { display: block; color: var(--ink-3); font-size: var(--t-xs); }
+  .scroll-x { overflow-x: auto; }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../../">Ananya Patel<span>.</span></a>
+    <nav class="nav" aria-label="Main">
+      <a href="./">Case study</a>
+      <a href="../../#projects" class="hide-sm">Projects</a>
+    </nav>
+    <button class="theme-btn" type="button" data-theme-toggle>Dark mode</button>
+  </div>
+</header>
+
+<main class="wrap dash">
+  <div style="display:grid;gap:var(--s-2)">
+    <p class="eyebrow">Project 03 · Company code IN10 · Plant IN11 · PO 4500000118</p>
+    <h1 style="font-size:clamp(1.9rem,5vw,2.6rem)">IN10 procure-to-pay simulator</h1>
+    <p class="muted prose">One purchase order item runs through goods receipt, the three-way match in invoice verification and the payment run, in the order SAP applies the controls. Choose a unit test to load its data, or change any field and see which control posts, blocks or stops the document.</p>
+  </div>
+
+  <div class="panel">
+    <span class="ctl-label">Unit tests · green = paid, amber = posted but not paid, red = stopped</span>
+    <div class="presets" id="presets"></div>
+    <p class="preset-desc" id="preset-desc"></p>
+  </div>
+
+  <div class="layout">
+    <section class="panel" aria-labelledby="in-title">
+      <div class="panel-head"><h2 id="in-title">PO, receipt &amp; invoice</h2><span class="small muted">ME21N · MIGO · MIRO</span></div>
+      <form class="form" id="form" autocomplete="off">
+        <div class="line-head"><b>PO</b><span class="small muted">4500000118 item 10 · vendor 100001 Shakti Steel · RM-1001 HR Steel Coil</span></div>
+        <div class="field"><label for="f-poQty">Ordered qty (MT)</label><input id="f-poQty" type="number" min="0.001" step="0.1"></div>
+        <div class="field"><label for="f-poPrice">PO net price ₹ / MT</label><input id="f-poPrice" type="number" min="1" step="100"></div>
+        <div class="field" style="grid-column:1/-1"><label for="f-priceControl">Material price control</label>
+          <select id="f-priceControl"><option value="V">V · moving average price</option><option value="S">S · standard price ₹57,500 / MT</option></select></div>
+
+        <div class="line-head"><b>GR</b><span class="small muted">MIGO · movement type 101</span></div>
+        <div class="field"><label for="f-grQty">Qty received (MT)</label><input id="f-grQty" type="number" min="0" step="0.1"></div>
+        <div class="field"><label for="f-grDate">GR posting date</label><input id="f-grDate" type="date"></div>
+
+        <div class="line-head"><b>IR</b><span class="small muted">MIRO · tax code I8 (GST 18%)</span></div>
+        <div class="field"><label for="f-invDate">Invoice / posting date</label><input id="f-invDate" type="date"></div>
+        <div class="field"><label for="f-invRef">Vendor reference</label><input id="f-invRef" type="text" maxlength="16"></div>
+        <div class="field"><label for="f-invQty">Invoiced qty (MT)</label><input id="f-invQty" type="number" min="0.001" step="0.1"></div>
+        <div class="field"><label for="f-invPrice">Invoice price ₹ / MT</label><input id="f-invPrice" type="number" min="1" step="100"></div>
+        <label class="switch" for="f-tds"><input type="checkbox" id="f-tds"><span>Deduct TDS under section 194Q (0.1% of the taxable value), as set in the vendor master.</span></label>
+
+        <div class="line-head"><b>F110</b><span class="small muted">Run AP01 on 20.10.2026 · next run 27.10.2026</span></div>
+        <label class="switch" for="f-mrbr"><input type="checkbox" id="f-mrbr"><span>AP manager released the payment block in MRBR (only matters if the invoice was blocked).</span></label>
+        <p class="fixed">Fixed: over-delivery 2% · PP ₹5,000 or 2% · DQ ₹0 · terms NT30 · OB52 open 006–007/2026 · MM period 2026/06 (05 allowed)</p>
+      </form>
+    </section>
+
+    <section class="panel" aria-labelledby="res-title" aria-live="polite">
+      <div class="panel-head"><h2 id="res-title">System response</h2><span class="small muted">Updates as you edit</span></div>
+      <div id="banner"></div>
+      <div class="tiles" id="tiles"></div>
+      <div id="checks"></div>
+    </section>
+  </div>
+
+  <section class="panel" aria-labelledby="je-title">
+    <div class="panel-head"><h2 id="je-title">Accounting documents</h2><span class="small muted">Account determination from OBYC, OB40, OBWW and FBZP</span></div>
+    <div class="docs" id="docs"></div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <span>© <span data-year>2026</span> Ananya Patel · <a href="./">Back to case study</a></span>
+    <span>Simulated responses in plain language, not SAP message texts. Fictional data.</span>
+  </div>
+</footer>
+
+<script src="data/p2p_data.js"></script>
+<script src="p2p-core.js"></script>
+<script src="simulator.js"></script>
+</body>
+</html>

@@ -1,0 +1,9 @@
+Object,ID,Description,TCode,Assigned_To
+Plant,IN11,Pune plant,OX10,Company code IN10 (OX18)
+Storage location,RM01,Raw material store,OX09,Plant IN11
+Purchasing organisation,IN10,Central purchasing IN10,OX08,"Company code IN10 (OX01), plant IN11 (OX17)"
+Purchasing group,P01,Raw material buyer,OME4,Client-wide
+Valuation level,Plant,Valuation area = plant,OX14,Client-wide
+Valuation grouping code,0001,Account determination for IN10 plants,OMWD,Plant IN11 / COA INCA
+Valuation class,3000,Raw materials,OMSK,Material type ROH
+MM period,2026/06,"Current period, previous allowed",OMSY / MMPV,Company code IN10
