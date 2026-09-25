@@ -1,0 +1,6 @@
+Variant,Group,Description,Cost_Center
+IN10,G001,General (balance sheet),Suppressed
+IN10,G004,Cost accounts,Required
+IN10,G005,Bank accounts,Optional
+IN10,G029,Revenue accounts,Optional
+IN10,G067,Reconciliation accounts,Suppressed

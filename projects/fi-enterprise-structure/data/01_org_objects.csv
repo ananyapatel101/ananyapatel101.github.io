@@ -1,0 +1,12 @@
+Object,ID,Description,TCode,Assigned_To
+Client,100,Ananya group client,SCC4,
+Company,IN00,Ananya Group,OX15,Client 100
+Company code,IN10,"Ananya Manufacturing Pvt Ltd, Pune, IN, INR, EN",OX02,Company IN00 (OX16)
+Leading ledger,0L,"Leading ledger, accounting principle IND-GAAP",FINSC_LEDGER,All company codes
+Currency type,10,Company code currency INR,FINSC_CMP_CODE,IN10 / 0L
+Chart of accounts,INCA,"Operating COA, 6-digit accounts",OB13,IN10 (OB62)
+Fiscal year variant,V3,"April-March, 12 posting + 4 special periods",OB29,IN10 (OB37)
+Posting period variant,IN10,Opening/closing of periods for IN10,OBBO,IN10 (OBBP)
+Field status variant,IN10,Copy of 0001 with IN10 groups,OBC4,IN10 (OBC5)
+Financial statement version,INS3,Schedule III (see Project 01),OB58,COA INCA
+Retained earnings account,321000,P&L statement account type X,OB53,COA INCA

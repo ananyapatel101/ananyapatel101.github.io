@@ -5,6 +5,8 @@ Static portfolio site (plain HTML/CSS/JS, no build step) for GitHub Pages.
 - **Home:** `index.html`
 - **Project 01, FSV & Month-End Close:** [`projects/fsv-month-end-close/`](projects/fsv-month-end-close/)
   - Case study, live Schedule III statements, CSV dataset, Power BI build guide
+- **Project 02, End-to-End Financial Accounting Setup:** [`projects/fi-enterprise-structure/`](projects/fi-enterprise-structure/)
+  - Configuration workbook, 12-case unit-test script, interactive posting simulator, CSV configuration data
 
 All SAP data is fictional (company code IN10).
 

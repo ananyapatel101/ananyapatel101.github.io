@@ -1,0 +1,8 @@
+Doc_Type,Description,Number_Range,Account_Types_Allowed,Reverse_Doc_Type
+SA,G/L account document,01,S,AB
+AB,Accounting document (reversal),01,A D K M S,AB
+AA,Asset posting,01,A S,AB
+KR,Vendor invoice,19,K S,AB
+KZ,Vendor payment,15,K S,AB
+DR,Customer invoice,18,D S,AB
+DZ,Customer payment,14,D S,AB

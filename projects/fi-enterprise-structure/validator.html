@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>IN10 Posting Simulator · Ananya Patel</title>
+<meta name="description" content="Run a journal entry through company code IN10's configuration (fiscal year, posting periods, document type, number range, field status, exchange rate, tolerance group) and see which control accepts or blocks it.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Schibsted+Grotesk:wght@600;700&display=swap">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script src="../../assets/js/main.js"></script>
+<style>
+  .dash { display: grid; gap: var(--s-5); padding-block: var(--s-6) 0; }
+  .panel { background: var(--surface); border: 1px solid var(--rule); border-radius: var(--radius); padding: var(--s-4); display: grid; gap: var(--s-3); min-width: 0; align-content: start; }
+  .panel h2 { font-size: var(--t-lg); }
+  .panel-head { display: flex; justify-content: space-between; align-items: baseline; gap: var(--s-3); flex-wrap: wrap; }
+  .ctl-label { font: 500 var(--t-xs)/1 var(--f-mono); text-transform: uppercase; letter-spacing: .08em; color: var(--ink-3); }
+  .layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: var(--s-4); align-items: start; }
+  @media (max-width: 960px) { .layout { grid-template-columns: 1fr; } }
+
+  .presets { display: flex; flex-wrap: wrap; gap: .4rem; }
+  .preset { border: 1px solid var(--rule-strong); background: var(--surface); color: var(--ink-2); border-radius: 999px; padding: .35rem .65rem; font: 500 var(--t-xs)/1 var(--f-mono); cursor: pointer; display: inline-flex; gap: .35rem; align-items: center; }
+  .preset::before { content: ""; width: .45rem; height: .45rem; border-radius: 50%; background: var(--ink-3); }
+  .preset.exp-posted::before { background: var(--good); }
+  .preset.exp-error::before { background: var(--critical); }
+  .preset[aria-pressed="true"] { border-color: var(--accent); color: var(--ink); background: var(--accent-wash); }
+  .preset-desc { font-size: var(--t-sm); color: var(--ink-2); min-height: 1.4em; }
+
+  .form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-3) var(--s-4); }
+  .form .full { grid-column: 1 / -1; }
+  .field { display: grid; gap: .3rem; }
+  .field label { font-size: var(--t-xs); color: var(--ink-3); font-family: var(--f-mono); text-transform: uppercase; letter-spacing: .06em; }
+  .field select, .field input {
+    font: 400 var(--t-sm)/1.3 var(--f-body); color: var(--ink); background: var(--paper); border: 1px solid var(--rule-strong);
+    border-radius: var(--radius); padding: .55rem .6rem; width: 100%; min-width: 0;
+  }
+  .field input[type="number"] { font-family: var(--f-mono); }
+  .field .hint { font-size: var(--t-xs); color: var(--ink-3); }
+  .line-head { grid-column: 1 / -1; display: flex; gap: .5rem; align-items: baseline; border-top: 1px solid var(--rule); padding-top: var(--s-3); }
+  .line-head b { font-family: var(--f-mono); color: var(--accent); }
+  @media (max-width: 520px) { .form { grid-template-columns: 1fr; } }
+
+  .banner { border-radius: var(--radius); padding: var(--s-4); display: grid; gap: .35rem; border: 2px solid; }
+  .banner.ok { border-color: var(--good); }
+  .banner.bad { border-color: var(--critical); }
+  .banner .pill { display: inline-flex; align-items: center; gap: .45rem; font: 700 var(--t-lg)/1.2 var(--f-display); }
+  .banner .ico { width: 1.5rem; height: 1.5rem; border-radius: 50%; display: inline-grid; place-items: center; color: #fff; font-size: .9rem; flex: none; }
+  .banner.ok .ico { background: var(--good); } .banner.ok .pill { color: var(--good-text); }
+  .banner.bad .ico { background: var(--critical); } .banner.bad .pill { color: var(--critical); }
+  .banner p { color: var(--ink-2); font-size: var(--t-sm); }
+
+  .checks { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; border-top: 1px solid var(--rule); }
+  .checks li { display: grid; grid-template-columns: 1.6rem minmax(0, 1fr); gap: .6rem; padding-block: .6rem; border-bottom: 1px solid var(--rule); }
+  .checks .st { width: 1.3rem; height: 1.3rem; border-radius: 50%; display: grid; place-items: center; font-size: .75rem; color: #fff; margin-top: .1rem; }
+  .checks .pass .st { background: var(--good); }
+  .checks .fail .st { background: var(--critical); }
+  .checks .skip .st { background: transparent; border: 1.5px dashed var(--rule-strong); color: var(--ink-3); }
+  .checks b { font-weight: 600; font-size: var(--t-sm); }
+  .checks .skip b { color: var(--ink-3); font-weight: 500; }
+  .checks p { font-size: var(--t-sm); color: var(--ink-2); }
+  .checks .fail p { color: var(--ink); }
+
+  table.stmt { width: 100%; border-collapse: collapse; font-size: var(--t-sm); }
+  table.stmt th, table.stmt td { padding: .45rem .5rem; border-bottom: 1px solid var(--rule); text-align: left; }
+  table.stmt thead th { font: 500 var(--t-xs)/1.3 var(--f-mono); text-transform: uppercase; letter-spacing: .06em; color: var(--ink-3); white-space: nowrap; }
+  table.stmt td.num, table.stmt th.num { text-align: right; font-family: var(--f-mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  table.stmt td.mono { font-family: var(--f-mono); white-space: nowrap; }
+  table.stmt tr.open td:last-child { color: var(--good-text); font-weight: 600; }
+  .scroll-x { overflow-x: auto; }
+  .switch { display: flex; gap: .55rem; align-items: flex-start; font-size: var(--t-sm); color: var(--ink-2); cursor: pointer; }
+  .switch input { margin-top: .2rem; accent-color: var(--accent); }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../../">Ananya Patel<span>.</span></a>
+    <nav class="nav" aria-label="Main">
+      <a href="./">Case study</a>
+      <a href="../../#projects" class="hide-sm">Projects</a>
+    </nav>
+    <button class="theme-btn" type="button" data-theme-toggle>Dark mode</button>
+  </div>
+</header>
+
+<main class="wrap dash">
+  <div style="display:grid;gap:var(--s-2)">
+    <p class="eyebrow">Project 02 · Company code IN10 · FYV V3 · Posting period variant IN10</p>
+    <h1 style="font-size:clamp(1.9rem,5vw,2.6rem)">IN10 posting simulator</h1>
+    <p class="muted prose">Enter a two-line journal entry and it runs through IN10's configuration in the order the controls apply. Choose a unit test to load its data, or change any field and watch which control accepts or blocks the posting.</p>
+  </div>
+
+  <div class="panel">
+    <span class="ctl-label">Unit tests · green dot = expected to post, red = expected to fail</span>
+    <div class="presets" id="presets"></div>
+    <p class="preset-desc" id="preset-desc"></p>
+  </div>
+
+  <div class="layout">
+    <section class="panel" aria-labelledby="doc-title">
+      <div class="panel-head"><h2 id="doc-title">Document header &amp; lines</h2><span class="small muted">FB50 / FB60 style entry</span></div>
+      <form class="form" id="form" autocomplete="off">
+        <div class="field"><label for="f-docType">Document type</label><select id="f-docType"></select></div>
+        <div class="field"><label for="f-user">User</label><select id="f-user"></select></div>
+        <div class="field"><label for="f-postingDate">Posting date</label><input id="f-postingDate" type="date" required></div>
+        <div class="field"><label for="f-specialPeriod">Special period</label>
+          <select id="f-specialPeriod"><option value="">None</option><option>13</option><option>14</option><option>15</option><option>16</option></select></div>
+        <div class="field"><label for="f-amount">Amount</label><input id="f-amount" type="number" min="1" step="1" required></div>
+        <div class="field"><label for="f-currency">Currency</label><select id="f-currency"><option>INR</option><option>USD</option><option>EUR</option></select></div>
+
+        <div class="line-head"><b>Line 1</b><span class="small muted">Debit</span></div>
+        <div class="field"><label for="f-drAccount">Account</label><select id="f-drAccount"></select></div>
+        <div class="field"><label for="f-drCostCenter">Cost center</label><select id="f-drCostCenter"></select></div>
+        <div class="line-head"><b>Line 2</b><span class="small muted">Credit</span></div>
+        <div class="field"><label for="f-crAccount">Account</label><select id="f-crAccount"></select></div>
+        <div class="field"><label for="f-crCostCenter">Cost center</label><select id="f-crCostCenter"></select></div>
+      </form>
+    </section>
+
+    <section class="panel" aria-labelledby="res-title" aria-live="polite">
+      <div class="panel-head"><h2 id="res-title">System response</h2><span class="small muted">Updates as you edit</span></div>
+      <div id="banner"></div>
+      <ol class="checks" id="checks"></ol>
+      <div class="scroll-x"><table class="stmt" id="entry"></table></div>
+    </section>
+  </div>
+
+  <section class="panel" aria-labelledby="ob52-title">
+    <div class="panel-head"><h2 id="ob52-title">OB52 · posting period variant IN10</h2><span class="small muted">Interval 1 carries the authorisation group</span></div>
+    <label class="switch" for="open-p07"><input type="checkbox" id="open-p07"><span>Open period 007/2026 (October). This is step WD −2 of the Project 01 close, and UT-02b depends on it.</span></label>
+    <div class="scroll-x"><table class="stmt" id="ob52"></table></div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <span>© <span data-year>2026</span> Ananya Patel · <a href="./">Back to case study</a></span>
+    <span>Simulated responses in plain language, not SAP message texts. Fictional data.</span>
+  </div>
+</footer>
+
+<script src="data/es_data.js"></script>
+<script src="validator-core.js"></script>
+<script src="validator.js"></script>
+</body>
+</html>

@@ -1,0 +1,4 @@
+Company_Code,Group,Description,Amount_Per_Document_INR,Amount_Per_Open_Item_INR,Users
+IN10,(blank),Default for unassigned users,100000,50000,TEMP01
+IN10,FI_CLERK,Accounts clerk,500000,200000,CLERK01
+IN10,FI_MGR,Finance manager,5000000,2500000,MGR01

@@ -1,0 +1,17 @@
+Period,Month,Calendar_Year_Shift,Example_FY2026
+001,Apr,0,Apr 2026
+002,May,0,May 2026
+003,Jun,0,Jun 2026
+004,Jul,0,Jul 2026
+005,Aug,0,Aug 2026
+006,Sep,0,Sep 2026
+007,Oct,0,Oct 2026
+008,Nov,0,Nov 2026
+009,Dec,0,Dec 2026
+010,Jan,-1,Jan 2027
+011,Feb,-1,Feb 2027
+012,Mar,-1,Mar 2027
+013,Special,-1,Posting date in March 2027 + special period entered
+014,Special,-1,Posting date in March 2027 + special period entered
+015,Special,-1,Posting date in March 2027 + special period entered
+016,Special,-1,Posting date in March 2027 + special period entered
