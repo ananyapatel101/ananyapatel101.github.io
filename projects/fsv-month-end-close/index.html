@@ -1,0 +1,323 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>FSV &amp; Month-End Close · Ananya Patel</title>
+<meta name="description" content="SAP S/4HANA case study: chart of accounts in FS00, a Schedule III Financial Statement Version in OB58, and a September month-end close with FBS1 accruals and F.81 reversals.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Schibsted+Grotesk:wght@600;700&display=swap">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script src="../../assets/js/main.js"></script>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../../">Ananya Patel<span>.</span></a>
+    <nav class="nav" aria-label="Main">
+      <a href="../../#projects">Projects</a>
+      <a href="statements.html">Live statements</a>
+      <a href="../../#contact" class="hide-sm">Contact</a>
+    </nav>
+    <button class="theme-btn" type="button" data-theme-toggle>Dark mode</button>
+  </div>
+</header>
+
+<main>
+  <section class="cs-hero">
+    <div class="wrap">
+      <p class="eyebrow">Project 01 · SAP S/4HANA FI · General Ledger</p>
+      <h1>Financial Statement Version &amp; Month-End Close</h1>
+      <p class="muted prose" style="font-size:var(--t-lg)">I structured a chart of accounts, grouped it into a Schedule III Financial Statement Version, and ran a September close with accruals and deferrals. The system then produces a Balance Sheet and P&amp;L that balance, tie back to the trial balance and reverse cleanly on day 1.</p>
+      <div class="cs-meta">
+        <span class="chip strong">FS00</span><span class="chip strong">OB58</span><span class="chip strong">FBS1</span><span class="chip strong">F.81</span>
+        <span class="chip">S_ALR_87012284</span><span class="chip">Excel</span><span class="chip">Power BI</span>
+      </div>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="statements.html">Open live statements</a>
+        <a class="btn btn-ghost" href="#data">Download the data</a>
+      </div>
+    </div>
+  </section>
+
+  <div class="wrap cs-layout">
+    <nav class="toc" aria-label="On this page">
+      <a href="#scenario">Scenario</a>
+      <a href="#fs00">SOP A · FS00</a>
+      <a href="#ob58">SOP B · OB58</a>
+      <a href="#hierarchy">FSV hierarchy</a>
+      <a href="#rule">Integrity rule</a>
+      <a href="#close">Month-end close</a>
+      <a href="#flow">Document flow</a>
+      <a href="#impact">Statement impact</a>
+      <a href="#business">Business impact</a>
+      <a href="#interview">Interview guide</a>
+      <a href="#data">Data &amp; Power BI</a>
+    </nav>
+
+    <article>
+      <!-- ============================================================ -->
+      <div class="cs-section" id="scenario">
+        <p class="eyebrow">Scenario</p>
+        <h2>Org structure</h2>
+        <p>All data is fictional. Balances are year-to-date for April to September 2026, which is the first half of FY 2026-27 under the Indian April–March fiscal year.</p>
+        <div class="table-wrap"><table class="data">
+          <thead><tr><th>Object</th><th>Value</th><th>Where it's set</th></tr></thead>
+          <tbody>
+            <tr><td>Company code</td><td><span class="acct">IN10</span> Ananya Manufacturing Pvt Ltd</td><td class="tc">OX02</td></tr>
+            <tr><td>Chart of accounts</td><td><span class="acct">INCA</span> operating COA, 6-digit accounts, stored 10-digit</td><td class="tc">OB13 / OB62</td></tr>
+            <tr><td>Fiscal year variant</td><td><span class="acct">V3</span> April – March, 12 + 4 special periods</td><td class="tc">OB29 / OB37</td></tr>
+            <tr><td>Currency</td><td>INR</td><td class="tc">OX02</td></tr>
+            <tr><td>Financial Statement Version</td><td><span class="acct">INS3</span> Schedule III, Companies Act 2013 (Division I)</td><td class="tc">OB58</td></tr>
+            <tr><td>Retained earnings account</td><td><span class="acct">321000</span> (P&amp;L statement account type X)</td><td class="tc">OB53</td></tr>
+            <tr><td>Close period</td><td>September 2026 = period 06; reversals post in period 07</td><td class="tc">OB52</td></tr>
+          </tbody>
+        </table></div>
+      </div>
+
+      <!-- ============================================================ -->
+      <div class="cs-section" id="fs00">
+        <p class="eyebrow">Deliverable 1a</p>
+        <h2>SOP A: Create G/L accounts in FS00</h2>
+        <p>Before FS00, check the prerequisites in this order, because each step depends on the one before it.</p>
+        <ol class="steps">
+          <li><span class="tc">OB13</span><span>Create chart of accounts INCA: length 6, manual cost element creation off, since S/4HANA creates cost elements through the G/L account type.</span></li>
+          <li><span class="tc">OB62</span><span>Assign INCA to company code IN10.</span></li>
+          <li><span class="tc">OBD4</span><span>Define account groups with number ranges: FA 111000–119999, CA 131000–169999, BANK 171000–179999, CL 211000–249999, LOAN 251000–299999, EQ 311000–399999, REV 411000–499999, EXP 511000–699999.</span></li>
+          <li><span class="tc">OB53</span><span>Assign retained earnings account 321000 to P&amp;L statement account type X. At year-end, balance carryforward (FAGLGVTR) moves the P&amp;L result there.</span></li>
+          <li><span class="tc">OB52</span><span>Open posting periods 06 and 07 for account types +, S, K, D.</span></li>
+        </ol>
+        <p>Then create each account centrally in <span class="mono">FS00</span>, entering chart-of-accounts and company-code data together. Two worked examples:</p>
+        <div class="table-wrap"><table class="data">
+          <thead><tr><th>Tab</th><th>Field</th><th>219500 Accrued Expenses</th><th>621000 Power &amp; Fuel</th><th>Why it matters</th></tr></thead>
+          <tbody>
+            <tr><td>Type/Description</td><td>G/L account type</td><td>Balance Sheet Account</td><td>Primary Costs or Revenue</td><td>In S/4HANA the type replaces the old P&amp;L/BS radio button. Primary costs create a cost element (category 1) automatically.</td></tr>
+            <tr><td>Type/Description</td><td>Account group</td><td class="acct">CL</td><td class="acct">EXP</td><td>Controls the number range and field status of the master record.</td></tr>
+            <tr><td>Type/Description</td><td>Short / long text</td><td>Accrued Expenses</td><td>Power &amp; Fuel</td><td>This is the text that shows on the trial balance and in FSV drill-down.</td></tr>
+            <tr><td>Control Data</td><td>Account currency</td><td>INR</td><td>INR</td><td>Company code currency.</td></tr>
+            <tr><td>Control Data</td><td>Open item management</td><td>✓</td><td>–</td><td>Each accrual stays open until its F.81 reversal clears it, so open items show what's still unreversed.</td></tr>
+            <tr><td>Control Data</td><td>Line item display</td><td>✓</td><td>✓</td><td>Allows drill-down from the FSV report to documents (FAGLL03).</td></tr>
+            <tr><td>Control Data</td><td>Reconciliation account</td><td>–</td><td>–</td><td>Only 211000 (K, vendors) and 141000 (D, customers) are recon accounts.</td></tr>
+            <tr><td>Control Data</td><td>Sort key</td><td class="acct">001</td><td class="acct">001</td><td>Sorts line items by posting date.</td></tr>
+            <tr><td>Create/Bank/Interest</td><td>Field status group</td><td class="acct">G001</td><td class="acct">G004</td><td>G004 makes a cost center mandatory, so the FBS1 accrual to 621000 carries a cost center.</td></tr>
+            <tr><td>Create/Bank/Interest</td><td>Post automatically only</td><td>–</td><td>–</td><td>Left off so FBS1 can post manually; switched on for GR/IR 219100.</td></tr>
+          </tbody>
+        </table></div>
+        <p class="note">All 38 accounts, with their types, groups, flags and FSV items, are in <a href="data/01_gl_master.csv">01_gl_master.csv</a>. Numbering follows the balance sheet: 1 assets, 2 liabilities, 3 equity, 4 revenue, 5–6 expenses.</p>
+      </div>
+
+      <!-- ============================================================ -->
+      <div class="cs-section" id="ob58">
+        <p class="eyebrow">Deliverable 1b</p>
+        <h2>SOP B: Build the Financial Statement Version in OB58</h2>
+        <ol class="steps">
+          <li><span class="tc">OB58</span><span><b>New entries:</b> FSV INS3, name "Schedule III – Companies Act 2013", maintenance language EN, item keys automatic, chart of accounts INCA, group account number off.</span></li>
+          <li><span class="tc">OB58</span><span>Select INS3 → <b>Financial statement items</b>. SAP creates the root plus the special items: Assets, Liabilities &amp; equity, Net result: profit, Net result: loss, P&amp;L result and Not assigned.</span></li>
+          <li><span class="tc">OB58</span><span>Rename the top items to Schedule III wording, then build sub-items (<i>Create items</i>, same level or sub-level) down to note level, such as "(c) Other current liabilities".</span></li>
+          <li><span class="tc">OB58</span><span>On each end item, click <b>Assign accounts</b> and enter From and To accounts using full account numbers. Tick <b>D</b> and <b>C</b> to show the account at this item whatever its balance.</span></li>
+          <li><span class="tc">OB58</span><span><b>D/C shift</b> for HDFC 171000: <b>D only</b> under Cash &amp; cash equivalents and <b>C only</b> under Short-term borrowings. An overdraft then moves to liabilities automatically.</span></li>
+          <li><span class="tc">OB58</span><span><b>Net result:</b> place the "Net result: profit / loss" item under Reserves &amp; surplus, so the current-period P&amp;L appears in equity and the Balance Sheet balances before year-end carryforward.</span></li>
+          <li><span class="tc">OB58</span><span><b>Check assignments</b> (Goto → Check). The result must show no accounts under Not assigned and no account assigned twice for the same D/C side.</span></li>
+          <li><span class="tc">S_ALR_87012284</span><span>Run the statement: company code IN10, FSV INS3, FY 2026, periods 01–06, comparison FY 2025. In Fiori, use the <i>Balance Sheet/Income Statement</i> app.</span></li>
+        </ol>
+      </div>
+
+      <!-- ============================================================ -->
+      <div class="cs-section" id="hierarchy">
+        <p class="eyebrow">FSV INS3</p>
+        <h2>Node hierarchy and account assignment</h2>
+        <p>Account ranges are stored and assigned as full 10-digit numbers. SAP pads the 6-digit account with leading zeros (ALPHA conversion), so <span class="mono">131000</span> is held as <span class="mono">0000131000</span>.</p>
+        <div class="table-wrap"><table class="data">
+          <thead><tr><th>FSV item</th><th>From</th><th>To</th><th>D</th><th>C</th></tr></thead>
+          <tbody>
+            <tr class="head-row"><td>I. EQUITY AND LIABILITIES</td><td></td><td></td><td></td><td></td></tr>
+            <tr class="lvl-2 head-row"><td>1. Shareholders' funds</td><td></td><td></td><td></td><td></td></tr>
+            <tr class="lvl-3"><td>(a) Share capital</td><td class="acct">0000311000</td><td class="acct">0000311999</td><td>✓</td><td>✓</td></tr>
+            <tr class="lvl-3"><td>(b) Reserves and surplus</td><td class="acct">0000321000</td><td class="acct">0000321999</td><td>✓</td><td>✓</td></tr>
+            <tr class="lvl-4"><td>Net result: profit / loss (current period)</td><td colspan="4" class="muted">Special item; takes the P&amp;L result</td></tr>
+            <tr class="lvl-2 head-row"><td>2. Non-current liabilities</td><td></td><td></td><td></td><td></td></tr>
+            <tr class="lvl-3"><td>(a) Long-term borrowings</td><td class="acct">0000251000</td><td class="acct">0000259999</td><td>✓</td><td>✓</td></tr>
+            <tr class="lvl-2 head-row"><td>3. Current liabilities</td><td></td><td></td><td></td><td></td></tr>
+            <tr class="lvl-3"><td>(a) Short-term borrowings</td><td class="acct">0000171000</td><td class="acct">0000171000</td><td>–</td><td>✓</td></tr>
+            <tr class="lvl-3"><td>(b) Trade payables</td><td class="acct">0000211000</td><td class="acct">0000211999</td><td>✓</td><td>✓</td></tr>
+            <tr class="lvl-3"><td>(c) Other current liabilities</td><td class="acct">0000219000</td><td class="acct">0000229999</td><td>✓</td><td>✓</td></tr>
+            <tr class="lvl-3"><td>(d) Short-term provisions</td><td class="acct">0000231000</td><td class="acct">0000239999</td><td>✓</td><td>✓</td></tr>
+            <tr class="head-row"><td>II. ASSETS</td><td></td><td></td><td></td><td></td></tr>
+            <tr class="lvl-2 head-row"><td>1. Non-current assets</td><td></td><td></td><td></td><td></td></tr>
+            <tr class="lvl-3"><td>(a) Property, plant and equipment</td><td class="acct">0000111000</td><td class="acct">0000119999</td><td>✓</td><td>✓</td></tr>
+            <tr class="lvl-2 head-row"><td>2. Current assets</td><td></td><td></td><td></td><td></td></tr>
+            <tr class="lvl-3"><td>(a) Inventories</td><td class="acct">0000131000</td><td class="acct">0000139999</td><td>✓</td><td>✓</td></tr>
+            <tr class="lvl-3"><td>(b) Trade receivables</td><td class="acct">0000141000</td><td class="acct">0000149999</td><td>✓</td><td>✓</td></tr>
+            <tr class="lvl-3"><td>(c) Cash and cash equivalents</td><td class="acct">0000171000<br>0000172000</td><td class="acct">0000171000<br>0000179999</td><td>✓<br>✓</td><td>–<br>✓</td></tr>
+            <tr class="lvl-3"><td>(d) Short-term loans and advances</td><td class="acct">0000153000</td><td class="acct">0000169999</td><td>✓</td><td>✓</td></tr>
+            <tr class="lvl-3"><td>(e) Other current assets</td><td class="acct">0000151000</td><td class="acct">0000152999</td><td>✓</td><td>✓</td></tr>
+            <tr class="head-row"><td>STATEMENT OF PROFIT AND LOSS</td><td></td><td></td><td></td><td></td></tr>
+            <tr class="lvl-2"><td>I. Revenue from operations</td><td class="acct">0000411000</td><td class="acct">0000419999</td><td>✓</td><td>✓</td></tr>
+            <tr class="lvl-2"><td>II. Other income</td><td class="acct">0000421000</td><td class="acct">0000429999</td><td>✓</td><td>✓</td></tr>
+            <tr class="lvl-2 head-row"><td>IV. Expenses</td><td></td><td></td><td></td><td></td></tr>
+            <tr class="lvl-3"><td>(a) Cost of materials consumed</td><td class="acct">0000511000</td><td class="acct">0000519999</td><td>✓</td><td>✓</td></tr>
+            <tr class="lvl-3"><td>(b) Employee benefits expense</td><td class="acct">0000611000</td><td class="acct">0000619999</td><td>✓</td><td>✓</td></tr>
+            <tr class="lvl-3"><td>(c) Finance costs</td><td class="acct">0000651000</td><td class="acct">0000659999</td><td>✓</td><td>✓</td></tr>
+            <tr class="lvl-3"><td>(d) Depreciation and amortisation</td><td class="acct">0000641000</td><td class="acct">0000649999</td><td>✓</td><td>✓</td></tr>
+            <tr class="lvl-3"><td>(e) Other expenses</td><td class="acct">0000621000<br>0000661000</td><td class="acct">0000639999<br>0000669999</td><td>✓<br>✓</td><td>✓<br>✓</td></tr>
+            <tr class="lvl-2"><td>VI. Tax expense</td><td class="acct">0000671000</td><td class="acct">0000679999</td><td>✓</td><td>✓</td></tr>
+            <tr class="head-row"><td>Not assigned</td><td colspan="4" class="muted">Target: 0 accounts</td></tr>
+          </tbody>
+        </table></div>
+      </div>
+
+      <!-- ============================================================ -->
+      <div class="cs-section" id="rule">
+        <p class="eyebrow">Deliverable 2</p>
+        <h2>Configuration rule: FSV integrity</h2>
+        <div class="callout">
+          <p class="eyebrow">Rule INS3-01 · applies to every FSV change</p>
+          <ol>
+            <li><b>Assign by full account number.</b> Every account goes on an FSV item as an explicit From–To range of full 10-digit internal numbers (<span class="mono">0000131000</span>–<span class="mono">0000139999</span>). Never use a truncated or partial string such as <span class="mono">131</span> or <span class="mono">13*</span>. A range that doesn't match exactly drops the account into <i>Not assigned</i>, and the Balance Sheet stops balancing without any error message.</li>
+            <li><b>Protect history.</b> Once an account has postings, never delete or renumber the FSV item it rolls up to. If an account must move, reassign it with a dated change note, and re-run prior-period statements to confirm they still reproduce the figures already reported.</li>
+            <li><b>Check before every close.</b> Run <i>OB58 → Check assignments</i> before the period is closed. The only acceptable result is 0 accounts under Not assigned and 0 accounts assigned twice for the same debit/credit side.</li>
+          </ol>
+        </div>
+        <p class="note">Why it holds up with auditors: the FSV is a reporting view, not a posting object. History lives in the documents and account balances. The FSV only groups them, so the audit trail is protected by keeping the account-to-item mapping complete, unambiguous and version-controlled. The live statements page runs this check on every refresh.</p>
+      </div>
+
+      <!-- ============================================================ -->
+      <div class="cs-section" id="close">
+        <p class="eyebrow">Month-end close</p>
+        <h2>September 2026 close checklist</h2>
+        <div class="table-wrap"><table class="data">
+          <thead><tr><th>When</th><th>T-code</th><th>Task</th><th>Control</th></tr></thead>
+          <tbody>
+            <tr><td>WD −2</td><td class="tc">OB52</td><td>Open period 07 so reversals can post</td><td>Period variant for IN10</td></tr>
+            <tr><td>WD −1</td><td class="tc">FBS1</td><td>Post six accrual and deferral entries (A1–A4, D1–D2), dated 30.09.2026, reversal date 01.10.2026, reason 05</td><td>Each entry has a basis on file</td></tr>
+            <tr><td>WD −1</td><td class="tc">AFAB</td><td>Depreciation run for period 06 (already included in the pre-close TB)</td><td>Asset history sheet ties to 641000</td></tr>
+            <tr><td>WD 0</td><td class="tc">FAGL_FCV</td><td>Foreign currency valuation and GR/IR regrouping</td><td>No open FX items this period</td></tr>
+            <tr><td>WD 0</td><td class="tc">S_ALR_87012277</td><td>Review G/L balances and trial balance (also FAGLB03)</td><td>Debits = credits; flux review against August</td></tr>
+            <tr><td>WD 0</td><td class="tc">OB58</td><td>Check FSV assignments (Rule INS3-01)</td><td>0 not assigned, 0 duplicates</td></tr>
+            <tr><td>WD 0</td><td class="tc">S_ALR_87012284</td><td>Produce Schedule III Balance Sheet and P&amp;L</td><td>Assets = Equity + Liabilities</td></tr>
+            <tr><td>WD +1</td><td class="tc">F.81</td><td>Reverse the FBS1 documents on 01.10.2026, test run first, then update run</td><td>Accrual accounts return to their pre-close balance</td></tr>
+            <tr><td>WD +1</td><td class="tc">OB52</td><td>Close period 06 for normal users</td><td>Only authorised users can post to 06</td></tr>
+          </tbody>
+        </table></div>
+      </div>
+
+      <!-- ============================================================ -->
+      <div class="cs-section" id="flow">
+        <p class="eyebrow">Deliverable 3</p>
+        <h2>FI document flow: FBS1 and F.81</h2>
+        <p><b>Step 1, FBS1 accrual/deferral entry.</b> Posting date 30.09.2026, period 06, document type SA, reversal date 01.10.2026, reversal reason 05.</p>
+        <div class="table-wrap"><table class="data">
+          <thead><tr><th>#</th><th>Doc no.</th><th>Type</th><th>Debit (PK 40)</th><th>Credit (PK 50)</th><th class="num">₹</th><th>Basis</th></tr></thead>
+          <tbody>
+            <tr><td>A1</td><td class="acct">0100000451</td><td>Accrual</td><td><span class="acct">621000</span> Power &amp; Fuel</td><td><span class="acct">219500</span> Accrued Expenses</td><td class="num">1,20,000</td><td>Sep meter reading × tariff; bill not yet received</td></tr>
+            <tr><td>A2</td><td class="acct">0100000452</td><td>Accrual</td><td><span class="acct">631000</span> Audit Fees</td><td><span class="acct">219500</span> Accrued Expenses</td><td class="num">50,000</td><td>Annual fee ₹6,00,000 ÷ 12</td></tr>
+            <tr><td>A3</td><td class="acct">0100000453</td><td>Accrual</td><td><span class="acct">651000</span> Interest on Term Loan</td><td><span class="acct">219500</span> Accrued Expenses</td><td class="num">62,500</td><td>₹75,00,000 × 10% ÷ 12</td></tr>
+            <tr><td>A4</td><td class="acct">0100000454</td><td>Accrued income</td><td><span class="acct">152000</span> Accrued Interest Receivable</td><td><span class="acct">421000</span> Interest Income on FD</td><td class="num">18,750</td><td>₹30,00,000 × 7.5% ÷ 12</td></tr>
+            <tr><td>D1</td><td class="acct">0100000455</td><td>Deferral (income)</td><td><span class="acct">422000</span> Rental Income</td><td><span class="acct">219600</span> Income Received in Advance</td><td class="num">1,50,000</td><td>October rent received on 25-Sep</td></tr>
+            <tr><td>D2</td><td class="acct">0100000456</td><td>Deferral (expense)</td><td><span class="acct">151000</span> Prepaid Expenses</td><td><span class="acct">624000</span> Software Subscription</td><td class="num">90,000</td><td>October subscription expensed in September</td></tr>
+          </tbody>
+          <tfoot><tr><td colspan="5">Total, each document balances (Dr = Cr)</td><td class="num">4,91,250</td><td></td></tr></tfoot>
+        </table></div>
+
+        <p><b>Step 2, F.81 reversal.</b> Posting date 01.10.2026, period 07. Each document is reversed with debit and credit swapped and linked to the original.</p>
+        <div class="table-wrap"><table class="data">
+          <thead><tr><th>#</th><th>Reversal doc</th><th>Reverses</th><th>Debit</th><th>Credit</th><th class="num">₹</th></tr></thead>
+          <tbody>
+            <tr><td>A1</td><td class="acct">0100000461</td><td class="acct">0100000451</td><td><span class="acct">219500</span> Accrued Expenses</td><td><span class="acct">621000</span> Power &amp; Fuel</td><td class="num">1,20,000</td></tr>
+            <tr><td>A2</td><td class="acct">0100000462</td><td class="acct">0100000452</td><td><span class="acct">219500</span> Accrued Expenses</td><td><span class="acct">631000</span> Audit Fees</td><td class="num">50,000</td></tr>
+            <tr><td>A3</td><td class="acct">0100000463</td><td class="acct">0100000453</td><td><span class="acct">219500</span> Accrued Expenses</td><td><span class="acct">651000</span> Interest on Term Loan</td><td class="num">62,500</td></tr>
+            <tr><td>A4</td><td class="acct">0100000464</td><td class="acct">0100000454</td><td><span class="acct">421000</span> Interest Income on FD</td><td><span class="acct">152000</span> Accrued Interest Receivable</td><td class="num">18,750</td></tr>
+            <tr><td>D1</td><td class="acct">0100000465</td><td class="acct">0100000455</td><td><span class="acct">219600</span> Income Received in Advance</td><td><span class="acct">422000</span> Rental Income</td><td class="num">1,50,000</td></tr>
+            <tr><td>D2</td><td class="acct">0100000466</td><td class="acct">0100000456</td><td><span class="acct">624000</span> Software Subscription</td><td><span class="acct">151000</span> Prepaid Expenses</td><td class="num">90,000</td></tr>
+          </tbody>
+        </table></div>
+
+        <p><b>Step 3, October true-up.</b> The actual power bill arrives on 08-Oct and is posted with FB60 (doc 1900000123, net of GST).</p>
+        <div class="table-wrap"><table class="data">
+          <thead><tr><th>Account 621000 Power &amp; Fuel, October</th><th class="num">Debit ₹</th><th class="num">Credit ₹</th></tr></thead>
+          <tbody>
+            <tr><td>F.81 reversal of A1 (01.10.2026)</td><td class="num"></td><td class="num">1,20,000</td></tr>
+            <tr><td>FB60 actual invoice (08.10.2026)</td><td class="num">1,23,500</td><td class="num"></td></tr>
+          </tbody>
+          <tfoot><tr><td>Net October expense: only the estimate variance</td><td class="num">3,500</td><td class="num"></td></tr></tfoot>
+        </table></div>
+        <p class="note">FBS1 and F.81 suit entries that reverse in full in the next period. A multi-month deferral such as a 12-month insurance premium is released month by month with recurring entries (FBD1 / F.14) or the S/4HANA Accrual Engine.</p>
+      </div>
+
+      <!-- ============================================================ -->
+      <div class="cs-section" id="impact">
+        <p class="eyebrow">Result</p>
+        <h2>What the close does to the statements</h2>
+        <div class="table-wrap"><table class="data">
+          <thead><tr><th>Measure</th><th class="num">Pre-close</th><th class="num">After close</th><th class="num">Change</th></tr></thead>
+          <tbody>
+            <tr><td>Profit after tax (YTD, before tax re-estimate)</td><td class="num">51,91,250</td><td class="num">49,17,500</td><td class="num">−2,73,750</td></tr>
+            <tr><td>Total assets</td><td class="num">3,37,85,000</td><td class="num">3,38,93,750</td><td class="num">+1,08,750</td></tr>
+            <tr><td>Current assets</td><td class="num">1,86,45,000</td><td class="num">1,87,53,750</td><td class="num">+1,08,750</td></tr>
+            <tr><td>Current liabilities</td><td class="num">69,55,000</td><td class="num">73,37,500</td><td class="num">+3,82,500</td></tr>
+            <tr><td>Current ratio</td><td class="num">2.68</td><td class="num">2.56</td><td class="num">−0.12</td></tr>
+          </tbody>
+        </table></div>
+        <p>Without the close, September profit is overstated by ₹2.74 lakh and short-term obligations are understated by ₹3.83 lakh. A lender would read a stronger liquidity position than the company actually has. <a href="statements.html">Toggle each entry on the live statements page</a> to see its individual effect.</p>
+      </div>
+
+      <!-- ============================================================ -->
+      <div class="cs-section" id="business">
+        <p class="eyebrow">Business impact</p>
+        <h2>Why this matters</h2>
+        <p>The FSV is the link between thousands of G/L postings and the two statements that the board, auditors and lenders actually read. If it's built to Schedule III with complete, full-number account ranges, the statutory Balance Sheet and P&amp;L come straight out of SAP, with no manual regrouping in Excel. Every figure can be drilled back to the source document.</p>
+        <p>Accruals and deferrals apply the matching principle: expenses and income land in the month they belong to, not the month the paper arrives. Posting them with FBS1 and reversing them with F.81 makes the process repeatable and leaves an audit trail, and it can't be forgotten, because every reversal is scheduled when the accrual is posted. The result is a faster close, reliable monthly margins and fewer audit adjustments.</p>
+      </div>
+
+      <!-- ============================================================ -->
+      <div class="cs-section" id="interview">
+        <p class="eyebrow">Interview guide</p>
+        <h2>How I present it in 90 seconds</h2>
+        <ol>
+          <li><b>Structure:</b> "I built a 38-account chart of accounts in FS00, numbered by balance-sheet class, using S/4HANA G/L account types so expense accounts create cost elements automatically."</li>
+          <li><b>Reporting:</b> "I mapped them into a Schedule III FSV in OB58 using full account ranges. That includes a D/C shift, so a bank overdraft moves to short-term borrowings, and a net-result node so the balance sheet balances mid-year."</li>
+          <li><b>Close:</b> "For September I posted four accruals and two deferrals in FBS1 with a reversal date, then reversed them on day 1 with F.81. The close reduced PAT by ₹2.74 lakh and the current ratio from 2.68 to 2.56."</li>
+          <li><b>Control:</b> "Before every close I run the OB58 assignment check and make sure nothing sits in Not assigned. The live statements page shows the same check."</li>
+        </ol>
+        <div class="qa">
+          <details><summary>Why FBS1 and not FB50 for an accrual?</summary><p>FBS1 stores the reversal date and reason on the document, so F.81 picks up every open accrual automatically. With FB50, someone has to remember to reverse each one by hand.</p></details>
+          <details><summary>What if the actual bill differs from the accrual?</summary><p>The difference lands in the next period, here ₹3,500 in October. If variances are consistently large, the estimation basis (meter reading × tariff) gets reviewed.</p></details>
+          <details><summary>Accrual versus deferral?</summary><p>An accrual records something that has happened but isn't billed yet (power used, interest earned). A deferral pushes something already billed or received into the period it relates to (October rent, October subscription).</p></details>
+          <details><summary>How does the P&amp;L reach the Balance Sheet?</summary><p>During the year, the FSV's net result item shows current profit inside Reserves &amp; surplus. At year-end, FAGLGVTR carries P&amp;L accounts forward to retained earnings 321000, as set in OB53.</p></details>
+          <details><summary>What does D/C shift do?</summary><p>It lets one account appear on different FSV items depending on its balance. HDFC 171000 is an asset when it has a debit balance and a short-term borrowing when overdrawn.</p></details>
+          <details><summary>What happens if an account isn't in the FSV?</summary><p>Its balance goes to Not assigned, the statement no longer balances and nothing flags it during posting. That's why the assignment check is part of the close checklist.</p></details>
+        </div>
+      </div>
+
+      <!-- ============================================================ -->
+      <div class="cs-section" id="data">
+        <p class="eyebrow">Data &amp; tools</p>
+        <h2>Download the dataset</h2>
+        <p>A Python script generated these files. It checks that every document balances, that the Balance Sheet balances before and after close and after F.81, and that every account maps to exactly one FSV item. The files open directly in Excel or Power BI.</p>
+        <div class="downloads">
+          <a href="data/01_gl_master.csv">01_gl_master.csv <span>38 rows</span></a>
+          <a href="data/02_fsv_hierarchy.csv">02_fsv_hierarchy.csv <span>FSV</span></a>
+          <a href="data/03_trial_balance_pre_close.csv">03_trial_balance_pre_close.csv <span>TB</span></a>
+          <a href="data/04_fbs1_accruals_deferrals.csv">04_fbs1_accruals_deferrals.csv <span>6 docs</span></a>
+          <a href="data/05_f81_reversals.csv">05_f81_reversals.csv <span>6 docs</span></a>
+          <a href="data/06_journal_entries.csv">06_journal_entries.csv <span>26 lines</span></a>
+          <a href="data/07_trial_balance_post_close.csv">07_trial_balance_post_close.csv <span>TB</span></a>
+        </div>
+        <h3 style="margin-top:var(--s-4)">Power BI</h3>
+        <p>The <a href="powerbi/POWERBI_BUILD_GUIDE.md">Power BI build guide</a> covers the data model (a parent-child FSV hierarchy built with <span class="mono">PATH()</span>), DAX measures and page layout.</p>
+        <div class="placeholder">Power BI report screenshot will go here</div>
+      </div>
+    </article>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <span>© <span data-year>2026</span> Ananya Patel · <a href="../../">Home</a></span>
+    <span>Fictional company code IN10. Not affiliated with SAP SE.</span>
+  </div>
+</footer>
+</body>
+</html>

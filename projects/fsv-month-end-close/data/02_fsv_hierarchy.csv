@@ -1,0 +1,37 @@
+Node_ID,Parent_ID,Node_Text,Level,From_Account,To_Account,Debit_Flag,Credit_Flag,Sort
+INS3,,INS3 Schedule III - Companies Act 2013 (Division I),0,,,,,0
+BS,INS3,Balance Sheet,1,,,,,1
+BS.EL,BS,I. EQUITY AND LIABILITIES,2,,,,,1
+BS.EL.SF,BS.EL,1. Shareholders' funds,3,,,,,1
+BS.EL.SF.SC,BS.EL.SF,(a) Share capital,4,0000311000,0000311999,X,X,1
+BS.EL.SF.RS,BS.EL.SF,(b) Reserves and surplus,4,0000321000,0000321999,X,X,2
+BS.EL.SF.RS.NR,BS.EL.SF.RS,Surplus in P&L - current period (net result),5,,,,,1
+BS.EL.NCL,BS.EL,2. Non-current liabilities,3,,,,,2
+BS.EL.NCL.LTB,BS.EL.NCL,(a) Long-term borrowings,4,0000251000,0000259999,X,X,1
+BS.EL.CL,BS.EL,3. Current liabilities,3,,,,,3
+BS.EL.CL.STB,BS.EL.CL,(a) Short-term borrowings,4,0000171000,0000171000,,X,1
+BS.EL.CL.TP,BS.EL.CL,(b) Trade payables,4,0000211000,0000211999,X,X,2
+BS.EL.CL.OCL,BS.EL.CL,(c) Other current liabilities,4,0000219000,0000229999,X,X,3
+BS.EL.CL.STP,BS.EL.CL,(d) Short-term provisions,4,0000231000,0000239999,X,X,4
+BS.A,BS,II. ASSETS,2,,,,,2
+BS.A.NCA,BS.A,1. Non-current assets,3,,,,,1
+BS.A.NCA.PPE,BS.A.NCA,"(a) Property, plant and equipment",4,0000111000,0000119999,X,X,1
+BS.A.CA,BS.A,2. Current assets,3,,,,,2
+BS.A.CA.INV,BS.A.CA,(a) Inventories,4,0000131000,0000139999,X,X,1
+BS.A.CA.TR,BS.A.CA,(b) Trade receivables,4,0000141000,0000149999,X,X,2
+BS.A.CA.CCE,BS.A.CA,(c) Cash and cash equivalents,4,0000171000,0000171000,X,,3
+BS.A.CA.CCE,BS.A.CA,(c) Cash and cash equivalents,4,0000172000,0000179999,X,X,3
+BS.A.CA.STLA,BS.A.CA,(d) Short-term loans and advances,4,0000153000,0000169999,X,X,4
+BS.A.CA.OCA,BS.A.CA,(e) Other current assets,4,0000151000,0000152999,X,X,5
+PL,INS3,Statement of Profit and Loss,1,,,,,2
+PL.REV,PL,I. Revenue from operations,2,0000411000,0000419999,X,X,1
+PL.OI,PL,II. Other income,2,0000421000,0000429999,X,X,2
+PL.EXP,PL,IV. Expenses,2,,,,,3
+PL.EXP.COMC,PL.EXP,(a) Cost of materials consumed,3,0000511000,0000519999,X,X,1
+PL.EXP.EMP,PL.EXP,(b) Employee benefits expense,3,0000611000,0000619999,X,X,2
+PL.EXP.FIN,PL.EXP,(c) Finance costs,3,0000651000,0000659999,X,X,3
+PL.EXP.DEP,PL.EXP,(d) Depreciation and amortisation expense,3,0000641000,0000649999,X,X,4
+PL.EXP.OTH,PL.EXP,(e) Other expenses,3,0000621000,0000639999,X,X,5
+PL.EXP.OTH,PL.EXP,(e) Other expenses,3,0000661000,0000669999,X,X,5
+PL.TAX,PL,VI. Tax expense,2,0000671000,0000679999,X,X,4
+NA,INS3,Not assigned,1,,,,,9

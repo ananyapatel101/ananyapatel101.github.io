@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>IN10 Live Statements · Ananya Patel</title>
+<meta name="description" content="Interactive Schedule III Balance Sheet and P&L for fictional company code IN10: toggle September accruals and deferrals and watch the statements recompute through the FSV.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Schibsted+Grotesk:wght@600;700&display=swap">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script src="../../assets/js/main.js"></script>
+<style>
+  .dash { display: grid; gap: var(--s-5); padding-block: var(--s-6) 0; }
+  .dash-head { display: grid; gap: var(--s-2); }
+  .panel { background: var(--surface); border: 1px solid var(--rule); border-radius: var(--radius); padding: var(--s-4); display: grid; gap: var(--s-3); min-width: 0; }
+  .panel h2 { font-size: var(--t-lg); }
+  .panel-head { display: flex; justify-content: space-between; align-items: baseline; gap: var(--s-3); flex-wrap: wrap; }
+
+  .controls { display: grid; gap: var(--s-4); }
+  .ctl-label { font: 500 var(--t-xs)/1 var(--f-mono); text-transform: uppercase; letter-spacing: .08em; color: var(--ink-3); }
+  .seg { display: flex; flex-wrap: wrap; gap: 0; border: 1px solid var(--rule-strong); border-radius: var(--radius); overflow: hidden; width: fit-content; max-width: 100%; }
+  .seg button { border: 0; border-right: 1px solid var(--rule-strong); background: var(--surface); color: var(--ink-2); padding: .6rem .85rem; font: 500 var(--t-sm)/1.2 var(--f-body); cursor: pointer; text-align: left; }
+  .seg button:last-child { border-right: 0; }
+  .seg button small { display: block; font: 400 var(--t-xs)/1.2 var(--f-mono); color: var(--ink-3); margin-top: .15rem; }
+  .seg button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); }
+  .seg button[aria-pressed="true"] small { color: inherit; opacity: .8; }
+  .toggles { display: flex; flex-wrap: wrap; gap: var(--s-2); }
+  .tg { display: inline-flex; align-items: center; gap: .45rem; border: 1px solid var(--rule-strong); border-radius: 999px; padding: .4rem .75rem .4rem .55rem; cursor: pointer; font-size: var(--t-sm); background: var(--surface); user-select: none; }
+  .tg input { accent-color: var(--accent); margin: 0; }
+  .tg b { font-family: var(--f-mono); font-weight: 600; }
+  .tg .amt { font-family: var(--f-mono); color: var(--ink-3); font-size: var(--t-xs); }
+  .tg:has(input:not(:checked)) { opacity: .6; }
+  .tg.warn { border-color: var(--critical); }
+  .ctl-row { display: flex; flex-wrap: wrap; gap: var(--s-5); align-items: flex-end; }
+  .ctl-row > div { display: grid; gap: var(--s-2); }
+
+  .kpis { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: var(--s-3); }
+  @media (max-width: 960px) { .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  .kpi { background: var(--surface); border: 1px solid var(--rule); border-radius: var(--radius); padding: var(--s-4); display: grid; gap: .3rem; align-content: start; }
+  .kpi .k-label { font-size: var(--t-xs); color: var(--ink-3); font-family: var(--f-mono); text-transform: uppercase; letter-spacing: .06em; }
+  .kpi .k-value { font: 700 var(--t-xl)/1.1 var(--f-display); letter-spacing: -.01em; }
+  .kpi .k-delta { font: 500 var(--t-xs)/1.2 var(--f-mono); color: var(--ink-2); }
+  .kpi.check { border-width: 2px; }
+  .kpi.check.ok { border-color: var(--good); }
+  .kpi.check.bad { border-color: var(--critical); }
+  .pill { display: inline-flex; align-items: center; gap: .4rem; font: 600 var(--t-sm)/1 var(--f-body); }
+  .pill .ico { width: 1.25rem; height: 1.25rem; border-radius: 50%; display: inline-grid; place-items: center; color: #fff; font-size: .8rem; }
+  .ok .pill .ico { background: var(--good); }
+  .bad .pill .ico { background: var(--critical); }
+  .ok .pill { color: var(--good-text); }
+  .bad .pill { color: var(--critical); }
+
+  .grid-2 { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--s-4); align-items: start; }
+  @media (max-width: 1024px) { .grid-2 { grid-template-columns: 1fr; } }
+
+  table.stmt { width: 100%; border-collapse: collapse; font-size: var(--t-sm); }
+  table.stmt th, table.stmt td { padding: .42rem .5rem; border-bottom: 1px solid var(--rule); text-align: left; }
+  table.stmt thead th { font: 500 var(--t-xs)/1.3 var(--f-mono); text-transform: uppercase; letter-spacing: .06em; color: var(--ink-3); white-space: nowrap; }
+  table.stmt td.num, table.stmt th.num { text-align: right; font-family: var(--f-mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  table.stmt tr.l2 td:first-child { font-weight: 700; }
+  table.stmt tr.l3 td:first-child { font-weight: 600; padding-left: 1rem; }
+  table.stmt tr.l4 td:first-child { padding-left: 1.8rem; }
+  table.stmt tr.l5 td:first-child { padding-left: 2.6rem; color: var(--ink-2); }
+  table.stmt tr.acct-row td { color: var(--ink-2); font-size: var(--t-xs); background: var(--surface-2); }
+  table.stmt tr.acct-row td:first-child { padding-left: 3rem; font-family: var(--f-mono); }
+  table.stmt tr.total td { font-weight: 700; border-top: 2px solid var(--rule-strong); }
+  table.stmt tr.na td { color: var(--critical); font-weight: 600; }
+  table.stmt tr.changed td.delta { color: var(--ink); font-weight: 600; }
+  table.stmt td.delta { color: var(--ink-3); }
+  .exp-btn { border: 0; background: none; color: inherit; font: inherit; cursor: pointer; padding: 0; text-align: left; display: inline-flex; gap: .35rem; align-items: baseline; }
+  .exp-btn::before { content: "+"; font-family: var(--f-mono); color: var(--ink-3); width: .8rem; }
+  .exp-btn[aria-expanded="true"]::before { content: "−"; }
+  .exp-btn:hover { color: var(--accent); }
+
+  .chart-box { position: relative; height: 260px; }
+  .legend { display: flex; gap: var(--s-4); flex-wrap: wrap; font-size: var(--t-xs); color: var(--ink-2); }
+  .legend i { display: inline-block; width: .7rem; height: .7rem; border-radius: 2px; margin-right: .35rem; vertical-align: -1px; }
+
+  .integrity { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s-3); }
+  .integrity div { border: 1px solid var(--rule); border-radius: var(--radius); padding: var(--s-3); display: grid; gap: .2rem; }
+  .integrity b { font: 700 var(--t-xl)/1 var(--f-display); }
+  .integrity span { font-size: var(--t-xs); color: var(--ink-3); }
+  .integrity .bad b { color: var(--critical); }
+  .sim { display: flex; gap: .5rem; align-items: flex-start; font-size: var(--t-sm); color: var(--ink-2); cursor: pointer; }
+  .sim input { margin-top: .25rem; accent-color: var(--critical); }
+  .sim code { white-space: nowrap; }
+
+  .scroll-x { overflow-x: auto; }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../../">Ananya Patel<span>.</span></a>
+    <nav class="nav" aria-label="Main">
+      <a href="./">Case study</a>
+      <a href="../../#projects" class="hide-sm">Projects</a>
+    </nav>
+    <button class="theme-btn" type="button" data-theme-toggle>Dark mode</button>
+  </div>
+</header>
+
+<main class="wrap dash">
+  <div class="dash-head">
+    <p class="eyebrow">Project 01 · Company code IN10 · FSV INS3</p>
+    <h1 style="font-size:clamp(1.9rem,5vw,2.6rem)">Live Schedule III statements</h1>
+    <p class="muted prose">The trial balance of fictional IN10 runs through the FSV in your browser. Pick a point in the close, switch individual accruals on or off, and the Balance Sheet, P&amp;L and ratios recompute from the account level up.</p>
+  </div>
+
+  <div class="panel controls">
+    <div class="ctl-row">
+      <div>
+        <span class="ctl-label" id="view-label">Point in the close</span>
+        <div class="seg" role="group" aria-labelledby="view-label" id="view-seg">
+          <button type="button" data-view="0" aria-pressed="false">Pre-close<small>30.09 · TB only</small></button>
+          <button type="button" data-view="1" aria-pressed="true">After FBS1<small>30.09 · P06 close</small></button>
+          <button type="button" data-view="2" aria-pressed="false">After F.81<small>01.10 · P07</small></button>
+          <button type="button" data-view="3" aria-pressed="false">After actual bill<small>08.10 · FB60</small></button>
+        </div>
+      </div>
+    </div>
+    <div style="display:grid;gap:var(--s-2)">
+      <span class="ctl-label">FBS1 entries included</span>
+      <div class="toggles" id="toggles"></div>
+    </div>
+  </div>
+
+  <div class="kpis" id="kpis" aria-live="polite"></div>
+
+  <div class="grid-2">
+    <section class="panel" aria-labelledby="bs-title" style="padding-block:var(--s-4)">
+      <div class="panel-head">
+        <h2 id="bs-title">Balance Sheet</h2>
+        <span class="small muted" id="bs-asof"></span>
+      </div>
+      <div class="scroll-x"><table class="stmt" id="bs"></table></div>
+    </section>
+    <section class="panel" aria-labelledby="pl-title" style="padding-block:var(--s-4)">
+      <div class="panel-head">
+        <h2 id="pl-title">Statement of Profit and Loss</h2>
+        <span class="small muted" id="pl-asof"></span>
+      </div>
+      <div class="scroll-x"><table class="stmt" id="pl"></table></div>
+    </section>
+  </div>
+
+  <div class="grid-2">
+    <section class="panel" aria-labelledby="chart-title" style="padding-block:var(--s-4)">
+      <div class="panel-head">
+        <h2 id="chart-title">Profit impact of each Sep entry</h2>
+        <span class="small muted">₹ · effect on PAT (YTD)</span>
+      </div>
+      <div class="legend"><span><i style="background:var(--debit)"></i>Raises profit</span><span><i style="background:var(--critical)"></i>Lowers profit</span><span><i style="background:var(--rule-strong)"></i>Switched off</span></div>
+      <div class="chart-box"><canvas id="impact" role="img" aria-label="Bar chart of the profit impact of each accrual and deferral entry"></canvas></div>
+      <p class="small muted" id="impact-note"></p>
+    </section>
+
+    <section class="panel" aria-labelledby="int-title" style="padding-block:var(--s-4)">
+      <div class="panel-head">
+        <h2 id="int-title">FSV integrity check</h2>
+        <span class="small muted">Rule INS3-01 · OB58 Check assignments</span>
+      </div>
+      <div class="integrity" id="integrity"></div>
+      <label class="sim" for="sim-trunc">
+        <input type="checkbox" id="sim-trunc">
+        <span>Simulate a truncated range: assign <b>(a) Inventories</b> as <code>131</code> – <code>139</code> instead of <code>0000131000</code> – <code>0000139999</code>, then watch the check and the Balance Sheet.</span>
+      </label>
+    </section>
+  </div>
+
+  <section class="panel" aria-labelledby="jr-title" style="padding-block:var(--s-4)">
+    <div class="panel-head">
+      <h2 id="jr-title">Journal lines in this view</h2>
+      <span class="small muted" id="jr-count"></span>
+    </div>
+    <div class="scroll-x"><table class="stmt" id="journal"></table></div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <span>© <span data-year>2026</span> Ananya Patel · <a href="./">Back to case study</a></span>
+    <span>Fictional data. Amounts in INR, Indian digit grouping.</span>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="data/fsv_data.js"></script>
+<script src="statements.js"></script>
+</body>
+</html>

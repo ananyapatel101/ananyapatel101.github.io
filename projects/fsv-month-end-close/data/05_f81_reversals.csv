@@ -1,0 +1,7 @@
+Entry_ID,Reversal_Document,Reverses,TCode,Posting_Date,Period,Debit_Account,Debit_Text,Credit_Account,Credit_Text,Amount_INR,Reversal_Reason
+A1,0100000461,0100000451,F.81,2026-10-01,P07,219500,Accrued Expenses,621000,Power & Fuel,120000,05
+A2,0100000462,0100000452,F.81,2026-10-01,P07,219500,Accrued Expenses,631000,Audit Fees,50000,05
+A3,0100000463,0100000453,F.81,2026-10-01,P07,219500,Accrued Expenses,651000,Interest on Term Loan,62500,05
+A4,0100000464,0100000454,F.81,2026-10-01,P07,421000,Interest Income on FD,152000,Accrued Interest Receivable,18750,05
+D1,0100000465,0100000455,F.81,2026-10-01,P07,219600,Income Received in Advance,422000,Rental Income,150000,05
+D2,0100000466,0100000456,F.81,2026-10-01,P07,624000,Software Subscription,151000,Prepaid Expenses,90000,05

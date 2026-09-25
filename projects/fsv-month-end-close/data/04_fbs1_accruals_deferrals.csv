@@ -1,0 +1,7 @@
+Entry_ID,Type,Description,Document,Doc_Type,TCode,Posting_Date,Period,Debit_Account,Debit_Text,Credit_Account,Credit_Text,Amount_INR,Basis,Reversal_Date,Reversal_Reason
+A1,Accrual,"Sep power consumption, bill not yet received",0100000451,SA,FBS1,2026-09-30,P06,621000,Power & Fuel,219500,Accrued Expenses,120000,Meter reading 30-Sep x tariff,2026-10-01,05
+A2,Accrual,Statutory audit fee for Sep,0100000452,SA,FBS1,2026-09-30,P06,631000,Audit Fees,219500,Accrued Expenses,50000,"Annual fee 6,00,000 / 12",2026-10-01,05
+A3,Accrual,Term-loan interest for Sep,0100000453,SA,FBS1,2026-09-30,P06,651000,Interest on Term Loan,219500,Accrued Expenses,62500,"75,00,000 x 10% / 12",2026-10-01,05
+A4,Accrued income,"FD interest earned in Sep, credited at maturity",0100000454,SA,FBS1,2026-09-30,P06,152000,Accrued Interest Receivable,421000,Interest Income on FD,18750,"30,00,000 x 7.5% / 12",2026-10-01,05
+D1,Deferral (income),October rent received in advance on 25-Sep,0100000455,SA,FBS1,2026-09-30,P06,422000,Rental Income,219600,Income Received in Advance,150000,Relates to Oct,2026-10-01,05
+D2,Deferral (expense),October software subscription expensed in Sep,0100000456,SA,FBS1,2026-09-30,P06,151000,Prepaid Expenses,624000,Software Subscription,90000,Relates to Oct,2026-10-01,05
