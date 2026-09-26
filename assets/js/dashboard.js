@@ -1,4 +1,4 @@
-// Homepage dashboard: XYZ Pvt Ltd (company code IN10) explained in plain English.
+// Homepage dashboard: XYZ Pvt Ltd (company code IN10) at a glance.
 // Every figure comes from the project data files (projects/*/data/*.csv) and ties to Part 5's trial balance at 30.09.2026.
 (function () {
   "use strict";
@@ -679,7 +679,6 @@
         var host = h("div", "viz", null, viz);
         bl.host = host;
         var ex = h("div", "explain", null, card);
-        h("p", "ex-kicker", "In plain English", ex);
         bl.plain.forEach(function (para) { h("p", null, para, ex); });
         var tk = h("div", "takeaway", null, ex);
         h("span", "tk-label", "The takeaway", tk);
@@ -691,7 +690,6 @@
         var det = h("details", "tech", null, card);
         var sum = h("summary", null, null, det);
         h("span", null, "Technical details", sum);
-        h("small", null, "for finance & SAP readers", sum);
         var body = h("div", "tech-body", null, det);
         var ul = h("ul", null, null, body);
         bl.tech.forEach(function (line) { h("li", null, line, ul); });
