@@ -5,11 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Résumé · Ananya Patel</title>
 <meta name="description" content="Résumé of Ananya Patel: MBA Finance & Marketing (Ravenshaw University), finance intern at Mahanadi Coalfields Limited, trained in SAP S/4HANA FICO.">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Carlito:ital,wght@0,400;0,700;1,400&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&display=swap">
 <link rel="stylesheet" href="assets/css/style.css">
 <script src="assets/js/main.js"></script>
 <style>
-  .cv { max-width: 52rem; margin-inline: auto; background: var(--surface); border: 1px solid var(--rule); border-radius: var(--radius); padding: clamp(1.25rem, 4vw, 3rem); display: grid; gap: var(--s-6); box-shadow: var(--shadow); }
+  .cv { width: min(52rem, 100% - 32px); margin-inline: auto; background: var(--surface); border: 1px solid var(--rule); border-radius: var(--radius); padding: clamp(1.25rem, 4vw, 3rem); display: grid; gap: var(--s-6); box-shadow: var(--shadow); }
   .cv-head { display: grid; gap: var(--s-2); border-bottom: 2px solid var(--accent); padding-bottom: var(--s-4); }
   .cv-head .contact { display: flex; flex-wrap: wrap; gap: .25rem 1.25rem; font: 400 var(--t-sm)/1.5 var(--f-mono); color: var(--ink-2); }
   .cv-head .contact > * { overflow-wrap: anywhere; min-width: 0; }
@@ -25,7 +25,7 @@
   .skills-dl dt { font-weight: 600; color: var(--ink); }
   .skills-dl dd { margin: 0; color: var(--ink-2); }
   @media (max-width: 600px) { .skills-dl { grid-template-columns: 1fr; gap: 0; } .skills-dl dd { margin-bottom: var(--s-3); } }
-  .cv-actions { max-width: 52rem; margin: var(--s-6) auto var(--s-4); display: flex; gap: var(--s-3); flex-wrap: wrap; justify-content: space-between; align-items: center; }
+  .cv-actions { width: min(52rem, 100% - 32px); margin: var(--s-6) auto var(--s-4); display: flex; gap: var(--s-3); flex-wrap: wrap; justify-content: space-between; align-items: center; }
   .cv-proj { display: grid; gap: .2rem; }
   .cv-proj h3 { font-size: var(--t-md); }
   .cv-proj h3 a { color: var(--ink); text-decoration: none; }
@@ -40,7 +40,7 @@
     html { font-size: 16px; }
     body { padding: 0; line-height: 1.4; background: #fff; }
     .site-header, .site-footer, .cv-actions { display: none !important; }
-    .cv { border: 0; padding: 0; gap: 8pt; max-width: none; }
+    .cv { border: 0; padding: 0; gap: 8pt; max-width: none; width: auto; box-shadow: none; }
     .cv-sec { gap: 5pt; }
     .cv-sec > h2, .cv-proj h3, .cv-proj > p { break-after: avoid; }
     .cv-page2 { break-before: page; gap: 12pt; }
