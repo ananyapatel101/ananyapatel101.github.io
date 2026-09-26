@@ -5,7 +5,7 @@ Static portfolio site (plain HTML/CSS/JS, no build step) for GitHub Pages.
 - **Home:** `index.html`
 - **Résumé:** [`resume.html`](resume.html) (printable, “Save as PDF” gives a clean A4 CV)
 - **Project 1, Global Gold Market: Price Drivers and Investment Role** (MBA research): [`projects/gold-market-research/`](projects/gold-market-research/)
-  - Research write-up: driver framework, transmission table, demand/supply, safe-haven evaluation, interview Q&A
+  - Research write-up: driver framework, transmission table, demand/supply, safe-haven evaluation
 - **Project 2, SAP S/4HANA FICO End-to-End Implementation** (self project, one company code IN10, five parts):
   - **Part 1, Financial Accounting Setup:** [`projects/fi-enterprise-structure/`](projects/fi-enterprise-structure/): configuration workbook, 12-case unit-test script, interactive posting simulator, CSV configuration data
   - **Part 2, Procure-to-Pay (P2P):** [`projects/procure-to-pay/`](projects/procure-to-pay/): MM–FI configuration workbook, document flow and journal entries, 12-case unit-test script, interactive P2P simulator, CSV data

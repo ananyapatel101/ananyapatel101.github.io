@@ -75,7 +75,6 @@
       <a href="#aging">AR at month-end</a>
       <a href="#tests">Unit test script</a>
       <a href="#business">Business impact</a>
-      <a href="#interview">Interview guide</a>
       <a href="#data">Data</a>
     </nav>
 
@@ -344,26 +343,6 @@
         <p class="eyebrow">Business impact</p>
         <h2>Why O2C controls matter</h2>
         <p>Receivables are IN10's biggest current asset: ₹64.8 lakh, more than its cash and fixed deposit together. The credit check stops new sales to customers who are already stretched or seriously late, before the goods leave the plant. Delivery-related billing means nothing is invoiced that wasn't shipped, and nothing shipped goes unbilled. Early-payment discounts turn a 30-day receivable into a 9-day one at a known cost (₹38,800 on this invoice). Tolerances clear the small differences automatically and put the large ones in front of a person, and the ageing list tells the collections team exactly where to call.</p>
-      </div>
-
-      <!-- ============================================================ -->
-      <div class="cs-section" id="interview">
-        <p class="eyebrow">Interview guide</p>
-        <h2>How I present it in 90 seconds</h2>
-        <ol>
-          <li><b>Scope:</b> "I ran order-to-cash end to end for company code IN10: a sales order with a credit check, delivery and goods issue, a GST invoice from billing, and an incoming payment with cash discount and the customer's TDS."</li>
-          <li><b>Integration:</b> "Sales org IN10 posts to company code IN10. Goods issue uses OBYC, so stock is credited and COGS debited; billing uses VKOA for revenue and discounts, and OB40 for output GST."</li>
-          <li><b>Controls:</b> "SAP Credit Management blocks orders over the limit or with items 60 days overdue, OB52 and the MM period guard the dates, and OBA3 and OBA4 decide what F-28 can clear automatically."</li>
-          <li><b>Proof:</b> "Twelve unit tests and a simulator. And it ties back: the customer open items at 30 September add up to exactly the ₹64,80,000 of receivables in the trial balance of my month-end close (Part 5)."</li>
-        </ol>
-        <div class="qa">
-          <details><summary>Which O2C steps create an accounting entry?</summary><p>Goods issue (Dr COGS, Cr stock), billing (Dr customer, Cr revenue and output tax) and the payment (Dr bank, Cr customer). The sales order and the delivery don't post to FI.</p></details>
-          <details><summary>What is VKOA and what does it depend on?</summary><p>Revenue account determination for billing. With condition type KOFI it looks up the chart of accounts, sales org, customer account assignment group, material account assignment group and account key (ERL revenue, ERS deductions) and returns a G/L account.</p></details>
-          <details><summary>A billing document isn't in FI. What do you check?</summary><p>VFX3 shows billing documents blocked for accounting and the reason. Most often it's account determination (a missing account assignment group, or a missing VKOA entry), a closed posting period or a missing cost center. Fix the cause and release it from VFX3.</p></details>
-          <details><summary>How does the credit check work in S/4HANA?</summary><p>SAP Credit Management: the BP has a credit segment with a limit and a risk class. On saving an order, the check rule adds the order value to the open receivables and open orders and blocks if the limit is exceeded or if an item is overdue beyond the set days. Blocked orders are released in UKM_MY_DCDS (VKM1 in older systems).</p></details>
-          <details><summary>Why IGST for one customer and CGST + SGST for another?</summary><p>GST follows the place of supply. The plant is in Maharashtra; a Maharashtra customer is intra-state (CGST + SGST), an Odisha customer is inter-state (IGST). The pricing procedure picks the condition from the regions.</p></details>
-          <details><summary>What happens if a customer pays short?</summary><p>F-28 compares the gap with the tolerance (the lower of the OBA3 customer group and the user's OBA4 limits). Within it, the difference is written off automatically; above it, you post a residual or partial payment, or leave it on account.</p></details>
-        </div>
       </div>
 
       <!-- ============================================================ -->

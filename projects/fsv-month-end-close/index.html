@@ -51,7 +51,6 @@
       <a href="#flow">Document flow</a>
       <a href="#impact">Statement impact</a>
       <a href="#business">Business impact</a>
-      <a href="#interview">Interview guide</a>
       <a href="#data">Data &amp; Power BI</a>
     </nav>
 
@@ -267,26 +266,6 @@
         <h2>Why this matters</h2>
         <p>The FSV is the link between thousands of G/L postings and the two statements that the board, auditors and lenders actually read. If it's built to Schedule III with complete, full-number account ranges, the statutory Balance Sheet and P&amp;L come straight out of SAP, with no manual regrouping in Excel. Every figure can be drilled back to the source document.</p>
         <p>Accruals and deferrals apply the matching principle: expenses and income land in the month they belong to, not the month the paper arrives. Posting them with FBS1 and reversing them with F.81 makes the process repeatable and leaves an audit trail, and it can't be forgotten, because every reversal is scheduled when the accrual is posted. The result is a faster close, reliable monthly margins and fewer audit adjustments.</p>
-      </div>
-
-      <!-- ============================================================ -->
-      <div class="cs-section" id="interview">
-        <p class="eyebrow">Interview guide</p>
-        <h2>How I present it in 90 seconds</h2>
-        <ol>
-          <li><b>Structure:</b> "I built a 38-account chart of accounts in FS00, numbered by balance-sheet class, using S/4HANA G/L account types so expense accounts create cost elements automatically."</li>
-          <li><b>Reporting:</b> "I mapped them into a Schedule III FSV in OB58 using full account ranges. That includes a D/C shift, so a bank overdraft moves to short-term borrowings, and a net-result node so the balance sheet balances mid-year."</li>
-          <li><b>Close:</b> "For September I posted four accruals and two deferrals in FBS1 with a reversal date, then reversed them on day 1 with F.81. The close reduced PAT by ₹2.74 lakh and the current ratio from 2.68 to 2.56."</li>
-          <li><b>Control:</b> "Before every close I run the OB58 assignment check and make sure nothing sits in Not assigned. The live statements page shows the same check."</li>
-        </ol>
-        <div class="qa">
-          <details><summary>Why FBS1 and not FB50 for an accrual?</summary><p>FBS1 stores the reversal date and reason on the document, so F.81 picks up every open accrual automatically. With FB50, someone has to remember to reverse each one by hand.</p></details>
-          <details><summary>What if the actual bill differs from the accrual?</summary><p>The difference lands in the next period, here ₹3,500 in October. If variances are consistently large, the estimation basis (meter reading × tariff) gets reviewed.</p></details>
-          <details><summary>Accrual versus deferral?</summary><p>An accrual records something that has happened but isn't billed yet (power used, interest earned). A deferral pushes something already billed or received into the period it relates to (October rent, October subscription).</p></details>
-          <details><summary>How does the P&amp;L reach the Balance Sheet?</summary><p>During the year, the FSV's net result item shows current profit inside Reserves &amp; surplus. At year-end, FAGLGVTR carries P&amp;L accounts forward to retained earnings 321000, as set in OB53.</p></details>
-          <details><summary>What does D/C shift do?</summary><p>It lets one account appear on different FSV items depending on its balance. HDFC 171000 is an asset when it has a debit balance and a short-term borrowing when overdrawn.</p></details>
-          <details><summary>What happens if an account isn't in the FSV?</summary><p>Its balance goes to Not assigned, the statement no longer balances and nothing flags it during posting. That's why the assignment check is part of the close checklist.</p></details>
-        </div>
       </div>
 
       <!-- ============================================================ -->

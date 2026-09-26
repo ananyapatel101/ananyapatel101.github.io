@@ -75,7 +75,6 @@
       <a href="#history">Asset history sheet</a>
       <a href="#tests">Unit test script</a>
       <a href="#business">Business impact</a>
-      <a href="#interview">Interview guide</a>
       <a href="#data">Data</a>
     </nav>
 
@@ -370,26 +369,6 @@
         <p class="eyebrow">Business impact</p>
         <h2>Why asset controls matter</h2>
         <p>Fixed assets are IN10's largest asset class: ₹1.51 crore of net book value, 45% of total assets in Part 5's balance sheet. Depreciation of ₹1.7 lakh a month is the biggest non-cash cost in the P&amp;L. With recon accounts and an asset register that agrees to the ledger, the auditor can trace every rupee of PPE to a numbered asset with a location, a capitalisation date and a useful life. The AUC keeps a half-installed machine out of depreciation until it can produce, and the "put to use" date moves the first-year tax deduction by ₹1.62 lakh. Closing the asset year with AJAB after the audit keeps the signed numbers from changing.</p>
-      </div>
-
-      <!-- ============================================================ -->
-      <div class="cs-section" id="interview">
-        <p class="eyebrow">Interview guide</p>
-        <h2>How I present it in 90 seconds</h2>
-        <ol>
-          <li><b>Scope:</b> "I set up Asset Accounting for company code IN10 and ran an asset month: a machine bought through an AUC and capitalised, an old lathe sold, and the depreciation run."</li>
-          <li><b>Configuration:</b> "Chart of depreciation IN10 from 1IN, with book area 01 posting to the ledger and tax area 15 for the Income Tax Act. Asset classes carry the AO90 account determination, number range and depreciation keys."</li>
-          <li><b>Controls:</b> "The asset accounts are recon accounts, so nobody can post to them by hand. AUCs don't depreciate, OB52 and AJAB guard the dates, and OBA4 decides who can post a ₹24.78 lakh capital invoice."</li>
-          <li><b>Proof:</b> "Twelve unit tests and a simulator. And it ties back: my asset register adds up to the fixed assets and the ₹9.9 lakh of depreciation in the trial balance of my month-end close (Part 5)."</li>
-        </ol>
-        <div class="qa">
-          <details><summary>What is a depreciation area?</summary><p>A separate valuation of the same asset. Area 01 is the book value under the Companies Act and posts to the G/L; area 15 holds Income Tax Act values without posting. Each area has its own key, useful life and values.</p></details>
-          <details><summary>Why use an asset under construction?</summary><p>While a machine is being installed, its costs aren't depreciable yet. Posting them to an AUC (depreciation key 0000, shown as capital work-in-progress) collects them in one place. IN10's AUC class manages line items, so when the machine is ready for use I enter a distribution rule in AIAB and settle with AIBU; depreciation on the final asset starts from that date. An AUC without line items would be moved with a transfer (ABUMN) instead.</p></details>
-          <details><summary>What does AO90 control?</summary><p>For each account determination key it gives the G/L accounts for APC, accumulated depreciation, depreciation expense, and gains, losses and clearing on retirement. The asset class points to the key.</p></details>
-          <details><summary>How is the gain or loss on a sale calculated?</summary><p>Sale value minus NBV on the value date. SAP retires the APC and accumulated depreciation (with depreciation up to the value date according to period control), compares them with the revenue and posts the difference to the gain or loss account.</p></details>
-          <details><summary>What happens in the year-end asset close?</summary><p>AJRW opens the new asset fiscal year and carries values forward; it runs at the start of the year. AJAB closes the old year after the audit, so no posting can change it. Before AJAB: all AFAB runs posted, no AUC settlements pending, and the history sheet reconciled with the G/L.</p></details>
-          <details><summary>Why can't you post to 111000 with FB50?</summary><p>It's a reconciliation account for account type A. Postings must come from Asset Accounting with an asset number, which keeps the sub-ledger and the G/L equal.</p></details>
-        </div>
       </div>
 
       <!-- ============================================================ -->

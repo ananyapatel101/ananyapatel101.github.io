@@ -64,7 +64,6 @@
       <a href="#tolerance">Tolerance groups</a>
       <a href="#tests">Unit test script</a>
       <a href="#business">Business impact</a>
-      <a href="#interview">Interview guide</a>
       <a href="#data">Data</a>
     </nav>
 
@@ -274,26 +273,6 @@
         <p class="eyebrow">Business impact</p>
         <h2>Why the foundation matters</h2>
         <p>Every later process (AP, AR, assets, the month-end close) depends on these settings, and they are expensive to change once documents exist. A fiscal year variant or number range set up wrongly shows up as a failed audit trail, not as a system error. Posting periods, field status and tolerance groups are also preventive controls. They stop back-dated entries, missing cost centers and oversized postings before they happen, which is cheaper than finding them later in reconciliation.</p>
-      </div>
-
-      <!-- ============================================================ -->
-      <div class="cs-section" id="interview">
-        <p class="eyebrow">Interview guide</p>
-        <h2>How I present it in 90 seconds</h2>
-        <ol>
-          <li><b>Structure:</b> "I set up company IN00 and company code IN10 for an Indian entity: INR, fiscal year variant V3 for April to March, and leading ledger 0L writing to ACDOCA."</li>
-          <li><b>Controls:</b> "The posting periods use both OB52 intervals. Prior-year special periods sit in interval 1, restricted to the closing team. Field status makes cost centers mandatory on cost accounts, and tolerance groups cap what a clerk can post."</li>
-          <li><b>Documents:</b> "Document types map to their own number ranges per fiscal year, so every posting gets a gap-free, auditable number."</li>
-          <li><b>Proof:</b> "I wrote 12 unit tests, each tied to one control, and built a simulator that runs them. For example, a clerk trying a prior-year adjustment is blocked, and a manager in group FICL can post it."</li>
-        </ol>
-        <div class="qa">
-          <details><summary>Company versus company code?</summary><p>The company code is the legal entity with its own statements and is mandatory. The company is optional and groups company codes for consolidation.</p></details>
-          <details><summary>Why a separate posting period variant for IN10?</summary><p>So IN10 can open and close periods on its own timetable. Company codes that share a variant close together, which suits a shared service centre but not an entity with its own close.</p></details>
-          <details><summary>What changed in S/4HANA?</summary><p>The Universal Journal (ACDOCA) holds FI and CO in one table, ledgers and currency types are set under FINSC_LEDGER, and a primary cost element is simply a G/L account with account type "Primary Costs or Revenue".</p></details>
-          <details><summary>Field status variant versus field status group?</summary><p>The variant is a container assigned to the company code (OBC5). The groups inside it (G001, G004 …) are attached to each G/L account in FS00, and they decide which fields are required, optional or suppressed.</p></details>
-          <details><summary>Why do tolerance groups matter for audit?</summary><p>They're a preventive control: posting limits by role. Combined with the blank default group, no user can post unlimited amounts, which is a typical SOX-style or internal-audit test.</p></details>
-          <details><summary>How are special periods used?</summary><p>With V3, periods 13–16 follow March. You post with a March date and enter the special period, which keeps audit adjustments separate from normal March activity.</p></details>
-        </div>
       </div>
 
       <!-- ============================================================ -->

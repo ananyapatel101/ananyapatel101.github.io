@@ -74,7 +74,6 @@
       <a href="#grir">GR/IR at month-end</a>
       <a href="#tests">Unit test script</a>
       <a href="#business">Business impact</a>
-      <a href="#interview">Interview guide</a>
       <a href="#data">Data</a>
     </nav>
 
@@ -332,26 +331,6 @@
         <p class="eyebrow">Business impact</p>
         <h2>Why P2P controls matter</h2>
         <p>Purchases are a manufacturer's largest cash outflow: raw materials alone are ₹1.94 crore of IN10's ₹3.24 crore half-year revenue. The three-way match means the company pays only for goods it received, at the price it agreed. The duplicate check stops the same bill being paid twice. GR/IR books the liability the day the goods arrive, which makes the month-end close faster and more complete. And GST is worked out from the tax code, not by hand, which protects the input tax credit; checking TDS applicability up front avoids deducting tax the law doesn't require.</p>
-      </div>
-
-      <!-- ============================================================ -->
-      <div class="cs-section" id="interview">
-        <p class="eyebrow">Interview guide</p>
-        <h2>How I present it in 90 seconds</h2>
-        <ol>
-          <li><b>Scope:</b> "I ran procure-to-pay end to end for company code IN10: a requisition, a PO for 10 tonnes of steel, two goods receipts, a three-way-matched invoice with GST input credit, and an F110 payment."</li>
-          <li><b>Integration:</b> "Plant IN11 and purchasing org IN10 are assigned to the company code. OBYC sends goods receipts to inventory and GR/IR, and price differences to PRD for standard-price materials."</li>
-          <li><b>Controls:</b> "OMR6 tolerances put a payment block on invoices that don't match the PO or the receipt, the duplicate check is set to an error, and F110 pays only released items that are due."</li>
-          <li><b>Proof:</b> "Twelve unit tests and a simulator. And it ties back: the ₹3,40,000 GR/IR balance at 30 September is exactly the figure in the trial balance of my month-end close (Part 5)."</li>
-        </ol>
-        <div class="qa">
-          <details><summary>What is GR/IR and why does it exist?</summary><p>A clearing account between goods receipt and invoice. The GR credits it, the invoice debits it, and when both match it's zero. A credit balance means goods received but not invoiced, which is a liability, and a debit balance means invoiced but not received.</p></details>
-          <details><summary>What does OBYC do? Name the keys you used.</summary><p>It's MM account determination, set by transaction key, valuation grouping code and valuation class. BSX is inventory, WRX is GR/IR and PRD is price differences. Others you'll meet are GBB (offsetting entries for consumption) and KDM (exchange rate differences).</p></details>
-          <details><summary>Price control V versus S?</summary><p>With V (moving average), price differences go into the stock value and the price moves. With S (standard), stock stays at standard and every difference goes to PRD. Raw materials usually use V, and finished goods use S for costing.</p></details>
-          <details><summary>An invoice is blocked. What do you do?</summary><p>Find the cause in MRBR: price, quantity or date. Confirm with the buyer or the store, then release it or ask for a credit note. If it's a quantity block, it can release automatically when the goods receipt arrives.</p></details>
-          <details><summary>Why is there no TDS on this invoice?</summary><p>Section 194Q applies only to a buyer whose turnover in the previous year was above ₹10 crore, and then only on purchases from one seller above ₹50 lakh in the year. IN10 sells about ₹6.5 crore a year, so it doesn't deduct. If it did qualify, TDS would be 0.1% of the value before GST (here ₹580 on ₹5,80,000), set up as withholding tax type Q1 in OBWW and the vendor master.</p></details>
-          <details><summary>How does F110 decide what to pay?</summary><p>It pays items that would be overdue, or would lose a cash discount, by the next run date. It skips blocked items and lists them as exceptions. Bank determination in FBZP chooses the house bank and the clearing account.</p></details>
-        </div>
       </div>
 
       <!-- ============================================================ -->
