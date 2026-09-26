@@ -118,6 +118,7 @@ section { padding-block: var(--s-8) 0; }
 section > .wrap > header { display: grid; gap: var(--s-3); margin-bottom: var(--s-6); }
 .sec-lede { color: var(--ink-2); font-size: var(--t-lg); max-width: 46rem; }
 #experience, #contact { background: var(--surface-2); padding-block: var(--s-8); margin-top: var(--s-8); }
+#experience { margin-top: 0; }
 #projects { padding-bottom: var(--s-8); }
 main.dash { padding-bottom: var(--s-8); }
 .site-footer { background: var(--navy); color: #94a3b8; font-size: var(--t-xs); padding-block: var(--s-6); }
