@@ -5,9 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Ananya Patel · Finance & SAP FICO</title>
 <meta name="description" content="Portfolio of Ananya Patel: MBA Finance graduate with SAP S/4HANA FICO, Power BI and Excel projects: FSV design, month-end close, procure-to-pay, order-to-cash, asset accounting and financial analysis.">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap">
 <link rel="stylesheet" href="assets/css/style.css">
 <script src="assets/js/main.js"></script>
+<script src="assets/js/dashboard.js" defer></script>
 </head>
 <body>
 
@@ -15,6 +16,7 @@
   <div class="wrap">
     <a class="brand" href="./">Ananya Patel<span>.</span></a>
     <nav class="nav" aria-label="Main">
+      <a href="#dashboard">Dashboard</a>
       <a href="#about" class="hide-sm">About</a>
       <a href="#experience" class="hide-sm">Experience</a>
       <a href="#projects">Projects</a>
@@ -26,23 +28,60 @@
 
 <main>
   <section class="hero" aria-labelledby="hero-title">
-    <div class="wrap">
+    <div class="hero-bg" aria-hidden="true"><span></span><span></span><span></span></div>
+    <div class="wrap hero-grid">
       <div class="hero-copy">
-        <p class="eyebrow">Finance &amp; Accounting · SAP S/4HANA FICO</p>
+        <p class="badge"><span class="dot" aria-hidden="true"></span>Open to finance &amp; SAP FICO roles</p>
         <h1 id="hero-title">Ananya Patel</h1>
-        <p class="lede">MBA Finance graduate who builds the ledger behind the report: chart of accounts, financial statement versions, month-end close in SAP, then the analysis in Excel and Power BI.</p>
+        <p class="lede">I build the books behind a business in SAP, then explain the numbers so anyone can follow them.</p>
+        <p class="lede-sub">MBA Finance · SAP S/4HANA FICO · Excel &amp; Power BI</p>
         <div class="hero-actions">
-          <a class="btn btn-primary" href="#projects">View projects</a>
-          <a class="btn btn-ghost" href="resume.html">View résumé</a>
-          <a class="btn btn-ghost" href="assets/files/Ananya_Patel_Resume.docx" download>Download résumé (.docx)</a>
+          <a class="btn btn-primary" href="#dashboard">Explore the dashboard</a>
+          <a class="btn btn-ghost" href="#projects">View projects</a>
+          <a class="btn btn-ghost" href="assets/files/Ananya_Patel_Resume.docx" download>Download résumé</a>
         </div>
       </div>
+      <a class="hero-card" href="#dashboard" aria-label="Preview of the dashboard: XYZ Pvt Ltd, April to September 2026">
+        <span class="hc-top"><span>XYZ Pvt Ltd · Apr–Sep 2026</span><span class="hc-live">Built in SAP</span></span>
+        <span class="hc-kpi"><b>₹49.2 L</b><span>profit after tax</span></span>
+        <span class="hc-bars" aria-hidden="true">
+          <span style="--w:100%"><i>Sales</i><em>₹3.24 Cr</em></span>
+          <span style="--w:60%" class="neg"><i>Materials</i><em>−₹1.94 Cr</em></span>
+          <span style="--w:14%" class="neg"><i>Salaries</i><em>−₹45.6 L</em></span>
+          <span style="--w:15%" class="tot"><i>Profit</i><em>₹49.2 L</em></span>
+        </span>
+        <span class="hc-foot"><span class="ok" aria-hidden="true">✓</span> Books balance: ₹3.39 Cr = ₹3.39 Cr</span>
+      </a>
+    </div>
+    <div class="wrap">
       <div class="hero-stats">
-        <div><b>5</b><span>SAP FICO modules, one company code</span></div>
-        <div><b>48</b><span>Unit-test cases proving each control</span></div>
+        <div><b>5</b><span>SAP FICO modules, one company</span></div>
+        <div><b>48</b><span>test cases proving each control</span></div>
         <div><b>MBA</b><span>Finance &amp; Marketing, 2026</span></div>
         <div><b>MCL</b><span>Finance internship, Coal India</span></div>
       </div>
+    </div>
+  </section>
+
+  <section id="dashboard" class="dashboard" aria-labelledby="dash-title">
+    <div class="wrap">
+      <header class="sec-head">
+        <p class="eyebrow">Interactive dashboard</p>
+        <h2 id="dash-title">A company's books, explained in plain English</h2>
+        <p class="sec-lede">XYZ Pvt Ltd is a fictional small factory in Pune that I set up and ran in SAP from scratch. Pick a question below. Each chart comes with a plain-English explanation, and you can hover or tap any bar for exact numbers. Finance and SAP readers can open <b>Technical details</b> under each chart.</p>
+      </header>
+      <div class="kpis">
+        <div class="kpi"><span class="k-label">Sales, Apr–Sep</span><b>₹3.24 Cr</b><span class="k-note">money from selling its products</span></div>
+        <div class="kpi"><span class="k-label">Profit after tax</span><b>₹49.2 L</b><span class="k-note">what the business kept</span></div>
+        <div class="kpi"><span class="k-label">Kept from every ₹100</span><b>₹14.70</b><span class="k-note">profit margin 14.7%</span></div>
+        <div class="kpi"><span class="k-label">Current ratio</span><b>2.56</b><span class="k-note">₹2.56 on hand for every ₹1 due soon</span></div>
+      </div>
+      <div class="dboard" data-dashboard>
+        <div class="db-tabs" role="tablist" aria-label="Dashboard questions"></div>
+        <div class="db-panels"></div>
+        <noscript><p class="muted">The interactive charts need JavaScript. The same figures are in the case studies below.</p></noscript>
+      </div>
+      <p class="db-foot">All data is fictional, but it is internally consistent: every chart ties to the same trial balance at 30 September 2026.</p>
     </div>
   </section>
 

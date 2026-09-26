@@ -17,6 +17,7 @@
   function label(btn) { btn.textContent = isDark() ? "Light mode" : "Dark mode"; }
 
   root.setAttribute("data-theme", "light");
+  root.classList.add("js");
 
   document.addEventListener("DOMContentLoaded", function () {
     document.querySelectorAll("[data-theme-toggle]").forEach(function (btn) {
@@ -39,6 +40,15 @@
         } else { selectText(btn); }
       });
     });
+
+    // Fade sections in as they scroll into view.
+    var reveal = document.querySelectorAll("main > section:not(.hero):not(.cs-hero) > .wrap, .cs-section");
+    if ("IntersectionObserver" in window && !(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches)) {
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } });
+      }, { rootMargin: "0px 0px -8% 0px" });
+      reveal.forEach(function (n) { n.classList.add("reveal"); io.observe(n); });
+    }
 
     var y = document.querySelector("[data-year]");
     if (y) y.textContent = new Date().getFullYear();
