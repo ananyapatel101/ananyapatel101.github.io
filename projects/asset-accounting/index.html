@@ -1,0 +1,424 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Asset Accounting · Ananya Patel</title>
+<meta name="description" content="SAP S/4HANA case study: asset accounting for company code IN10, with chart of depreciation, book and tax areas, AO90 account determination, an asset bought through an AUC and settled, an asset sale, the AFAB depreciation run, an asset register tied to the trial balance and a 12-case unit-test script.">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Carlito:ital,wght@0,400;0,700;1,400&display=swap">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script src="../../assets/js/main.js"></script>
+<style>
+  :root { --warning-text: #8a5a00; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --warning-text: #fab219; } }
+  :root[data-theme="dark"] { --warning-text: #fab219; }
+  .flow { min-width: 720px; display: block; width: 100%; height: auto; }
+  .flow .box { fill: var(--surface); stroke: var(--rule-strong); stroke-width: 1; }
+  .flow .box.key { fill: var(--accent-wash); stroke: var(--accent); stroke-width: 1.5; }
+  .flow .box.ref { fill: var(--surface-2); stroke: var(--rule-strong); stroke-dasharray: 4 3; }
+  .flow .t1 { fill: var(--ink); font: 600 14px var(--f-body); }
+  .flow .t2 { fill: var(--ink-2); font: 400 12px var(--f-body); }
+  .flow .tc { fill: var(--accent); font: 600 11px var(--f-mono); }
+  .flow .m { fill: var(--ink); font: 400 11.5px var(--f-mono); }
+  .flow .m.dr { fill: var(--debit); } .flow .m.cr { fill: var(--credit); }
+  .flow .edge { stroke: var(--rule-strong); stroke-width: 1.5; fill: none; }
+  .flow .edge.key { stroke: var(--accent); }
+  .flow .arrow { fill: var(--rule-strong); }
+  .res-posted { color: var(--good-text); font-weight: 600; }
+  .res-warn { color: var(--warning-text); font-weight: 600; }
+  .res-error { color: var(--critical); font-weight: 600; }
+  table.data tr.sub td { color: var(--ink-2); }
+  .flow .m { font-size: 10.5px; }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../../">Ananya Patel<span>.</span></a>
+    <nav class="nav" aria-label="Main">
+      <a href="../../#projects">Projects</a>
+      <a href="../../resume.html" class="hide-sm">Résumé</a>
+      <a href="simulator.html">Asset simulator</a>
+      <a href="../../#contact" class="hide-sm">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="cs-hero">
+    <div class="wrap">
+      <p class="eyebrow">SAP FICO self project · Part 4 of 5 · SAP S/4HANA FI-AA · Asset Accounting</p>
+      <h1>Asset Accounting (FI-AA)</h1>
+      <p class="muted prose" style="font-size:var(--t-lg)">I set up Asset Accounting for company code IN10 and ran a full asset month. The setup covers a chart of depreciation with a book area (Companies Act) and a tax area (Income Tax Act), asset classes, depreciation keys and AO90 account determination. In October a new machine was bought into an asset under construction, installed and capitalised, an old lathe was sold at a profit, and the depreciation run posted. The eleven assets in the register add up exactly to the fixed assets and depreciation in Part 5's trial balance, and a 12-case unit-test script proves each control.</p>
+      <div class="cs-meta">
+        <span class="chip strong">AS01</span><span class="chip strong">F-90</span><span class="chip strong">AIBU</span><span class="chip strong">F-92</span><span class="chip strong">AFAB</span>
+        <span class="chip strong">AO90</span><span class="chip">OADB</span><span class="chip">OAOA</span><span class="chip">ABAVN</span><span class="chip">AJAB</span><span class="chip">S_ALR_87011990</span>
+      </div>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="simulator.html">Open asset simulator</a>
+        <a class="btn btn-ghost" href="#tests">See the unit tests</a>
+      </div>
+    </div>
+  </section>
+
+  <div class="wrap cs-layout">
+    <nav class="toc" aria-label="On this page">
+      <a href="#flow">Document flow</a>
+      <a href="#workbook">Configuration workbook</a>
+      <a href="#rules">Integration rules</a>
+      <a href="#ao90">Account determination</a>
+      <a href="#register">Asset register</a>
+      <a href="#depreciation">Book vs tax depreciation</a>
+      <a href="#postings">Journal entries</a>
+      <a href="#sale">Asset sale</a>
+      <a href="#history">Asset history sheet</a>
+      <a href="#tests">Unit test script</a>
+      <a href="#business">Business impact</a>
+      <a href="#interview">Interview guide</a>
+      <a href="#data">Data</a>
+    </nav>
+
+    <article>
+      <!-- ============================================================ -->
+      <div class="cs-section" id="flow">
+        <p class="eyebrow">Scenario</p>
+        <h2>One asset month, five postings</h2>
+        <p>XYZ Inc. (IN10) adds a vertical machining centre, the VMC-1060, to its Pune plant. The machine comes from Bharat CNC Machines in Bengaluru and is installed by a local firm, so its costs collect on an asset under construction (AUC) until it is ready for use on 20 October. The same month an old manual lathe is sold to a used-machinery dealer, and on 31 October the depreciation run posts. All data is fictional.</p>
+        <div class="table-wrap" style="padding:var(--s-4)">
+          <svg class="flow" viewBox="0 0 894 440" role="img" aria-labelledby="flow-title flow-desc">
+            <title id="flow-title">Asset accounting documents for October 2026</title>
+            <desc id="flow-desc">Asset masters are created with AS01 and make no ledger entry. The machine invoice 1900000124 debits AUC 4000001 21,00,000 and input GST 3,78,000 and credits vendor 100003 24,78,000. The installation invoice 1900000125 debits the AUC 60,000 and input GST 10,800 and credits the vendor 69,600 and TDS payable 1,200. Settlement 0100000467 moves 21,60,000 from the AUC to asset 1100008, so capital work-in-progress returns to zero. The depreciation run 0500000007 debits depreciation 1,84,000. Separately, sale 1800000206 debits the buyer 5,90,000, retires the lathe's cost of 7,20,000 and accumulated depreciation of 2,64,000, credits output GST 90,000 and books a profit of 44,000.</desc>
+            <defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="arrow" d="M0,0 L10,5 L0,10 z"/></marker></defs>
+
+            <rect class="box" x="12" y="16" width="150" height="84" rx="6"/>
+            <text class="tc" x="26" y="38">AS01</text>
+            <text class="t1" x="26" y="58">Asset masters</text>
+            <text class="t2" x="26" y="76">4000001 · 1100008</text>
+            <text class="t2" x="26" y="92">07.10 · AUC + final</text>
+
+            <path class="edge" d="M162 58 H190" marker-end="url(#ah)"/>
+            <rect class="box key" x="192" y="16" width="150" height="84" rx="6"/>
+            <text class="tc" x="206" y="38">F-90 · KR</text>
+            <text class="t1" x="206" y="58">Machine invoice</text>
+            <text class="t2" x="206" y="76">1900000124</text>
+            <text class="t2" x="206" y="92">09.10 · IGST 18%</text>
+
+            <path class="edge" d="M342 58 H370" marker-end="url(#ah)"/>
+            <rect class="box key" x="372" y="16" width="150" height="84" rx="6"/>
+            <text class="tc" x="386" y="38">F-90 · KR</text>
+            <text class="t1" x="386" y="58">Installation</text>
+            <text class="t2" x="386" y="76">1900000125</text>
+            <text class="t2" x="386" y="92">16.10 · TDS 194C</text>
+
+            <path class="edge" d="M522 58 H550" marker-end="url(#ah)"/>
+            <rect class="box key" x="552" y="16" width="150" height="84" rx="6"/>
+            <text class="tc" x="566" y="38">AIBU · AA</text>
+            <text class="t1" x="566" y="58">Settle AUC</text>
+            <text class="t2" x="566" y="76">0100000467</text>
+            <text class="t2" x="566" y="92">20.10 · ready for use</text>
+
+            <path class="edge" d="M702 58 H730" marker-end="url(#ah)"/>
+            <rect class="box key" x="732" y="16" width="150" height="84" rx="6"/>
+            <text class="tc" x="746" y="38">AFAB · AF</text>
+            <text class="t1" x="746" y="58">Depreciation</text>
+            <text class="t2" x="746" y="76">0500000007</text>
+            <text class="t2" x="746" y="92">31.10 · period 007</text>
+
+            <path class="edge" d="M87 100 V138"/>
+            <rect class="box ref" x="12" y="140" width="150" height="84" rx="6"/>
+            <text class="t1" x="26" y="166">No ledger entry</text>
+            <text class="t2" x="26" y="186">Master data only:</text>
+            <text class="t2" x="26" y="204">class, life, key</text>
+
+            <path class="edge" d="M267 100 V138" marker-end="url(#ah)"/>
+            <rect class="box" x="192" y="140" width="150" height="84" rx="6"/>
+            <text class="m dr" x="206" y="164">Dr 4000001</text><text class="m" x="330" y="164" text-anchor="end">21,00,000</text>
+            <text class="m dr" x="206" y="186">Dr 161000</text><text class="m" x="330" y="186" text-anchor="end">3,78,000</text>
+            <text class="m cr" x="206" y="208">Cr 100003</text><text class="m" x="330" y="208" text-anchor="end">24,78,000</text>
+
+            <path class="edge" d="M447 100 V138" marker-end="url(#ah)"/>
+            <rect class="box" x="372" y="140" width="150" height="106" rx="6"/>
+            <text class="m dr" x="386" y="164">Dr 4000001</text><text class="m" x="510" y="164" text-anchor="end">60,000</text>
+            <text class="m dr" x="386" y="186">Dr 161000</text><text class="m" x="510" y="186" text-anchor="end">10,800</text>
+            <text class="m cr" x="386" y="208">Cr 100004</text><text class="m" x="510" y="208" text-anchor="end">69,600</text>
+            <text class="m cr" x="386" y="230">Cr 222000</text><text class="m" x="510" y="230" text-anchor="end">1,200</text>
+
+            <path class="edge" d="M627 100 V138" marker-end="url(#ah)"/>
+            <rect class="box" x="552" y="140" width="150" height="62" rx="6"/>
+            <text class="m dr" x="566" y="164">Dr 1100008</text><text class="m" x="690" y="164" text-anchor="end">21,60,000</text>
+            <text class="m cr" x="566" y="186">Cr 4000001</text><text class="m" x="690" y="186" text-anchor="end">21,60,000</text>
+
+            <path class="edge" d="M807 100 V138" marker-end="url(#ah)"/>
+            <rect class="box" x="732" y="140" width="150" height="84" rx="6"/>
+            <text class="m dr" x="746" y="164">Dr 641000</text><text class="m" x="870" y="164" text-anchor="end">1,84,000</text>
+            <text class="m cr" x="746" y="186">Cr 111900</text><text class="m" x="870" y="186" text-anchor="end">1,64,000</text>
+            <text class="m cr" x="746" y="208">Cr 112900</text><text class="m" x="870" y="208" text-anchor="end">20,000</text>
+
+            <path class="edge key" d="M267 224 V266 H627 V202"/>
+            <path class="edge key" d="M447 246 V266"/>
+            <text class="tc" x="447" y="286" text-anchor="middle">AUC 4000001 in 119000 (CWIP): +21,00,000 +60,000 −21,60,000 = 0</text>
+
+            <rect class="box key" x="12" y="316" width="870" height="110" rx="6"/>
+            <text class="tc" x="28" y="340">F-92 · DR · 1800000206 · 26.10.2026</text>
+            <text class="t1" x="28" y="362">Sale of lathe 1100002</text>
+            <text class="t2" x="28" y="382">to customer 200005 for ₹5,00,000 + GST</text>
+            <text class="t2" x="28" y="400">NBV ₹4,56,000 → profit ₹44,000</text>
+            <text class="m dr" x="330" y="346">Dr 200005 buyer</text><text class="m" x="560" y="346" text-anchor="end">5,90,000</text>
+            <text class="m dr" x="330" y="370">Dr 111900 acc. dep. retired</text><text class="m" x="560" y="370" text-anchor="end">2,64,000</text>
+            <text class="m cr" x="600" y="346">Cr 111000 cost retired</text><text class="m" x="866" y="346" text-anchor="end">7,20,000</text>
+            <text class="m cr" x="600" y="370">Cr 221000 CGST + SGST</text><text class="m" x="866" y="370" text-anchor="end">90,000</text>
+            <text class="m cr" x="600" y="394">Cr 423000 profit on sale</text><text class="m" x="866" y="394" text-anchor="end">44,000</text>
+            <text class="t2" x="330" y="412">219700 clearing: Cr 5,00,000 and Dr 5,00,000, nets to zero</text>
+          </svg>
+        </div>
+        <p class="note">Blue lines are debits and orange lines are credits. Line 70/75 postings to an asset number land on the G/L account from AO90: 4000001 on 119000, 1100008 and 1100002 on 111000 and 111900.</p>
+      </div>
+
+      <!-- ============================================================ -->
+      <div class="cs-section" id="workbook">
+        <p class="eyebrow">Deliverable · configuration workbook</p>
+        <h2>Configuration steps, in dependency order</h2>
+        <p>These steps build on Part 1's company code, ledger 0L, posting periods and tolerance groups, and on Part 5's chart of accounts and FSV. Each row states what was configured for IN10 and why.</p>
+        <div class="table-wrap"><table class="data">
+          <thead><tr><th>#</th><th>T-code</th><th>Object</th><th>IN10 value</th><th>Why</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td class="tc">EC08</td><td>Chart of depreciation</td><td>IN10, copied from India reference chart 1IN</td><td>The reference chart already has depreciation areas and keys that suit Indian law, so I only remove what IN10 doesn't need.</td></tr>
+            <tr><td>2</td><td class="tc">OADB</td><td>Depreciation areas</td><td>01 Book (Companies Act): posts in real time to ledger 0L, accounting principle IND-GAAP. 15 Income tax: values only, no posting</td><td>Area 01 gives the balance sheet values; area 15 gives the tax values for the return and deferred tax.</td></tr>
+            <tr><td>3</td><td class="tc">OAOB</td><td>Assign chart to company code</td><td>IN10 → IN10</td><td>Without it, no asset can be created in IN10.</td></tr>
+            <tr><td>4</td><td class="tc">FS00</td><td>Reconciliation accounts</td><td>111000, 111900, 112000, 112900 and new 119000: recon type A (assets)</td><td>Only Asset Accounting can post to them, so the G/L always equals the asset sub-ledger.</td></tr>
+            <tr><td>5</td><td class="tc">FS00 / OB58</td><td>New G/L accounts, FSV</td><td>119000 CWIP, 219700 asset sale clearing, 423000 profit on sale, 665000 loss on sale/scrapping; new INS3 item for CWIP</td><td>119000 would otherwise be shown as PPE (see the <a href="#rules">integration rules</a>).</td></tr>
+            <tr><td>6</td><td class="tc">AO90</td><td>Account determination</td><td>11000 P&amp;M, 12000 office equipment, 40000 AUC</td><td>Tells every asset transaction which G/L accounts to hit (<a href="#ao90">table</a>).</td></tr>
+            <tr><td>7</td><td class="tc">OAOA / AS08</td><td>Asset classes, number ranges</td><td>1100 P&amp;M (range 11), 1200 office equipment (12), 1500 low-value assets (15), 4000 AUC (40) with line item settlement</td><td>The class carries the account determination, number range and default depreciation terms into each new asset.</td></tr>
+            <tr><td>8</td><td class="tc">OAYZ</td><td>Areas per class</td><td>1100/1200: 01 ZSLM, 15 ZWDV; 1500: 01 ZLVA; 4000: key 0000 in both areas</td><td>AUCs must not depreciate; LVAs are written off in year one.</td></tr>
+            <tr><td>9</td><td class="tc">AFAMA / AFAMP</td><td>Depreciation keys, period control</td><td>ZSLM: straight line on APC over useful life, period control 01 for acquisitions and retirements. ZWDV: 15% on WDV, half rate in year one if used under 180 days</td><td>Matches the Companies Act (Schedule II) for books and the Income Tax Act for tax.</td></tr>
+            <tr><td>10</td><td class="tc">OAYK</td><td>Low-value asset limit</td><td>Class 1500: value-based check, ₹5,000 per item</td><td>Stops anything bigger being written off in one go by mistake.</td></tr>
+            <tr><td>11</td><td class="tc">OAYR / OBA7 / FBN1</td><td>Depreciation posting</td><td>Monthly AFAB; document type AF, number range 05 (0500000000–0599999999)</td><td>Depreciation hits the P&amp;L every month, so the monthly close in Part 5 includes it.</td></tr>
+            <tr><td>12</td><td class="tc">BP</td><td>Business partners</td><td>Vendors 100003 (Karnataka) and 100004 (Pune, WHT 194C 2%); customer 200005 (Chakan, terms 0001)</td><td>F-90 and F-92 post through the vendor and customer sub-ledgers.</td></tr>
+            <tr><td>13</td><td class="tc">AJRW / AJAB</td><td>Asset fiscal year</td><td>FY 2026 opened; FY 2025 closed after the audit</td><td>Once a year is closed, no asset value in it can change (AA-10).</td></tr>
+          </tbody>
+        </table></div>
+      </div>
+
+      <!-- ============================================================ -->
+      <div class="cs-section" id="rules">
+        <div class="callout">
+          <p class="eyebrow">Rule · FI-AA integration</p>
+          <ol>
+            <li><b>Recon accounts, not plain G/L accounts.</b> 111000–112900 are reconciliation accounts for account type A. Nobody can post a manual journal to them, so the trial balance can't drift away from the asset register. The asset register must add up to the G/L at every month-end (it does: <a href="#register">see the register</a>).</li>
+            <li><b>FSV before the first AUC posting.</b> Part 5's PPE item covers 0000111000–0000119999, so 119000 would show as property, plant and equipment. Schedule III shows capital work-in-progress as its own line. Following rule INS3-01, I cut the PPE range to 0000111000–0000118999 and added item <i>(b) Capital work-in-progress</i> (BS.A.NCA.CWIP) for 0000119000–0000119999, then re-ran the check: 0 not assigned. 219700, 423000 and 665000 already fall inside existing ranges.</li>
+            <li><b>Capitalise net of GST.</b> Input GST on capital goods is claimed in full as credit (161000). Section 16(3) of the CGST Act doesn't allow credit if depreciation is also claimed on the tax part, so the asset value is ₹21,60,000, not ₹25,48,800.</li>
+          </ol>
+        </div>
+      </div>
+
+      <!-- ============================================================ -->
+      <div class="cs-section" id="ao90">
+        <p class="eyebrow">AO90 · account determination</p>
+        <h2>Where every asset transaction goes</h2>
+        <div class="table-wrap"><table class="data">
+          <thead><tr><th>Transaction</th><th>11000 P&amp;M (classes 1100, 1500)</th><th>12000 Office eqpt (1200)</th><th>40000 AUC (4000)</th></tr></thead>
+          <tbody>
+            <tr><td>Acquisition and production costs</td><td class="acct">111000</td><td class="acct">112000</td><td class="acct">119000</td></tr>
+            <tr><td>Accumulated depreciation</td><td class="acct">111900</td><td class="acct">112900</td><td>–</td></tr>
+            <tr><td>Depreciation expense</td><td class="acct">641000</td><td class="acct">641000</td><td>–</td></tr>
+            <tr><td>Clearing, revenue from asset sale</td><td class="acct">219700</td><td class="acct">219700</td><td>–</td></tr>
+            <tr><td>Gain from asset sale</td><td class="acct">423000</td><td class="acct">423000</td><td>–</td></tr>
+            <tr><td>Loss from asset sale / retirement without revenue</td><td class="acct">665000</td><td class="acct">665000</td><td>–</td></tr>
+          </tbody>
+        </table></div>
+        <p class="note">Profit on sale sits in Other income (PL.OI) and losses in Other expenses, so neither distorts revenue from operations. Class 1300 Vehicles points to 13000, which has no AO90 entry yet; AA-08 shows what happens if someone uses it.</p>
+      </div>
+
+      <!-- ============================================================ -->
+      <div class="cs-section" id="register">
+        <p class="eyebrow">Asset register · AR01 · link to Part 5</p>
+        <h2>Eleven assets behind the trial balance</h2>
+        <p>At 30 September the asset sub-ledger holds eleven assets. Their totals equal the four fixed-asset balances and the ₹9,90,000 of depreciation in <a href="../fsv-month-end-close/#data">Part 5's trial balance</a>, to the rupee.</p>
+        <div class="table-wrap"><table class="data">
+          <thead><tr><th>Asset</th><th>Description</th><th>Capitalised</th><th class="num">APC ₹</th><th class="num">Life</th><th class="num">Monthly ₹</th><th class="num">Acc. dep. ₹</th><th class="num">NBV ₹</th></tr></thead>
+          <tbody>
+            <tr><td class="acct">1100001</td><td>Air compressor 75 kW &amp; pneumatic lines</td><td>12.04.2021</td><td class="num acct">5,40,000</td><td class="num">15 y</td><td class="num acct">3,000</td><td class="num acct">1,98,000</td><td class="num acct">3,42,000</td></tr>
+            <tr><td class="acct">1100002</td><td>Manual centre lathe LT-2 (sold 26.10)</td><td>12.04.2021</td><td class="num acct">7,20,000</td><td class="num">15 y</td><td class="num acct">4,000</td><td class="num acct">2,64,000</td><td class="num acct">4,56,000</td></tr>
+            <tr><td class="acct">1100003</td><td>CNC turning centre TC-1</td><td>18.07.2022</td><td class="num acct">12,00,000</td><td class="num">10 y</td><td class="num acct">10,000</td><td class="num acct">5,10,000</td><td class="num acct">6,90,000</td></tr>
+            <tr><td class="acct">1100004</td><td>Induction hardening machine IH-40</td><td>06.04.2023</td><td class="num acct">22,80,000</td><td class="num">10 y</td><td class="num acct">19,000</td><td class="num acct">7,98,000</td><td class="num acct">14,82,000</td></tr>
+            <tr><td class="acct">1100005</td><td>CNC turning centre TC-2</td><td>22.04.2024</td><td class="num acct">28,80,000</td><td class="num">10 y</td><td class="num acct">24,000</td><td class="num acct">7,20,000</td><td class="num acct">21,60,000</td></tr>
+            <tr><td class="acct">1100006</td><td>Machining cell MC-2 (2 VMC-850 + robot loader)</td><td>10.02.2025</td><td class="num acct">96,00,000</td><td class="num">10 y</td><td class="num acct">80,000</td><td class="num acct">16,00,000</td><td class="num acct">80,00,000</td></tr>
+            <tr><td class="acct">1100007</td><td>Hydraulic press 150 T (added in FY 2026)</td><td>14.07.2026</td><td class="num acct">12,00,000</td><td class="num">10 y</td><td class="num acct">10,000</td><td class="num acct">30,000</td><td class="num acct">11,70,000</td></tr>
+            <tr><td class="acct">1500001</td><td>Gauges &amp; measuring instruments, 16 × ₹5,000 (LVA)</td><td>20.06.2024</td><td class="num acct">80,000</td><td class="num">LVA</td><td class="num acct">–</td><td class="num acct">80,000</td><td class="num acct">0</td></tr>
+            <tr class="sub"><td></td><td><b>111000 / 111900 Plant &amp; machinery</b></td><td></td><td class="num acct"><b>1,85,00,000</b></td><td></td><td class="num acct">1,50,000</td><td class="num acct"><b>42,00,000</b></td><td class="num acct">1,43,00,000</td></tr>
+            <tr><td class="acct">1200001</td><td>Air conditioning, admin block</td><td>08.04.2024</td><td class="num acct">4,80,000</td><td class="num">5 y</td><td class="num acct">8,000</td><td class="num acct">2,40,000</td><td class="num acct">2,40,000</td></tr>
+            <tr><td class="acct">1200002</td><td>CCTV &amp; access control system</td><td>15.12.2025</td><td class="num acct">4,20,000</td><td class="num">5 y</td><td class="num acct">7,000</td><td class="num acct">70,000</td><td class="num acct">3,50,000</td></tr>
+            <tr><td class="acct">1200003</td><td>Photocopiers &amp; printers (3)</td><td>15.12.2025</td><td class="num acct">3,00,000</td><td class="num">5 y</td><td class="num acct">5,000</td><td class="num acct">50,000</td><td class="num acct">2,50,000</td></tr>
+            <tr class="sub"><td></td><td><b>112000 / 112900 Office equipment</b></td><td></td><td class="num acct"><b>12,00,000</b></td><td></td><td class="num acct">20,000</td><td class="num acct"><b>3,60,000</b></td><td class="num acct">8,40,000</td></tr>
+          </tbody>
+          <tfoot><tr><td colspan="3">Total = Part 5 trial balance</td><td class="num acct">1,97,00,000</td><td></td><td class="num acct">1,70,000</td><td class="num acct">45,60,000</td><td class="num acct">1,51,40,000</td></tr></tfoot>
+        </table></div>
+        <ul>
+          <li><b>Useful lives.</b> Schedule II gives 15 years for general plant and 5 years for office equipment. For CNC and heat-treatment machines IN10 uses 10 years based on a technical evaluation (they lose precision faster); Schedule II allows a different life if it is justified and disclosed.</li>
+          <li><b>Depreciation to date.</b> April–September: ten assets for six months (₹1,60,000 × 6 = ₹9,60,000) plus the press for July–September (₹10,000 × 3) = <b>₹9,90,000</b>, the 641000 balance in Part 5.</li>
+          <li><b>Period control 01.</b> Depreciation runs from the start of the month of capitalisation: the press, capitalised on 14 July, is depreciated for all of July.</li>
+        </ul>
+      </div>
+
+      <!-- ============================================================ -->
+      <div class="cs-section" id="depreciation">
+        <p class="eyebrow">Areas 01 and 15 · ZSLM · ZWDV</p>
+        <h2>Book and tax depreciation for the new machine</h2>
+        <p>The same asset is valued twice. Area 01 follows the Companies Act and posts to the ledger; area 15 follows the Income Tax Act and only keeps values, for the tax return and the deferred tax calculation.</p>
+        <div class="table-wrap"><table class="data">
+          <thead><tr><th></th><th>Area 01 · Book (ZSLM)</th><th>Area 15 · Tax (ZWDV)</th></tr></thead>
+          <tbody>
+            <tr><td>Method</td><td>Straight line on ₹21,60,000 over 10 years</td><td>15% on written-down value (block: plant &amp; machinery)</td></tr>
+            <tr><td>Start</td><td>October 2026 (period control 01: full month)</td><td>Put to use 20.10.2026: used 163 days in FY 2026-27, under 180, so half rate (7.5%)</td></tr>
+            <tr><td>Per month</td><td class="acct">₹18,000</td><td>Worked out yearly</td></tr>
+            <tr><td>FY 2026-27</td><td class="acct">₹1,08,000 (Oct–Mar)</td><td class="acct">₹1,62,000</td></tr>
+            <tr><td>Posts to G/L?</td><td>Yes, every month by AFAB</td><td>No</td></tr>
+          </tbody>
+        </table></div>
+        <p class="note">AA-05 capitalises the machine on 03.10 instead: 180 days of use, so the full 15% (₹3,24,000) applies. Seventeen days' difference halves or doubles the first-year tax deduction, which is why the "put to use" date needs evidence (installation report, first production order). For the eleven assets in the September register, planned FY 2026-27 depreciation is ₹21,72,762 for tax against ₹20,10,000 in the books; that timing difference is what deferred tax picks up.</p>
+      </div>
+
+      <!-- ============================================================ -->
+      <div class="cs-section" id="postings">
+        <p class="eyebrow">Deliverable · journal entries</p>
+        <h2>The ledger side of the October asset month</h2>
+        <div class="table-wrap"><table class="data">
+          <thead><tr><th>Doc</th><th>Type · date</th><th>PK</th><th>Account</th><th class="num">Debit ₹</th><th class="num">Credit ₹</th></tr></thead>
+          <tbody>
+            <tr><td class="acct">1900000124</td><td>KR · 09.10.2026</td><td class="acct">70</td><td><span class="acct">4000001</span> AUC VMC-1060 → 119000 · trans. type 100</td><td class="num acct">21,00,000</td><td></td></tr>
+            <tr class="sub"><td></td><td>F-90 by MGR01</td><td class="acct">40</td><td><span class="acct">161000</span> Input GST Credit: IGST 18%</td><td class="num acct">3,78,000</td><td></td></tr>
+            <tr class="sub"><td></td><td></td><td class="acct">31</td><td><span class="acct">100003</span> Bharat CNC Machines (recon 211000)</td><td></td><td class="num acct">24,78,000</td></tr>
+            <tr><td class="acct">1900000125</td><td>KR · 16.10.2026</td><td class="acct">70</td><td><span class="acct">4000001</span> AUC VMC-1060: installation &amp; commissioning</td><td class="num acct">60,000</td><td></td></tr>
+            <tr class="sub"><td></td><td>F-90 by MGR01</td><td class="acct">40</td><td><span class="acct">161000</span> Input GST Credit: CGST 9% + SGST 9%</td><td class="num acct">10,800</td><td></td></tr>
+            <tr class="sub"><td></td><td></td><td class="acct">50</td><td><span class="acct">222000</span> TDS Payable: 194C, 2% × 60,000</td><td></td><td class="num acct">1,200</td></tr>
+            <tr class="sub"><td></td><td></td><td class="acct">31</td><td><span class="acct">100004</span> Sahyadri Engineering Services (recon 211000)</td><td></td><td class="num acct">69,600</td></tr>
+            <tr><td class="acct">0100000467</td><td>AA · 20.10.2026</td><td class="acct">70</td><td><span class="acct">1100008</span> VMC-1060 → 111000 · capitalisation date 20.10</td><td class="num acct">21,60,000</td><td></td></tr>
+            <tr class="sub"><td></td><td>AIBU</td><td class="acct">75</td><td><span class="acct">4000001</span> AUC VMC-1060 → 119000, settled</td><td></td><td class="num acct">21,60,000</td></tr>
+            <tr><td class="acct">1800000206</td><td>DR · 26.10.2026</td><td class="acct">01</td><td><span class="acct">200005</span> Chakan Machine Traders (recon 141000)</td><td class="num acct">5,90,000</td><td></td></tr>
+            <tr class="sub"><td></td><td>F-92 · trans. type 210</td><td class="acct">50</td><td><span class="acct">221000</span> GST Output Payable: CGST 45,000 + SGST 45,000</td><td></td><td class="num acct">90,000</td></tr>
+            <tr class="sub"><td></td><td></td><td class="acct">50 / 40</td><td><span class="acct">219700</span> Asset Sale Clearing: sale value in, cleared by the system</td><td class="num acct">5,00,000</td><td class="num acct">5,00,000</td></tr>
+            <tr class="sub"><td></td><td></td><td class="acct">75</td><td><span class="acct">1100002</span> Lathe LT-2: cost retired from 111000</td><td></td><td class="num acct">7,20,000</td></tr>
+            <tr class="sub"><td></td><td></td><td class="acct">70</td><td><span class="acct">1100002</span> Lathe LT-2: acc. depreciation retired from 111900</td><td class="num acct">2,64,000</td><td></td></tr>
+            <tr class="sub"><td></td><td></td><td class="acct">50</td><td><span class="acct">423000</span> Profit on Sale of Fixed Assets</td><td></td><td class="num acct">44,000</td></tr>
+            <tr><td class="acct">0500000007</td><td>AF · 31.10.2026</td><td class="acct">40</td><td><span class="acct">641000</span> Depreciation, period 007</td><td class="num acct">1,84,000</td><td></td></tr>
+            <tr class="sub"><td></td><td>AFAB</td><td class="acct">50</td><td><span class="acct">111900</span> Acc. Depreciation - P&amp;M</td><td></td><td class="num acct">1,64,000</td></tr>
+            <tr class="sub"><td></td><td></td><td class="acct">50</td><td><span class="acct">112900</span> Acc. Depreciation - Office Eqpt</td><td></td><td class="num acct">20,000</td></tr>
+          </tbody>
+        </table></div>
+        <p class="note">Document numbers continue the earlier projects: KR after Part 5's October true-up 1900000123, range 01 after the F.81 reversals 0100000461–466, DR after Part 3's invoice 1800000205, and AF after September's run 0500000006. October's run: ₹1,70,000 for the register, minus ₹4,000 for the lathe (sold, no October depreciation), plus ₹18,000 for the VMC-1060 = ₹1,84,000. No TDS on the machine: IN10 is below the ₹10 crore turnover test for 194Q (<a href="../procure-to-pay/">Part 2</a>). The installation is a works contract, so 194C applies to every company.</p>
+      </div>
+
+      <!-- ============================================================ -->
+      <div class="cs-section" id="sale">
+        <p class="eyebrow">F-92 · ABAVN · GST on used assets</p>
+        <h2>Selling the lathe: NBV, profit and GST</h2>
+        <ol class="steps">
+          <li><span class="tc">NBV</span><span>The lathe cost ₹7,20,000 in April 2021 and has been depreciated for 66 months at ₹4,000: ₹2,64,000. Period control 01 for retirements means no depreciation in the month of sale, so NBV on 26.10 is ₹4,56,000.</span></li>
+          <li><span class="tc">Profit</span><span>Sale value ₹5,00,000 − NBV ₹4,56,000 = ₹44,000 profit to 423000. SAP works this out itself from the asset values; the user enters only the customer, the sale value (to clearing account 219700) and the asset.</span></li>
+          <li><span class="tc">GST</span><span>Section 18(6) of the CGST Act: on selling a used capital good, pay the higher of the credit taken less 5% per quarter of use, or tax on the sale value. After 22 quarters the first is nil, so GST is 18% of ₹5,00,000 (buyer in Maharashtra: CGST + SGST ₹45,000 each).</span></li>
+          <li><span class="tc">Tax block</span><span>For income tax, the plant &amp; machinery block is reduced by the ₹5,00,000 sale price, not by the NBV. The ₹44,000 book profit isn't taxed as such.</span></li>
+        </ol>
+        <p class="note">Scrapping instead (AA-03, photocopiers 1200003, ABAVN): no customer and no revenue, so the whole NBV of ₹2,50,000 goes to 665000 as a loss. A machine sold as <i>scrap</i> would add TCS under 206C(1); a working machine sold as a machine doesn't.</p>
+      </div>
+
+      <!-- ============================================================ -->
+      <div class="cs-section" id="history">
+        <p class="eyebrow">Month-end · S_ALR_87011990 · Schedule III PPE note</p>
+        <h2>Asset history sheet, FY 2026-27</h2>
+        <p>The asset history sheet is the PPE note in the annual accounts: opening, additions, transfers, retirements and depreciation per account. At 30 September it matches Part 5; at 31 October it includes the case-study documents.</p>
+        <div class="table-wrap"><table class="data">
+          <thead><tr><th>As of · account</th><th class="num">APC 01.04 ₹</th><th class="num">Additions</th><th class="num">Transfers</th><th class="num">Retirements</th><th class="num">APC close</th><th class="num">Acc. dep. 01.04</th><th class="num">Depreciation</th><th class="num">Dep. retired</th><th class="num">Acc. dep. close</th><th class="num">NBV</th></tr></thead>
+          <tbody>
+            <tr><td>30.09 · 111000 P&amp;M</td><td class="num acct">1,73,00,000</td><td class="num acct">12,00,000</td><td class="num acct">–</td><td class="num acct">–</td><td class="num acct">1,85,00,000</td><td class="num acct">33,30,000</td><td class="num acct">8,70,000</td><td class="num acct">–</td><td class="num acct">42,00,000</td><td class="num acct">1,43,00,000</td></tr>
+            <tr><td>30.09 · 112000 Office eqpt</td><td class="num acct">12,00,000</td><td class="num acct">–</td><td class="num acct">–</td><td class="num acct">–</td><td class="num acct">12,00,000</td><td class="num acct">2,40,000</td><td class="num acct">1,20,000</td><td class="num acct">–</td><td class="num acct">3,60,000</td><td class="num acct">8,40,000</td></tr>
+            <tr><td>31.10 · 111000 P&amp;M</td><td class="num acct">1,73,00,000</td><td class="num acct">12,00,000</td><td class="num acct">21,60,000</td><td class="num acct">−7,20,000</td><td class="num acct">1,99,40,000</td><td class="num acct">33,30,000</td><td class="num acct">10,34,000</td><td class="num acct">−2,64,000</td><td class="num acct">41,00,000</td><td class="num acct">1,58,40,000</td></tr>
+            <tr><td>31.10 · 112000 Office eqpt</td><td class="num acct">12,00,000</td><td class="num acct">–</td><td class="num acct">–</td><td class="num acct">–</td><td class="num acct">12,00,000</td><td class="num acct">2,40,000</td><td class="num acct">1,40,000</td><td class="num acct">–</td><td class="num acct">3,80,000</td><td class="num acct">8,20,000</td></tr>
+            <tr><td>31.10 · 119000 CWIP</td><td class="num acct">–</td><td class="num acct">21,60,000</td><td class="num acct">−21,60,000</td><td class="num acct">–</td><td class="num acct">0</td><td class="num acct">–</td><td class="num acct">–</td><td class="num acct">–</td><td class="num acct">–</td><td class="num acct">0</td></tr>
+          </tbody>
+        </table></div>
+        <p class="note">At 30.09 the closing columns equal 111000, 111900, 112000 and 112900 in Part 5's trial balance, and the two depreciation figures add up to 641000's ₹9,90,000. At month-end I compare the history sheet with the G/L balances in FAGLB03 as a reconciliation step; because the accounts are recon accounts, a difference points to a configuration or timing issue, not a stray journal.</p>
+      </div>
+
+      <!-- ============================================================ -->
+      <div class="cs-section" id="tests">
+        <p class="eyebrow">Deliverable · unit test script</p>
+        <h2>Twelve tests across master data, acquisition, retirement and the run</h2>
+        <p>Every case runs in the <a href="simulator.html">asset simulator</a> with one click. A Python script computed the expected results, and the simulator's separate JavaScript logic reproduces all twelve.</p>
+        <div class="table-wrap"><table class="data">
+          <thead><tr><th>ID</th><th>Scenario</th><th>Key input</th><th>Expected result</th></tr></thead>
+          <tbody>
+            <tr><td class="acct">AA-01</td><td>Happy path</td><td>AUC → 1100008 on 20.10 · AFAB 007</td><td class="res-posted">Capitalised ₹21,60,000 · October ₹18,000</td></tr>
+            <tr><td class="acct">AA-02</td><td>Asset sale</td><td>Lathe 1100002 · ₹5,00,000 · 26.10</td><td class="res-posted">Profit ₹44,000 · no October depreciation</td></tr>
+            <tr><td class="acct">AA-03</td><td>Scrapping</td><td>Photocopiers 1200003 · ABAVN</td><td class="res-posted">Loss ₹2,50,000 to 665000</td></tr>
+            <tr><td class="acct">AA-04</td><td>AUC not settled at month-end</td><td>Settlement box unticked</td><td class="res-warn">Held in CWIP · no depreciation</td></tr>
+            <tr><td class="acct">AA-05</td><td>Put to use on 03.10</td><td>180 days of use in FY 2026-27</td><td class="res-posted">Posted · tax 15% ₹3,24,000 (not half rate)</td></tr>
+            <tr><td class="acct">AA-06</td><td>Settlement before last invoice</td><td>Settled 14.10, invoice 16.10</td><td class="res-error">AIBU fails: AUC not complete on that date</td></tr>
+            <tr><td class="acct">AA-07</td><td>Invoice in a closed period</td><td>Dated 02.11.2026</td><td class="res-error">OB52: period 008 not open</td></tr>
+            <tr><td class="acct">AA-08</td><td>Class without account determination</td><td>Class 1300 Vehicles</td><td class="res-error">No AO90 accounts for 13000</td></tr>
+            <tr><td class="acct">AA-09</td><td>Capital invoice by a clerk</td><td>CLERK01 · limit ₹5,00,000</td><td class="res-error">OBA4 tolerance exceeded</td></tr>
+            <tr><td class="acct">AA-10</td><td>Value date in a closed year</td><td>15.03.2026 (FY 2025)</td><td class="res-error">FY 2025 closed by AJAB</td></tr>
+            <tr><td class="acct">AA-11</td><td>Retire before capitalisation</td><td>Value date 15.10, capitalised 20.10</td><td class="res-error">No asset value on that date</td></tr>
+            <tr><td class="acct">AA-12</td><td>Run for the next period early</td><td>AFAB period 008</td><td class="res-error">OB52: period 008 not open</td></tr>
+          </tbody>
+        </table></div>
+        <p class="note">Each test runs on its own, starting from the number ranges as they stood before 09.10.2026, which is why every successful test shows the case-study document numbers. Simulator state is October 2026: AFAB posted to 006, OB52 open for 006–007 for account types +, A, D, K and S. The AFAB lines in the simulator are the selected asset's share of the run. Messages are simulated in plain language and aren't copied from SAP message texts.</p>
+      </div>
+
+      <!-- ============================================================ -->
+      <div class="cs-section" id="business">
+        <p class="eyebrow">Business impact</p>
+        <h2>Why asset controls matter</h2>
+        <p>Fixed assets are IN10's largest asset class: ₹1.51 crore of net book value, 45% of total assets in Part 5's balance sheet. Depreciation of ₹1.7 lakh a month is the biggest non-cash cost in the P&amp;L. With recon accounts and an asset register that agrees to the ledger, the auditor can trace every rupee of PPE to a numbered asset with a location, a capitalisation date and a useful life. The AUC keeps a half-installed machine out of depreciation until it can produce, and the "put to use" date moves the first-year tax deduction by ₹1.62 lakh. Closing the asset year with AJAB after the audit keeps the signed numbers from changing.</p>
+      </div>
+
+      <!-- ============================================================ -->
+      <div class="cs-section" id="interview">
+        <p class="eyebrow">Interview guide</p>
+        <h2>How I present it in 90 seconds</h2>
+        <ol>
+          <li><b>Scope:</b> "I set up Asset Accounting for company code IN10 and ran an asset month: a machine bought through an AUC and capitalised, an old lathe sold, and the depreciation run."</li>
+          <li><b>Configuration:</b> "Chart of depreciation IN10 from 1IN, with book area 01 posting to the ledger and tax area 15 for the Income Tax Act. Asset classes carry the AO90 account determination, number range and depreciation keys."</li>
+          <li><b>Controls:</b> "The asset accounts are recon accounts, so nobody can post to them by hand. AUCs don't depreciate, OB52 and AJAB guard the dates, and OBA4 decides who can post a ₹24.78 lakh capital invoice."</li>
+          <li><b>Proof:</b> "Twelve unit tests and a simulator. And it ties back: my asset register adds up to the fixed assets and the ₹9.9 lakh of depreciation in the trial balance of my month-end close (Part 5)."</li>
+        </ol>
+        <div class="qa">
+          <details><summary>What is a depreciation area?</summary><p>A separate valuation of the same asset. Area 01 is the book value under the Companies Act and posts to the G/L; area 15 holds Income Tax Act values without posting. Each area has its own key, useful life and values.</p></details>
+          <details><summary>Why use an asset under construction?</summary><p>While a machine is being installed, its costs aren't depreciable yet. Posting them to an AUC (depreciation key 0000, shown as capital work-in-progress) collects them in one place. IN10's AUC class manages line items, so when the machine is ready for use I enter a distribution rule in AIAB and settle with AIBU; depreciation on the final asset starts from that date. An AUC without line items would be moved with a transfer (ABUMN) instead.</p></details>
+          <details><summary>What does AO90 control?</summary><p>For each account determination key it gives the G/L accounts for APC, accumulated depreciation, depreciation expense, and gains, losses and clearing on retirement. The asset class points to the key.</p></details>
+          <details><summary>How is the gain or loss on a sale calculated?</summary><p>Sale value minus NBV on the value date. SAP retires the APC and accumulated depreciation (with depreciation up to the value date according to period control), compares them with the revenue and posts the difference to the gain or loss account.</p></details>
+          <details><summary>What happens in the year-end asset close?</summary><p>AJRW opens the new asset fiscal year and carries values forward; it runs at the start of the year. AJAB closes the old year after the audit, so no posting can change it. Before AJAB: all AFAB runs posted, no AUC settlements pending, and the history sheet reconciled with the G/L.</p></details>
+          <details><summary>Why can't you post to 111000 with FB50?</summary><p>It's a reconciliation account for account type A. Postings must come from Asset Accounting with an asset number, which keeps the sub-ledger and the G/L equal.</p></details>
+        </div>
+      </div>
+
+      <!-- ============================================================ -->
+      <div class="cs-section" id="data">
+        <p class="eyebrow">Data</p>
+        <h2>Download the configuration and documents</h2>
+        <p>A Python script generated these files. It asserts that every document balances, that the asset register at 30.09.2026 equals Part 5's balances for 111000, 111900, 112000, 112900 and 641000, that 119000 moves from PPE to the new CWIP item after the OB58 change, and that the document numbers continue the ranges used in Parts 1–3 and 5.</p>
+        <div class="downloads">
+          <a href="data/01_org_objects_aa.csv">01_org_objects_aa.csv <span>11 rows</span></a>
+          <a href="data/02_gl_accounts_added.csv">02_gl_accounts_added.csv <span>4</span></a>
+          <a href="data/03_account_determination_AO90.csv">03_account_determination_AO90.csv <span>15</span></a>
+          <a href="data/04_asset_classes_dep_keys.csv">04_asset_classes_dep_keys.csv <span>5</span></a>
+          <a href="data/05_asset_register_300926.csv">05_asset_register_300926.csv <span>11 assets</span></a>
+          <a href="data/06_asset_history_sheet.csv">06_asset_history_sheet.csv <span>6</span></a>
+          <a href="data/07_document_flow.csv">07_document_flow.csv <span>6 steps</span></a>
+          <a href="data/08_journal_entries.csv">08_journal_entries.csv <span>21 lines</span></a>
+          <a href="data/09_depreciation_run_oct.csv">09_depreciation_run_oct.csv <span>12</span></a>
+          <a href="data/10_unit_tests.csv">10_unit_tests.csv <span>12 tests</span></a>
+        </div>
+      </div>
+    </article>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <span>© <span data-year>2026</span> Ananya Patel · <a href="../../">Home</a></span>
+    <span>Fictional company code IN10. Not affiliated with SAP SE.</span>
+  </div>
+</footer>
+</body>
+</html>

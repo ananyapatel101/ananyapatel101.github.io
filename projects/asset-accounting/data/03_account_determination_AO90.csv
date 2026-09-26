@@ -1,0 +1,16 @@
+Account_Determination,Used_By_Classes,Transaction,GL_Account,Account_Text
+11000,"1100, 1500",Acquisition and production costs,111000,Plant & Machinery
+11000,"1100, 1500",Accumulated depreciation,111900,Acc. Depreciation - P&M
+11000,"1100, 1500",Depreciation expense (ordinary),641000,Depreciation
+11000,"1100, 1500",Gain from asset sale,423000,Profit on Sale of Fixed Assets
+11000,"1100, 1500",Loss from asset sale,665000,Loss on Sale / Scrapping of Fixed Assets
+11000,"1100, 1500","Clearing account, revenue from asset sale",219700,Asset Sale Clearing
+11000,"1100, 1500",Loss on retirement without revenue,665000,Loss on Sale / Scrapping of Fixed Assets
+12000,1200,Acquisition and production costs,112000,Office Equipment
+12000,1200,Accumulated depreciation,112900,Acc. Depreciation - Office Eqpt
+12000,1200,Depreciation expense (ordinary),641000,Depreciation
+12000,1200,Gain from asset sale,423000,Profit on Sale of Fixed Assets
+12000,1200,Loss from asset sale,665000,Loss on Sale / Scrapping of Fixed Assets
+12000,1200,"Clearing account, revenue from asset sale",219700,Asset Sale Clearing
+12000,1200,Loss on retirement without revenue,665000,Loss on Sale / Scrapping of Fixed Assets
+40000,4000,Acquisition and production costs,119000,Capital Work-in-Progress

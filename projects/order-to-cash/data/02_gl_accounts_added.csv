@@ -1,0 +1,7 @@
+GL_Account,Description,GL_Account_Type,Account_Group,Open_Item_Mgmt,Line_Item_Display,Field_Status_Group,Post_Automatically_Only,FSV_Item,OB58_Change
+162000,TDS Receivable,Balance Sheet Account,CA,X,X,G001,,BS.A.CA.STLA,None: inside 0000153000-0000169999
+171200,HDFC Bank - Incoming Payments,Cash Account,BANK,X,X,G005,,BS.A.CA.CCE,None: inside 0000171100-0000171999 added in Part 2
+412000,Sales Deductions,Primary Costs or Revenue,REV,,X,G029,X,PL.REV,None: inside 0000411000-0000419999
+531000,Cost of Goods Sold - FG,Primary Costs or Revenue,EXP,,X,G004,X,PL.EXP.CHI,"New item PL.EXP.CHI with range 0000531000-0000539999, D and C"
+663000,Cash Discount Allowed,Primary Costs or Revenue,EXP,,X,G004,X,PL.EXP.OTH,None: inside 0000661000-0000669999
+664000,Payment Differences - Customers,Primary Costs or Revenue,EXP,,X,G004,X,PL.EXP.OTH,None: inside 0000661000-0000669999

@@ -5,9 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>FSV &amp; Month-End Close · Ananya Patel</title>
 <meta name="description" content="SAP S/4HANA case study: chart of accounts in FS00, a Schedule III Financial Statement Version in OB58, and a September month-end close with FBS1 accruals and F.81 reversals.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Schibsted+Grotesk:wght@600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Carlito:ital,wght@0,400;0,700;1,400&display=swap">
 <link rel="stylesheet" href="../../assets/css/style.css">
 <script src="../../assets/js/main.js"></script>
 </head>
@@ -18,17 +16,17 @@
     <a class="brand" href="../../">Ananya Patel<span>.</span></a>
     <nav class="nav" aria-label="Main">
       <a href="../../#projects">Projects</a>
+      <a href="../../resume.html" class="hide-sm">Résumé</a>
       <a href="statements.html">Live statements</a>
       <a href="../../#contact" class="hide-sm">Contact</a>
     </nav>
-    <button class="theme-btn" type="button" data-theme-toggle>Dark mode</button>
   </div>
 </header>
 
 <main>
   <section class="cs-hero">
     <div class="wrap">
-      <p class="eyebrow">Project 01 · SAP S/4HANA FI · General Ledger</p>
+      <p class="eyebrow">SAP FICO self project · Part 5 of 5 · SAP S/4HANA FI · General Ledger</p>
       <h1>Financial Statement Version &amp; Month-End Close</h1>
       <p class="muted prose" style="font-size:var(--t-lg)">I structured a chart of accounts, grouped it into a Schedule III Financial Statement Version, and ran a September close with accruals and deferrals. The system then produces a Balance Sheet and P&amp;L that balance, tie back to the trial balance and reverse cleanly on day 1.</p>
       <div class="cs-meta">
@@ -66,7 +64,7 @@
         <div class="table-wrap"><table class="data">
           <thead><tr><th>Object</th><th>Value</th><th>Where it's set</th></tr></thead>
           <tbody>
-            <tr><td>Company code</td><td><span class="acct">IN10</span> Ananya Manufacturing Pvt Ltd</td><td class="tc">OX02</td></tr>
+            <tr><td>Company code</td><td><span class="acct">IN10</span> XYZ Inc.</td><td class="tc">OX02</td></tr>
             <tr><td>Chart of accounts</td><td><span class="acct">INCA</span> operating COA, 6-digit accounts, stored 10-digit</td><td class="tc">OB13 / OB62</td></tr>
             <tr><td>Fiscal year variant</td><td><span class="acct">V3</span> April – March, 12 + 4 special periods</td><td class="tc">OB29 / OB37</td></tr>
             <tr><td>Currency</td><td>INR</td><td class="tc">OX02</td></tr>
@@ -85,7 +83,7 @@
         <ol class="steps">
           <li><span class="tc">OB13</span><span>Create chart of accounts INCA: length 6, manual cost element creation off, since S/4HANA creates cost elements through the G/L account type.</span></li>
           <li><span class="tc">OB62</span><span>Assign INCA to company code IN10.</span></li>
-          <li><span class="tc">OBD4</span><span>Define account groups with number ranges: FA 111000–119999, CA 131000–169999, BANK 171000–179999, CL 211000–249999, LOAN 251000–299999, EQ 311000–399999, REV 411000–499999, EXP 511000–699999.</span></li>
+          <li><span class="tc">OBD4</span><span>Define account groups with number ranges: FA 111000–119999, CA 131000–169999, BANK 171000–179999, CL 211000–249999, LOAN 251000–299999, EQ 311000–399999, REV 411000–499999, EXP 511000–699999, plus RECN 141000–219999 for the two reconciliation accounts (141000 customers, 211000 vendors). G/L account group intervals may overlap, so RECN can sit across the CA and CL ranges.</span></li>
           <li><span class="tc">OB53</span><span>Assign retained earnings account 321000 to P&amp;L statement account type X. At year-end, balance carryforward (FAGLGVTR) moves the P&amp;L result there.</span></li>
           <li><span class="tc">OB52</span><span>Open posting periods 06 and 07 for account types +, S, K, D.</span></li>
         </ol>
@@ -99,7 +97,7 @@
             <tr><td>Control Data</td><td>Account currency</td><td>INR</td><td>INR</td><td>Company code currency.</td></tr>
             <tr><td>Control Data</td><td>Open item management</td><td>✓</td><td>–</td><td>Each accrual stays open until its F.81 reversal clears it, so open items show what's still unreversed.</td></tr>
             <tr><td>Control Data</td><td>Line item display</td><td>✓</td><td>✓</td><td>Allows drill-down from the FSV report to documents (FAGLL03).</td></tr>
-            <tr><td>Control Data</td><td>Reconciliation account</td><td>–</td><td>–</td><td>Only 211000 (K, vendors) and 141000 (D, customers) are recon accounts.</td></tr>
+            <tr><td>Control Data</td><td>Reconciliation account</td><td>–</td><td>–</td><td>Recon accounts are 211000 (K, vendors), 141000 (D, customers) and the four fixed-asset accounts 111000–112900 (A, assets; the asset sub-ledger is <a href="../asset-accounting/">Part 4</a>).</td></tr>
             <tr><td>Control Data</td><td>Sort key</td><td class="acct">001</td><td class="acct">001</td><td>Sorts line items by posting date.</td></tr>
             <tr><td>Create/Bank/Interest</td><td>Field status group</td><td class="acct">G001</td><td class="acct">G004</td><td>G004 makes a cost center mandatory, so the FBS1 accrual to 621000 carries a cost center.</td></tr>
             <tr><td>Create/Bank/Interest</td><td>Post automatically only</td><td>–</td><td>–</td><td>Left off so FBS1 can post manually; switched on for GR/IR 219100.</td></tr>
@@ -162,7 +160,7 @@
             <tr class="lvl-3"><td>(c) Finance costs</td><td class="acct">0000651000</td><td class="acct">0000659999</td><td>✓</td><td>✓</td></tr>
             <tr class="lvl-3"><td>(d) Depreciation and amortisation</td><td class="acct">0000641000</td><td class="acct">0000649999</td><td>✓</td><td>✓</td></tr>
             <tr class="lvl-3"><td>(e) Other expenses</td><td class="acct">0000621000<br>0000661000</td><td class="acct">0000639999<br>0000669999</td><td>✓<br>✓</td><td>✓<br>✓</td></tr>
-            <tr class="lvl-2"><td>VI. Tax expense</td><td class="acct">0000671000</td><td class="acct">0000679999</td><td>✓</td><td>✓</td></tr>
+            <tr class="lvl-2"><td>X. Tax expense</td><td class="acct">0000671000</td><td class="acct">0000679999</td><td>✓</td><td>✓</td></tr>
             <tr class="head-row"><td>Not assigned</td><td colspan="4" class="muted">Target: 0 accounts</td></tr>
           </tbody>
         </table></div>
@@ -193,7 +191,7 @@
             <tr><td>WD −2</td><td class="tc">OB52</td><td>Open period 07 so reversals can post</td><td>Period variant for IN10</td></tr>
             <tr><td>WD −1</td><td class="tc">FBS1</td><td>Post six accrual and deferral entries (A1–A4, D1–D2), dated 30.09.2026, reversal date 01.10.2026, reason 05</td><td>Each entry has a basis on file</td></tr>
             <tr><td>WD −1</td><td class="tc">AFAB</td><td>Depreciation run for period 06 (already included in the pre-close TB)</td><td>Asset history sheet ties to 641000</td></tr>
-            <tr><td>WD 0</td><td class="tc">FAGL_FCV</td><td>Foreign currency valuation and GR/IR regrouping</td><td>No open FX items this period</td></tr>
+            <tr><td>WD 0</td><td class="tc">FAGL_FCV · F.19</td><td>Foreign currency valuation (FAGL_FCV) and GR/IR regrouping (F.19)</td><td>No open FX items this period; GR/IR is a net credit, so nothing to regroup</td></tr>
             <tr><td>WD 0</td><td class="tc">S_ALR_87012277</td><td>Review G/L balances and trial balance (also FAGLB03)</td><td>Debits = credits; flux review against August</td></tr>
             <tr><td>WD 0</td><td class="tc">OB58</td><td>Check FSV assignments (Rule INS3-01)</td><td>0 not assigned, 0 duplicates</td></tr>
             <tr><td>WD 0</td><td class="tc">S_ALR_87012284</td><td>Produce Schedule III Balance Sheet and P&amp;L</td><td>Assets = Equity + Liabilities</td></tr>
@@ -221,7 +219,7 @@
           <tfoot><tr><td colspan="5">Total, each document balances (Dr = Cr)</td><td class="num">4,91,250</td><td></td></tr></tfoot>
         </table></div>
 
-        <p><b>Step 2, F.81 reversal.</b> Posting date 01.10.2026, period 07. Each document is reversed with debit and credit swapped and linked to the original.</p>
+        <p><b>Step 2, F.81 reversal.</b> Posting date 01.10.2026, period 07, document type AB (the reverse document type set for SA in OBA7, see Part 1). Each document is reversed with debit and credit swapped and linked to the original.</p>
         <div class="table-wrap"><table class="data">
           <thead><tr><th>#</th><th>Reversal doc</th><th>Reverses</th><th>Debit</th><th>Credit</th><th class="num">₹</th></tr></thead>
           <tbody>

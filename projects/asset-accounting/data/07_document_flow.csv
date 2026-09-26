@@ -1,0 +1,7 @@
+Step,Date,TCode,Document,Doc_Type,Description,Amount_INR
+1,2026-10-07,AS01,4000001 / 1100008,,"AUC 4000001 (class 4000) and final asset 1100008 (class 1100, 10 years) created",
+2,2026-10-09,F-90,1900000124,KR,"Machine invoice BCM/26-27/0931 from vendor 100003 to AUC 4000001, IGST 18%",2478000
+3,2026-10-16,F-90,1900000125,KR,"Installation & commissioning by vendor 100004 to AUC 4000001, CGST+SGST, TDS 194C",70800
+4,2026-10-20,AIBU,0100000467,AA,"AUC settled to 1100008, capitalisation date 20.10.2026",2160000
+5,2026-10-26,F-92,1800000206,DR,"Lathe 1100002 sold to customer 200005, trans. type 210",590000
+6,2026-10-31,AFAB,0500000007,AF,"Depreciation run, period 007/2026",184000

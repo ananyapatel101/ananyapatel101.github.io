@@ -1,0 +1,6 @@
+Step,Date,TCode,Document,Doc_Type,Description,Qty,Amount_INR
+1,2026-10-01,VA01,0000010452,OR,"Sales order, customer PO KAC/PO/26-27/318, credit check passed",1000 EA,2289200
+2,2026-10-05,VL01N,0080010317,LF,Outbound delivery from shipping point IN11,1000 EA,
+3,2026-10-05,VL02N PGI 601,4900000871 / FI 4900000612,WL,Post goods issue at standard price,1000 EA,1450000
+4,2026-10-05,VF01,0090010288 / FI 1800000205,RV,"Invoice F2, IGST 18%, terms IN02",1000 EA,2289200
+5,2026-10-14,F-28,1400000088,DZ,"Incoming payment less 2% cash discount and TDS 194Q, clears 1800000205",,2248460

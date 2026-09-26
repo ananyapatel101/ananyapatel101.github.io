@@ -1,0 +1,13 @@
+Test_ID,Scenario,Customer,Qty,K007_Pct,Stock,Credit_Release,PGI_Done,PGI_Date,Bill_Date,Pay_Date,Poster,Disc_Taken,TDS,Short_Pay,Outcome,Stops_At,Invoice_Gross_INR,Exposure_After_INR,RV_Doc,DZ_Doc,Received_INR,Discount_INR,Write_Off_INR,Residual_INR
+O2C-01,"Happy path: 1,000 EA to Kalinga (Odisha, IGST), paid in 9 days less 2% discount and TDS",200001,1000,3,1500,,X,2026-10-05,2026-10-05,2026-10-14,MGR01,X,X,,cleared,cleared,2289200,5121200,1800000205,1400000088,2248460,38800,,
+O2C-02,Intra-state customer 200002 Pune Precision Tools: CGST + SGST instead of IGST,200002,1000,2,1500,,X,2026-10-05,2026-10-05,2026-10-14,MGR01,X,,,cleared,cleared,2312800,3728800,1800000205,1400000088,2273600,39200,,
+O2C-03,"Order raised to 1,050 EA: exposure passes the ₹52 lakh credit limit",200001,1050,3,1500,,X,2026-10-05,2026-10-05,2026-10-14,MGR01,X,X,,blocked,credit,2403660,5235660,,,,,,
+O2C-04,Same order after credit release in UKM_MY_DCDS,200001,1050,3,1500,X,X,2026-10-05,2026-10-05,2026-10-14,MGR01,X,X,,cleared,cleared,2403660,5235660,1800000205,1400000088,2360883,40740,,
+O2C-05,"Customer 200004 has an item 81 days overdue, although the order fits the limit",200004,300,0,1500,,X,2026-10-05,2026-10-05,2026-10-14,MGR01,X,,,blocked,credit,708000,1996000,,,,,,
+O2C-06,Only 800 EA in unrestricted stock at goods issue,200001,1000,3,800,,X,2026-10-05,2026-10-05,2026-10-14,MGR01,X,X,,error,stock,2289200,5121200,,,,,,
+O2C-07,Goods issue dated 02.11.2026 (MM period 2026/08 not open),200001,1000,3,1500,,X,2026-11-02,2026-11-02,2026-10-14,MGR01,X,X,,error,mmper,2289200,5121200,,,,,,
+O2C-08,Billing run before post goods issue,200001,1000,3,1500,,,2026-10-05,2026-10-05,2026-10-14,MGR01,X,X,,error,pgi,2289200,5121200,,,,,,
+O2C-09,Material without account assignment group: VKOA finds no revenue account,200001,1000,3,1500,,X,2026-10-05,2026-10-05,2026-10-14,MGR01,X,X,,error,vkoa,2289200,5121200,,,,,,
+O2C-10,"Receipt keyed by AR clerk CLERK01 (OBA4 limit ₹5,00,000)",200001,1000,3,1500,,X,2026-10-05,2026-10-05,2026-10-14,CLERK01,X,X,,error,oba4,2289200,5121200,1800000205,,,,,
+O2C-11,Paid on 20.10 (day 15) but the customer still deducts the 2% discount,200001,1000,3,1500,,X,2026-10-05,2026-10-05,2026-10-20,MGR01,X,X,,residual,residual,2289200,5121200,1800000205,1400000088,2248460,0,,38800
+O2C-12,Customer pays ₹250 short (bank charges): within tolerance,200001,1000,3,1500,,X,2026-10-05,2026-10-05,2026-10-14,MGR01,X,X,250,cleared,cleared,2289200,5121200,1800000205,1400000088,2248210,38800,250,

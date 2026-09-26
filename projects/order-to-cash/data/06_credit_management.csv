@@ -1,0 +1,5 @@
+Customer,Credit_Segment,Risk_Class,Credit_Limit_INR,Open_AR_300926_INR,Oldest_Days_Overdue_011026,Available_INR,Check_Rule
+200001,IN10,B,5200000,2832000,0,2368000,Limit incl. order value; block if oldest item > 60 days overdue
+200002,IN10,B,4000000,1416000,35,2584000,Limit incl. order value; block if oldest item > 60 days overdue
+200003,IN10,C,2500000,944000,17,1556000,Limit incl. order value; block if oldest item > 60 days overdue
+200004,IN10,D,2000000,1288000,81,712000,Limit incl. order value; block if oldest item > 60 days overdue

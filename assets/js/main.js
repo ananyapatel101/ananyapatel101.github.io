@@ -16,8 +16,7 @@
   }
   function label(btn) { btn.textContent = isDark() ? "Light mode" : "Dark mode"; }
 
-  var initial = saved();
-  if (initial) root.setAttribute("data-theme", initial);
+  root.setAttribute("data-theme", "light");
 
   document.addEventListener("DOMContentLoaded", function () {
     document.querySelectorAll("[data-theme-toggle]").forEach(function (btn) {

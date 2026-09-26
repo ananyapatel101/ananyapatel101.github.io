@@ -1,0 +1,6 @@
+Class,Description,Number_Range,Account_Determination,Area01_Key,Area01_Method,Area15_Key,Area15_Method,Useful_Life
+1100,Plant & machinery,11,11000,ZSLM,Straight line from APC over useful life; period control 01/01 (pro rata at period start),ZWDV,15% on WDV; half rate in year 1 if used < 180 days,"10 years for CNC and heat-treatment machines (technical evaluation), 15 years for general machines (Schedule II)"
+1200,Office equipment,12,12000,ZSLM,Straight line from APC over useful life; period control 01/01 (pro rata at period start),ZWDV,15% on WDV; half rate in year 1 if used < 180 days,5 years (Schedule II)
+1500,"Low-value assets (up to Rs 5,000 each)",15,11000,ZLVA,100% in year of acquisition,ZWDV,15% on WDV; half rate in year 1 if used < 180 days,Written off in the year of acquisition
+4000,Assets under construction,40,40000,0000,No depreciation,0000,No depreciation,Not depreciated until settled
+1300,"Vehicles (planned, account determination not yet maintained)",13,13000,ZSLM,Straight line from APC over useful life; period control 01/01 (pro rata at period start),ZWDV,15% on WDV; half rate in year 1 if used < 180 days,8 years (Schedule II)

@@ -1,8 +1,8 @@
 GL_Account,GL_Account_Full,Description,GL_Account_Type,Account_Group,Chart_of_Accounts,Company_Code,Currency,Open_Item_Mgmt,Line_Item_Display,Recon_Type,Field_Status_Group,PL_Statement_Acct_Type,FSV_Item
-111000,0000111000,Plant & Machinery,Balance Sheet Account,FA,INCA,IN10,INR,,X,,G007,,BS.A.NCA.PPE
-111900,0000111900,Acc. Depreciation - P&M,Balance Sheet Account,FA,INCA,IN10,INR,,X,,G007,,BS.A.NCA.PPE
-112000,0000112000,Office Equipment,Balance Sheet Account,FA,INCA,IN10,INR,,X,,G007,,BS.A.NCA.PPE
-112900,0000112900,Acc. Depreciation - Office Eqpt,Balance Sheet Account,FA,INCA,IN10,INR,,X,,G007,,BS.A.NCA.PPE
+111000,0000111000,Plant & Machinery,Balance Sheet Account,FA,INCA,IN10,INR,,X,A,G007,,BS.A.NCA.PPE
+111900,0000111900,Acc. Depreciation - P&M,Balance Sheet Account,FA,INCA,IN10,INR,,X,A,G007,,BS.A.NCA.PPE
+112000,0000112000,Office Equipment,Balance Sheet Account,FA,INCA,IN10,INR,,X,A,G007,,BS.A.NCA.PPE
+112900,0000112900,Acc. Depreciation - Office Eqpt,Balance Sheet Account,FA,INCA,IN10,INR,,X,A,G007,,BS.A.NCA.PPE
 131000,0000131000,Raw Material Inventory,Balance Sheet Account,CA,INCA,IN10,INR,,X,,G001,,BS.A.CA.INV
 132000,0000132000,Finished Goods Inventory,Balance Sheet Account,CA,INCA,IN10,INR,,X,,G001,,BS.A.CA.INV
 141000,0000141000,Trade Receivables - Domestic,Balance Sheet Account,RECN,INCA,IN10,INR,,X,D,G067,,BS.A.CA.TR

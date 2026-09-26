@@ -5,9 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>End-to-End FI Setup · Ananya Patel</title>
 <meta name="description" content="SAP S/4HANA case study: company code IN10 configured from a blank client to its first valid posting (enterprise structure, fiscal year, posting periods, field status, document types, number ranges, tolerance groups), with a unit-test script.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Schibsted+Grotesk:wght@600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Carlito:ital,wght@0,400;0,700;1,400&display=swap">
 <link rel="stylesheet" href="../../assets/css/style.css">
 <script src="../../assets/js/main.js"></script>
 <style>
@@ -32,19 +30,19 @@
     <a class="brand" href="../../">Ananya Patel<span>.</span></a>
     <nav class="nav" aria-label="Main">
       <a href="../../#projects">Projects</a>
+      <a href="../../resume.html" class="hide-sm">Résumé</a>
       <a href="validator.html">Posting simulator</a>
       <a href="../../#contact" class="hide-sm">Contact</a>
     </nav>
-    <button class="theme-btn" type="button" data-theme-toggle>Dark mode</button>
   </div>
 </header>
 
 <main>
   <section class="cs-hero">
     <div class="wrap">
-      <p class="eyebrow">Project 02 · SAP S/4HANA FI · Enterprise structure &amp; global settings</p>
+      <p class="eyebrow">SAP FICO self project · Part 1 of 5 · SAP S/4HANA FI · Enterprise structure &amp; global settings</p>
       <h1>End-to-End Financial Accounting Setup</h1>
-      <p class="muted prose" style="font-size:var(--t-lg)">I configured company code IN10 from a blank client to its first valid posting. The work covers the org objects, fiscal year, posting periods, field status, document types, number ranges and tolerance groups, and a 12-case unit-test script proves that each control works. Project 01's FSV and month-end close run on this foundation.</p>
+      <p class="muted prose" style="font-size:var(--t-lg)">I configured company code IN10 from a blank client to its first valid posting. The work covers the org objects, fiscal year, posting periods, field status, document types, number ranges and tolerance groups, and a 12-case unit-test script proves that each control works. Part 5's FSV and month-end close run on this foundation.</p>
       <div class="cs-meta">
         <span class="chip strong">OX15 / OX02 / OX16</span><span class="chip strong">OB29 / OB37</span><span class="chip strong">OBBO / OB52</span>
         <span class="chip strong">OBC4</span><span class="chip strong">OBA7 / FBN1</span><span class="chip strong">OBA4 / OB57</span><span class="chip">OBY6</span><span class="chip">FINSC_LEDGER</span>
@@ -75,11 +73,11 @@
       <div class="cs-section" id="structure">
         <p class="eyebrow">Scenario</p>
         <h2>Enterprise structure for IN10</h2>
-        <p>Ananya Group (company IN00) owns one Indian manufacturing entity, company code IN10 in Pune, which reports in INR under Indian GAAP (Schedule III). All data is fictional. The company code is the legal-entity level where the balance sheet and P&amp;L are produced, and every global setting below is assigned at that level.</p>
+        <p>XYZ Group (company IN00) owns one Indian manufacturing entity, company code IN10 in Pune, which reports in INR under Indian GAAP (Schedule III). All data is fictional. The company code is the legal-entity level where the balance sheet and P&amp;L are produced, and every global setting below is assigned at that level.</p>
         <div class="table-wrap" style="padding:var(--s-4)">
           <svg class="es-diagram" viewBox="0 0 760 390" role="img" aria-labelledby="es-title es-desc">
             <title id="es-title">IN10 enterprise structure</title>
-            <desc id="es-desc">Client 100 contains company IN00, which is assigned company code IN10. Company code IN10 is linked to chart of accounts INCA, fiscal year variant V3, posting period variant IN10, field status variant IN10 and leading ledger 0L. FSV INS3 from Project 01 sits on the chart of accounts.</desc>
+            <desc id="es-desc">Client 100 contains company IN00, which is assigned company code IN10. Company code IN10 is linked to chart of accounts INCA, fiscal year variant V3, posting period variant IN10, field status variant IN10 and leading ledger 0L. FSV INS3 from Part 5 sits on the chart of accounts.</desc>
             <defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="arrow" d="M0,0 L10,5 L0,10 z"/></marker></defs>
 
             <rect class="box" x="30" y="20" width="240" height="64" rx="6"/>
@@ -89,14 +87,14 @@
             <path class="edge" d="M150 84 V150" marker-end="url(#ah)"/>
             <rect class="box" x="30" y="152" width="240" height="64" rx="6"/>
             <text class="t1" x="48" y="179">Company IN00</text>
-            <text class="t2" x="48" y="199">Ananya Group · consolidation unit</text>
+            <text class="t2" x="48" y="199">XYZ Group · consolidation unit</text>
             <text class="tc" x="224" y="179" text-anchor="end">OX15</text>
 
             <path class="edge key" d="M150 216 V282" marker-end="url(#ah)"/>
             <text class="tc" x="160" y="254">OX16</text>
             <rect class="box key" x="30" y="284" width="240" height="80" rx="6"/>
             <text class="t1" x="48" y="312">Company code IN10</text>
-            <text class="t2" x="48" y="332">Ananya Manufacturing Pvt Ltd</text>
+            <text class="t2" x="48" y="332">XYZ Inc.</text>
             <text class="t2" x="48" y="350">Pune · INR · EN</text>
             <text class="tc" x="254" y="312" text-anchor="end">OX02</text>
 
@@ -108,7 +106,7 @@
 
             <rect class="box" x="420" y="24" width="310" height="56" rx="6"/>
             <text class="t1" x="436" y="48">Chart of accounts INCA</text>
-            <text class="t2" x="436" y="67">38 accounts · FSV INS3 on top (Project 01)</text>
+            <text class="t2" x="436" y="67">38 accounts · FSV INS3 on top (Part 5)</text>
             <text class="tc" x="716" y="48" text-anchor="end">OB13 · OB62</text>
 
             <rect class="box" x="420" y="94" width="310" height="56" rx="6"/>
@@ -142,16 +140,16 @@
         <div class="table-wrap"><table class="data">
           <thead><tr><th>#</th><th>T-code</th><th>Object</th><th>IN10 value</th><th>Why</th></tr></thead>
           <tbody>
-            <tr><td>1</td><td class="tc">OX15</td><td>Company</td><td>IN00 Ananya Group</td><td>Group-level unit for consolidation; one company can hold many company codes.</td></tr>
+            <tr><td>1</td><td class="tc">OX15</td><td>Company</td><td>IN00 XYZ Group</td><td>Group-level unit for consolidation; one company can hold many company codes.</td></tr>
             <tr><td>2</td><td class="tc">OX02</td><td>Company code</td><td>IN10, Pune, country IN, currency INR, language EN</td><td>The legal entity with its own balance sheet and P&amp;L.</td></tr>
             <tr><td>3</td><td class="tc">OX16</td><td>Assignment</td><td>IN10 → IN00</td><td>Links the entity to the group.</td></tr>
             <tr><td>4</td><td class="tc">FINSC_LEDGER</td><td>Ledger &amp; currencies</td><td>Leading ledger 0L; currency type 10 (INR)</td><td>In S/4HANA every posting writes one line to the Universal Journal (ACDOCA) per ledger.</td></tr>
             <tr><td>5</td><td class="tc">OB29 / OB37</td><td>Fiscal year variant</td><td>V3: Apr–Mar, 12 posting + 4 special periods → IN10</td><td>The Indian financial year. Special periods hold audit and year-end adjustments.</td></tr>
             <tr><td>6</td><td class="tc">OBBO / OBBP</td><td>Posting period variant</td><td>IN10 → IN10</td><td>A separate variant lets IN10 close its books on its own timetable.</td></tr>
             <tr><td>7</td><td class="tc">OB52</td><td>Open/close periods</td><td>Period 06/2026 open; 13–16/2025 restricted to group FICL</td><td>Stops back-dated postings and restricts prior-year adjustments to the closing team.</td></tr>
-            <tr><td>8</td><td class="tc">OBC4 / OBC5</td><td>Field status variant</td><td>IN10 (copy of 0001) → IN10</td><td>Controls which fields are required, optional or suppressed for each account group.</td></tr>
-            <tr><td>9</td><td class="tc">OB13 / OB62</td><td>Chart of accounts</td><td>INCA → IN10</td><td>The list of G/L accounts. Built in <a href="../fsv-month-end-close/#fs00">Project 01</a>.</td></tr>
-            <tr><td>10</td><td class="tc">OBY6</td><td>Global parameters</td><td>COA INCA, FYV V3, PPV IN10, FSV variant IN10; tax base is net value</td><td>A single screen to check that all the assignments are in place.</td></tr>
+            <tr><td>8</td><td class="tc">OBC4 / OBC5</td><td>Field status variant</td><td>IN10 (copy of 0001) → IN10</td><td>Controls which fields are required, optional or suppressed for each field status group used in FS00.</td></tr>
+            <tr><td>9</td><td class="tc">OB13 / OB62</td><td>Chart of accounts</td><td>INCA → IN10</td><td>The list of G/L accounts. Built in <a href="../fsv-month-end-close/#fs00">Part 5</a>.</td></tr>
+            <tr><td>10</td><td class="tc">OBY6</td><td>Global parameters</td><td>COA INCA, FYV V3, PPV IN10, field status variant IN10; tax base is net value</td><td>A single screen to check that all the assignments are in place.</td></tr>
             <tr><td>11</td><td class="tc">FBN1</td><td>Number ranges</td><td>01, 14, 15, 18, 19 for FY 2025 and 2026, internal</td><td>Every document gets a gap-free, auditable number for each fiscal year.</td></tr>
             <tr><td>12</td><td class="tc">OBA7</td><td>Document types</td><td>SA, AB, AA, KR, KZ, DR, DZ</td><td>Each type sets its number range, the account types it allows and its reversal type.</td></tr>
             <tr><td>13</td><td class="tc">OB41</td><td>Posting keys</td><td>40/50 G/L, 31/21 vendor, 01/15 customer (standard)</td><td>Posting keys set debit or credit, the account type and the screen layout. Reviewed, not changed.</td></tr>
@@ -189,7 +187,7 @@
             <tr><td class="acct">M (materials)</td><td class="acct">006/2026 – 006/2026</td><td></td><td></td></tr>
           </tbody>
         </table></div>
-        <p class="note">This is the state on 30.09.2026. At WD −2 of the September close (see <a href="../fsv-month-end-close/#close">Project 01 checklist</a>), the open interval is extended to 007/2026 so the F.81 reversals can post on 01.10.2026. Under V3, fiscal year 2026 means April 2026 to March 2027, and period 007 is October.</p>
+        <p class="note">This is the handover state, just before the September close starts. At WD −2 of the close (see <a href="../fsv-month-end-close/#close">Part 5 checklist</a>), the open interval is extended to 007/2026 so the F.81 reversals can post on 01.10.2026. Under V3, fiscal year 2026 means April 2026 to March 2027, and period 007 is October.</p>
       </div>
 
       <!-- ============================================================ -->
@@ -212,11 +210,11 @@
           <thead><tr><th>Range</th><th>FY</th><th>From</th><th>To</th><th>Current</th><th>Used by</th></tr></thead>
           <tbody>
             <tr><td class="acct">01</td><td>2025</td><td class="acct">0100000000</td><td class="acct">0199999999</td><td class="acct">0100009832</td><td>Closed year; special-period adjustments only</td></tr>
-            <tr><td class="acct">01</td><td>2026</td><td class="acct">0100000000</td><td class="acct">0199999999</td><td class="acct">0100000466</td><td>SA / AB / AA. Project 01's FBS1 and F.81 used 0100000451–466</td></tr>
+            <tr><td class="acct">01</td><td>2026</td><td class="acct">0100000000</td><td class="acct">0199999999</td><td class="acct">0100000450</td><td>SA / AB / AA. The next number, 0100000451, is Part 5's first FBS1 accrual (A1); its F.81 reversals later take 0100000461–466</td></tr>
             <tr><td class="acct">14</td><td>2026</td><td class="acct">1400000000</td><td class="acct">1499999999</td><td class="acct">1400000087</td><td>DZ</td></tr>
             <tr><td class="acct">15</td><td>2026</td><td class="acct">1500000000</td><td class="acct">1599999999</td><td class="acct">1500000122</td><td>KZ</td></tr>
             <tr><td class="acct">18</td><td>2026</td><td class="acct">1800000000</td><td class="acct">1899999999</td><td class="acct">1800000204</td><td>DR</td></tr>
-            <tr><td class="acct">19</td><td>2026</td><td class="acct">1900000000</td><td class="acct">1999999999</td><td class="acct">1900000123</td><td>KR. Project 01's FB60 true-up was 1900000123</td></tr>
+            <tr><td class="acct">19</td><td>2026</td><td class="acct">1900000000</td><td class="acct">1999999999</td><td class="acct">1900000122</td><td>KR. The next number, 1900000123, is Part 5's October FB60 true-up</td></tr>
           </tbody>
         </table></div>
         <div class="table-wrap"><table class="data">
@@ -254,21 +252,21 @@
         <div class="table-wrap"><table class="data">
           <thead><tr><th>ID</th><th>Scenario</th><th>Key input</th><th>Expected result</th></tr></thead>
           <tbody>
-            <tr><td class="acct">UT-01</td><td>G/L accrual in open period 06</td><td>SA · 30.09.2026 · CLERK01 · ₹1,20,000</td><td class="res-posted">Posted 0100000467</td></tr>
+            <tr><td class="acct">UT-01</td><td>G/L accrual in open period 06</td><td>SA · 30.09.2026 · CLERK01 · ₹1,20,000</td><td class="res-posted">Posted 0100000451</td></tr>
             <tr><td class="acct">UT-02</td><td>Posting into period 07 before it is opened</td><td>SA · 01.10.2026</td><td class="res-error">Posting period 007 2026 is not open</td></tr>
-            <tr><td class="acct">UT-02b</td><td>Same, after OB52 opens period 07</td><td>SA · 01.10.2026</td><td class="res-posted">Posted 0100000467</td></tr>
+            <tr><td class="acct">UT-02b</td><td>Same, after OB52 opens period 07</td><td>SA · 01.10.2026</td><td class="res-posted">Posted 0100000451</td></tr>
             <tr><td class="acct">UT-03</td><td>Cost account without cost center</td><td>Dr 621000 (G004), no cost center</td><td class="res-error">Field status: cost center required</td></tr>
             <tr><td class="acct">UT-04</td><td>Clerk above per-document limit</td><td>CLERK01 · ₹6,00,000</td><td class="res-error">Tolerance: limit ₹5,00,000</td></tr>
             <tr><td class="acct">UT-05</td><td>Vendor line on a G/L document</td><td>SA · Cr vendor 100001</td><td class="res-error">Account type K not allowed for SA</td></tr>
-            <tr><td class="acct">UT-06</td><td>Vendor invoice on the right type</td><td>KR · Cr vendor 100001 · ₹1,23,500</td><td class="res-posted">Posted 1900000124</td></tr>
-            <tr><td class="acct">UT-07</td><td>Prior-year audit adjustment by a clerk</td><td>31.03.2026 · special period 13 · CLERK01</td><td class="res-error">Period 013 2025 restricted to group FICL</td></tr>
+            <tr><td class="acct">UT-06</td><td>Vendor invoice on the right type</td><td>KR · Cr vendor 100001 · ₹1,23,500</td><td class="res-posted">Posted 1900000123</td></tr>
+            <tr><td class="acct">UT-07</td><td>Prior-year audit adjustment by a clerk</td><td>31.03.2026 · special period 13 · CLERK01 · Dr 631000 audit fees ₹2,50,000</td><td class="res-error">Period 013 2025 restricted to group FICL</td></tr>
             <tr><td class="acct">UT-08</td><td>Same adjustment by closing-team manager</td><td>31.03.2026 · period 13 · MGR01</td><td class="res-posted">Posted 0100009833 (FY 2025)</td></tr>
             <tr><td class="acct">UT-09</td><td>EUR posting, no exchange rate</td><td>EUR 1,500</td><td class="res-error">No rate type M for EUR → INR</td></tr>
-            <tr><td class="acct">UT-10</td><td>USD posting translated</td><td>USD 1,500 @ 85.40</td><td class="res-posted">Posted 0100000467 (₹1,28,100)</td></tr>
+            <tr><td class="acct">UT-10</td><td>USD posting translated</td><td>USD 1,500 @ 85.40</td><td class="res-posted">Posted 0100000451 (₹1,28,100)</td></tr>
             <tr><td class="acct">UT-11</td><td>Unassigned user</td><td>TEMP01 · ₹1,50,000</td><td class="res-error">Tolerance: blank group limit ₹1,00,000</td></tr>
           </tbody>
         </table></div>
-        <p class="note">Each test runs on its own against the starting configuration, which is why several "Posted" results show the same next number. Messages are simulated in plain language and aren't copied from SAP message texts.</p>
+        <p class="note">Each test runs on its own against the starting configuration, which is why several "Posted" results show the same next number. UT-01 predicts 0100000451, the number Part 5's accrual A1 then received. Messages are simulated in plain language and aren't copied from SAP message texts.</p>
       </div>
 
       <!-- ============================================================ -->
@@ -302,7 +300,7 @@
       <div class="cs-section" id="data">
         <p class="eyebrow">Data</p>
         <h2>Download the configuration</h2>
-        <p>A Python script generated these files. It asserts that number ranges don't overlap, that every document type has a range, that Project 01's document numbers fall inside those ranges, and that every unit test's expected result matches the simulator.</p>
+        <p>A Python script generated these files. It asserts that number ranges don't overlap, that every document type has a range, that Part 5's document numbers fall inside those ranges, and that every unit test's expected result matches the simulator.</p>
         <div class="downloads">
           <a href="data/01_org_objects.csv">01_org_objects.csv <span>11 rows</span></a>
           <a href="data/02_fiscal_year_variant_V3.csv">02_fiscal_year_variant_V3.csv <span>16</span></a>

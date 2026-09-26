@@ -4,10 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Ananya Patel · Finance & SAP FICO</title>
-<meta name="description" content="Portfolio of Ananya Patel: MBA Finance graduate with SAP S/4HANA FICO, Power BI and Excel projects: FSV design, month-end close, procure-to-pay and financial analysis.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Schibsted+Grotesk:wght@600;700&display=swap">
+<meta name="description" content="Portfolio of Ananya Patel: MBA Finance graduate with SAP S/4HANA FICO, Power BI and Excel projects: FSV design, month-end close, procure-to-pay, order-to-cash, asset accounting and financial analysis.">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Carlito:ital,wght@0,400;0,700;1,400&display=swap">
 <link rel="stylesheet" href="assets/css/style.css">
 <script src="assets/js/main.js"></script>
 </head>
@@ -20,9 +18,9 @@
       <a href="#about" class="hide-sm">About</a>
       <a href="#experience" class="hide-sm">Experience</a>
       <a href="#projects">Projects</a>
-      <a href="#contact">Contact</a>
+      <a href="resume.html">Résumé</a>
+      <a href="#contact" class="hide-sm">Contact</a>
     </nav>
-    <button class="theme-btn" type="button" data-theme-toggle>Dark mode</button>
   </div>
 </header>
 
@@ -34,26 +32,10 @@
         <h1 id="hero-title">Ananya Patel</h1>
         <p class="lede">MBA Finance graduate who builds the ledger behind the report: chart of accounts, financial statement versions, month-end close in SAP, then the analysis in Excel and Power BI.</p>
         <div class="hero-actions">
-          <a class="btn btn-primary" href="projects/fsv-month-end-close/">View FSV &amp; Close project</a>
-          <a class="btn btn-ghost" href="#contact">Get in touch</a>
+          <a class="btn btn-primary" href="#projects">View projects</a>
+          <a class="btn btn-ghost" href="resume.html">View résumé</a>
         </div>
-      </div>
-
-      <figure class="je" aria-label="Example journal entry from the month-end close project">
-        <div class="je-head">
-          <span>FBS1 · Doc 0100000451 · Type SA</span>
-          <span>IN10 · 30.09.2026 · P06</span>
-        </div>
-        <table>
-          <thead><tr><th>G/L</th><th>Account</th><th>Dr ₹</th><th>Cr ₹</th></tr></thead>
-          <tbody>
-            <tr><td>621000</td><td>Power &amp; Fuel</td><td>1,20,000</td><td></td></tr>
-            <tr class="cr"><td>219500</td><td>Accrued Expenses</td><td></td><td>1,20,000</td></tr>
-          </tbody>
-          <tfoot><tr><td></td><td>Reverses 01.10.2026 via F.81</td><td>1,20,000</td><td class="ok">1,20,000 ✓</td></tr></tfoot>
-        </table>
-      </figure>
-    </div>
+      </div>    </div>
   </section>
 
   <section id="about" aria-labelledby="about-title">
@@ -142,28 +124,32 @@
       <header>
         <p class="eyebrow">Projects</p>
         <h2 id="proj-title">Portfolio work</h2>
-        <p class="muted prose">Each SAP project uses one fictional company code (IN10, Ananya Manufacturing Pvt Ltd) and runs from configuration to postings, statements and analysis.</p>
       </header>
       <div class="projects">
-        <article class="project featured">
-          <span class="p-num">01</span>
+        <article class="project">
           <div class="p-body">
-            <p class="eyebrow">SAP FI · General Ledger</p>
-            <h3>Financial Statement Version &amp; Month-End Close</h3>
-            <p class="muted">Built a 38-account chart of accounts (FS00) and a Schedule III FSV (OB58) that produces a balancing Balance Sheet and P&amp;L. Then ran the September close: six FBS1 accruals and deferrals, reversed on day 1 with F.81. The close lowers PAT by ₹2.74 lakh, and the current ratio moves from 2.68 to 2.56.</p>
-            <div class="chips"><span class="chip">FS00</span><span class="chip">OB58</span><span class="chip">FBS1</span><span class="chip">F.81</span><span class="chip">Power BI</span></div>
+            <p class="eyebrow">MBA research · Markets</p>
+            <h3>1. Global Gold Market: Price Drivers and Investment Role</h3>
+            <p class="muted">Analysed global gold price trends and how inflation, interest rates, exchange rates and economic uncertainty move the price. Evaluated gold as a safe-haven and investment asset using secondary research on global demand and supply.</p>
+            <div class="chips"><span class="chip">Macro analysis</span><span class="chip">Excel</span><span class="chip">Secondary research</span></div>
           </div>
           <div class="p-links">
-            <span class="status live">Live</span>
-            <a href="projects/fsv-month-end-close/">Case study →</a>
-            <a href="projects/fsv-month-end-close/statements.html">Live statements →</a>
+            <span class="status live">Research</span>
+            <a href="projects/gold-market-research/">Case study →</a>
           </div>
         </article>
 
-        <article class="project featured">
-          <span class="p-num">02</span>
+        <div class="project self-project">
           <div class="p-body">
-            <p class="eyebrow">SAP FI · Enterprise structure &amp; global settings</p>
+            <p class="eyebrow">Self project · SAP S/4HANA FICO · Sep 2026, during SAP FICO training (AppliSAP)</p>
+            <h3>2. SAP S/4HANA FICO End-to-End Implementation: XYZ Inc.</h3>
+            <p class="muted">One fictional company code (IN10) set up and run end to end, in five parts that follow the order of the work. Every part posts into the same set of books, so the supplier, customer and asset balances all tie to the 30 September Balance Sheet and P&amp;L in Part 5.</p>
+          </div>
+        </div>
+        <div class="parts">
+        <article class="project">
+          <div class="p-body">
+            <p class="eyebrow">Part 1 of 5 · SAP FI · Enterprise structure &amp; global settings</p>
             <h3>End-to-End Financial Accounting Setup</h3>
             <p class="muted">Configured company code IN10 from a blank client to its first valid posting: company, ledger 0L, fiscal year variant V3, posting periods with a restricted audit period, field status, document types, number ranges and tolerance groups. Twelve unit tests prove each control, and a posting simulator runs them.</p>
             <div class="chips"><span class="chip">OX02</span><span class="chip">OB29</span><span class="chip">OB52</span><span class="chip">OBA7</span><span class="chip">FBN1</span><span class="chip">OBA4</span></div>
@@ -174,13 +160,11 @@
             <a href="projects/fi-enterprise-structure/validator.html">Posting simulator →</a>
           </div>
         </article>
-
-        <article class="project featured">
-          <span class="p-num">03</span>
+        <article class="project">
           <div class="p-body">
-            <p class="eyebrow">SAP MM–FI integration · Accounts Payable</p>
+            <p class="eyebrow">Part 2 of 5 · SAP MM–FI integration · Accounts Payable</p>
             <h3>Procure-to-Pay (P2P)</h3>
-            <p class="muted">Ran a purchase end to end in IN10: requisition, PO, two goods receipts, a three-way-matched MIRO invoice with GST input credit and TDS 194Q, then an F110 payment. Configured OBYC account determination, OMR6 tolerances and the payment program. Twelve unit tests cover blocks, duplicates and due dates, and the GR/IR balance ties to Project 01's trial balance.</p>
+            <p class="muted">Ran a purchase end to end in IN10: requisition, PO, two goods receipts, a three-way-matched MIRO invoice with GST input credit, then an F110 payment. Configured OBYC account determination, OMR6 tolerances and the payment program. Twelve unit tests cover blocks, duplicates and due dates, and the GR/IR balance ties to Part 5's trial balance.</p>
             <div class="chips"><span class="chip">ME21N</span><span class="chip">MIGO</span><span class="chip">MIRO</span><span class="chip">OBYC</span><span class="chip">OMR6</span><span class="chip">F110</span></div>
           </div>
           <div class="p-links">
@@ -189,17 +173,46 @@
             <a href="projects/procure-to-pay/simulator.html">P2P simulator →</a>
           </div>
         </article>
-
         <article class="project">
-          <span class="p-num">04</span>
           <div class="p-body">
-            <p class="eyebrow">MBA research · Markets</p>
-            <h3>Global Gold Market: Price Drivers and Investment Role</h3>
-            <p class="muted">Analysed global gold price trends and how inflation, interest rates, exchange rates and economic uncertainty move the price. Evaluated gold as a safe-haven and investment asset using secondary research on global demand and supply.</p>
-            <div class="chips"><span class="chip">Macro analysis</span><span class="chip">Excel</span><span class="chip">Secondary research</span></div>
+            <p class="eyebrow">Part 3 of 5 · SAP SD–FI integration · Accounts Receivable</p>
+            <h3>Order-to-Cash (O2C)</h3>
+            <p class="muted">Ran a sale end to end in IN10: a sales order through SAP Credit Management, delivery and goods issue, a GST invoice from billing with VKOA revenue accounts, then an incoming payment with 2% cash discount and the customer's TDS. Twelve unit tests cover credit blocks, stock, billing errors and payment tolerances, and the customer open items tie to Part 5's receivables.</p>
+            <div class="chips"><span class="chip">VA01</span><span class="chip">VL02N</span><span class="chip">VF01</span><span class="chip">VKOA</span><span class="chip">UKM_BP</span><span class="chip">F-28</span></div>
           </div>
-          <div class="p-links"><span class="status">Research</span></div>
+          <div class="p-links">
+            <span class="status live">Live</span>
+            <a href="projects/order-to-cash/">Case study →</a>
+            <a href="projects/order-to-cash/simulator.html">O2C simulator →</a>
+          </div>
         </article>
+        <article class="project">
+          <div class="p-body">
+            <p class="eyebrow">Part 4 of 5 · SAP FI-AA · Asset Accounting</p>
+            <h3>Asset Accounting: Acquisition to Depreciation</h3>
+            <p class="muted">Set up Asset Accounting for IN10: chart of depreciation with a Companies Act book area and an Income Tax Act area, asset classes, depreciation keys and AO90 account determination. Bought a machine through an AUC and capitalised it, sold an old lathe at a profit and ran AFAB. Twelve unit tests cover periods, tolerances and the year-end close, and the asset register ties to Part 5's fixed assets and depreciation.</p>
+            <div class="chips"><span class="chip">AS01</span><span class="chip">F-90</span><span class="chip">AIBU</span><span class="chip">F-92</span><span class="chip">AFAB</span><span class="chip">AO90</span></div>
+          </div>
+          <div class="p-links">
+            <span class="status live">Live</span>
+            <a href="projects/asset-accounting/">Case study →</a>
+            <a href="projects/asset-accounting/simulator.html">Asset simulator →</a>
+          </div>
+        </article>
+        <article class="project">
+          <div class="p-body">
+            <p class="eyebrow">Part 5 of 5 · SAP FI · General Ledger</p>
+            <h3>Financial Statement Version &amp; Month-End Close</h3>
+            <p class="muted">Built a 38-account chart of accounts (FS00) and a Schedule III FSV (OB58) that produces a balancing Balance Sheet and P&amp;L. Then ran the September close: six FBS1 accruals and deferrals, reversed on day 1 with F.81. The close lowers PAT by ₹2.74 lakh, and the current ratio moves from 2.68 to 2.56.</p>
+            <div class="chips"><span class="chip">FS00</span><span class="chip">OB58</span><span class="chip">FBS1</span><span class="chip">F.81</span><span class="chip">Power BI</span></div>
+          </div>
+          <div class="p-links">
+            <span class="status live">Live</span>
+            <a href="projects/fsv-month-end-close/">Case study →</a>
+            <a href="projects/fsv-month-end-close/statements.html">Live statements →</a>
+          </div>
+        </article>
+        </div>
       </div>
     </div>
   </section>
@@ -216,6 +229,10 @@
           <span class="label">Email</span>
           <a class="value" href="mailto:ananyaapatel101@gmail.com">ananyaapatel101@gmail.com</a>
           <button class="theme-btn copy-btn" type="button" data-copy="ananyaapatel101@gmail.com">Copy</button>
+        </div>
+        <div class="contact-row">
+          <span class="label">Résumé</span>
+          <a class="value" href="resume.html">View or print as PDF</a>
         </div>
         <div class="contact-row">
           <span class="label">LinkedIn</span>

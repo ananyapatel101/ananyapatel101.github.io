@@ -1,0 +1,5 @@
+Customer,Name,City,Region,BP_Roles,Recon_Account,Payment_Terms,Tolerance_Group,Acct_Assignment_Group,Tax_Classification,K007_Pct,Deducts_TDS_194Q
+200001,Kalinga Auto Components,Cuttack,21 Odisha,FLCU00 FLCU01 UKM000,141000,IN02,IN10,01,1 (taxable),3,X
+200002,Pune Precision Tools,Pune,27 Maharashtra,FLCU00 FLCU01 UKM000,141000,IN02,IN10,01,1 (taxable),2,
+200003,Deccan Tractors Ltd,Hyderabad,36 Telangana,FLCU00 FLCU01 UKM000,141000,IN02,IN10,01,1 (taxable),0,
+200004,Nashik Pumps & Valves,Nashik,27 Maharashtra,FLCU00 FLCU01 UKM000,141000,IN02,IN10,01,1 (taxable),0,

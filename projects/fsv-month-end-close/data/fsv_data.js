@@ -2,7 +2,7 @@
 window.FSV_DATA = {
  "asOf": "2026-09-30",
  "companyCode": "IN10",
- "company": "Ananya Manufacturing Pvt Ltd (fictional)",
+ "company": "XYZ Inc. (fictional)",
  "coa": "INCA",
  "fsv": "INS3",
  "accounts": [
@@ -717,7 +717,7 @@ window.FSV_DATA = {
   {
    "id": "PL.TAX",
    "parent": "PL",
-   "text": "VI. Tax expense",
+   "text": "X. Tax expense",
    "level": 2,
    "sort": 4,
    "side": "PL",
@@ -843,7 +843,7 @@ window.FSV_DATA = {
   },
   {
    "Document": "0100000461",
-   "Doc_Type": "SA",
+   "Doc_Type": "AB",
    "TCode": "F.81",
    "Posting_Date": "2026-10-01",
    "Fiscal_Period": "P07",
@@ -859,7 +859,7 @@ window.FSV_DATA = {
   },
   {
    "Document": "0100000461",
-   "Doc_Type": "SA",
+   "Doc_Type": "AB",
    "TCode": "F.81",
    "Posting_Date": "2026-10-01",
    "Fiscal_Period": "P07",
@@ -907,7 +907,7 @@ window.FSV_DATA = {
   },
   {
    "Document": "0100000462",
-   "Doc_Type": "SA",
+   "Doc_Type": "AB",
    "TCode": "F.81",
    "Posting_Date": "2026-10-01",
    "Fiscal_Period": "P07",
@@ -923,7 +923,7 @@ window.FSV_DATA = {
   },
   {
    "Document": "0100000462",
-   "Doc_Type": "SA",
+   "Doc_Type": "AB",
    "TCode": "F.81",
    "Posting_Date": "2026-10-01",
    "Fiscal_Period": "P07",
@@ -971,7 +971,7 @@ window.FSV_DATA = {
   },
   {
    "Document": "0100000463",
-   "Doc_Type": "SA",
+   "Doc_Type": "AB",
    "TCode": "F.81",
    "Posting_Date": "2026-10-01",
    "Fiscal_Period": "P07",
@@ -987,7 +987,7 @@ window.FSV_DATA = {
   },
   {
    "Document": "0100000463",
-   "Doc_Type": "SA",
+   "Doc_Type": "AB",
    "TCode": "F.81",
    "Posting_Date": "2026-10-01",
    "Fiscal_Period": "P07",
@@ -1035,7 +1035,7 @@ window.FSV_DATA = {
   },
   {
    "Document": "0100000464",
-   "Doc_Type": "SA",
+   "Doc_Type": "AB",
    "TCode": "F.81",
    "Posting_Date": "2026-10-01",
    "Fiscal_Period": "P07",
@@ -1051,7 +1051,7 @@ window.FSV_DATA = {
   },
   {
    "Document": "0100000464",
-   "Doc_Type": "SA",
+   "Doc_Type": "AB",
    "TCode": "F.81",
    "Posting_Date": "2026-10-01",
    "Fiscal_Period": "P07",
@@ -1099,7 +1099,7 @@ window.FSV_DATA = {
   },
   {
    "Document": "0100000465",
-   "Doc_Type": "SA",
+   "Doc_Type": "AB",
    "TCode": "F.81",
    "Posting_Date": "2026-10-01",
    "Fiscal_Period": "P07",
@@ -1115,7 +1115,7 @@ window.FSV_DATA = {
   },
   {
    "Document": "0100000465",
-   "Doc_Type": "SA",
+   "Doc_Type": "AB",
    "TCode": "F.81",
    "Posting_Date": "2026-10-01",
    "Fiscal_Period": "P07",
@@ -1163,7 +1163,7 @@ window.FSV_DATA = {
   },
   {
    "Document": "0100000466",
-   "Doc_Type": "SA",
+   "Doc_Type": "AB",
    "TCode": "F.81",
    "Posting_Date": "2026-10-01",
    "Fiscal_Period": "P07",
@@ -1179,7 +1179,7 @@ window.FSV_DATA = {
   },
   {
    "Document": "0100000466",
-   "Doc_Type": "SA",
+   "Doc_Type": "AB",
    "TCode": "F.81",
    "Posting_Date": "2026-10-01",
    "Fiscal_Period": "P07",

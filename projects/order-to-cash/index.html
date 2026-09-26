@@ -1,0 +1,398 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Order-to-Cash · Ananya Patel</title>
+<meta name="description" content="SAP S/4HANA case study: order-to-cash in company code IN10, from sales order to incoming payment, with credit management, GST pricing, VKOA revenue account determination, cash discount, customer TDS and a 12-case unit-test script.">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Carlito:ital,wght@0,400;0,700;1,400&display=swap">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script src="../../assets/js/main.js"></script>
+<style>
+  :root { --warning-text: #8a5a00; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --warning-text: #fab219; } }
+  :root[data-theme="dark"] { --warning-text: #fab219; }
+  .flow { min-width: 720px; display: block; width: 100%; height: auto; }
+  .flow .box { fill: var(--surface); stroke: var(--rule-strong); stroke-width: 1; }
+  .flow .box.key { fill: var(--accent-wash); stroke: var(--accent); stroke-width: 1.5; }
+  .flow .box.ref { fill: var(--surface-2); stroke: var(--rule-strong); stroke-dasharray: 4 3; }
+  .flow .t1 { fill: var(--ink); font: 600 14px var(--f-body); }
+  .flow .t2 { fill: var(--ink-2); font: 400 12px var(--f-body); }
+  .flow .tc { fill: var(--accent); font: 600 11px var(--f-mono); }
+  .flow .m { fill: var(--ink); font: 400 11.5px var(--f-mono); }
+  .flow .m.dr { fill: var(--debit); } .flow .m.cr { fill: var(--credit); }
+  .flow .edge { stroke: var(--rule-strong); stroke-width: 1.5; fill: none; }
+  .flow .edge.key { stroke: var(--accent); }
+  .flow .arrow { fill: var(--rule-strong); }
+  .res-posted { color: var(--good-text); font-weight: 600; }
+  .res-warn { color: var(--warning-text); font-weight: 600; }
+  .res-error { color: var(--critical); font-weight: 600; }
+  table.data tr.sub td { color: var(--ink-2); }
+  .flow .m { font-size: 10.5px; }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../../">Ananya Patel<span>.</span></a>
+    <nav class="nav" aria-label="Main">
+      <a href="../../#projects">Projects</a>
+      <a href="../../resume.html" class="hide-sm">Résumé</a>
+      <a href="simulator.html">O2C simulator</a>
+      <a href="../../#contact" class="hide-sm">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="cs-hero">
+    <div class="wrap">
+      <p class="eyebrow">SAP FICO self project · Part 3 of 5 · SAP S/4HANA SD–FI integration · Accounts Receivable</p>
+      <h1>Order-to-Cash (O2C)</h1>
+      <p class="muted prose" style="font-size:var(--t-lg)">I set up and ran the full sales cycle for company code IN10: a sales order with a credit check, a delivery and goods issue, a GST invoice from billing, and an incoming payment with cash discount and the customer's TDS. The work covers the sales org structure, pricing, VKOA revenue account determination, SAP Credit Management and payment tolerances, and a 12-case unit-test script proves each control. The customer open items behind it add up to the ₹64,80,000 of trade receivables in Part 5's trial balance.</p>
+      <div class="cs-meta">
+        <span class="chip strong">VA01</span><span class="chip strong">VL01N / VL02N</span><span class="chip strong">VF01</span><span class="chip strong">F-28</span>
+        <span class="chip strong">VKOA</span><span class="chip strong">UKM_BP</span><span class="chip">V/08</span><span class="chip">OBXI</span><span class="chip">OBA3</span><span class="chip">FBL5N</span>
+      </div>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="simulator.html">Open O2C simulator</a>
+        <a class="btn btn-ghost" href="#tests">See the unit tests</a>
+      </div>
+    </div>
+  </section>
+
+  <div class="wrap cs-layout">
+    <nav class="toc" aria-label="On this page">
+      <a href="#flow">Document flow</a>
+      <a href="#workbook">Configuration workbook</a>
+      <a href="#order">Integration rules</a>
+      <a href="#vkoa">Account determination</a>
+      <a href="#postings">Journal entries</a>
+      <a href="#pricing">Pricing &amp; GST</a>
+      <a href="#credit">Credit management</a>
+      <a href="#receipt">Incoming payment</a>
+      <a href="#aging">AR at month-end</a>
+      <a href="#tests">Unit test script</a>
+      <a href="#business">Business impact</a>
+      <a href="#interview">Interview guide</a>
+      <a href="#data">Data</a>
+    </nav>
+
+    <article>
+      <!-- ============================================================ -->
+      <div class="cs-section" id="flow">
+        <p class="eyebrow">Scenario</p>
+        <h2>One sale, five documents, three ledger entries</h2>
+        <p>Kalinga Auto Components (customer 200001, Cuttack, Odisha) orders 1,000 brake drums (FG-2001) from XYZ Inc. (IN10) at ₹2,000 each, less its 3% customer discount. The Pune plant (IN11) ships them on 5 October, billing raises a GST invoice the same day, and the customer pays nine days later, taking the 2% early-payment discount and deducting TDS. All data is fictional.</p>
+        <div class="table-wrap" style="padding:var(--s-4)">
+          <svg class="flow" viewBox="0 0 894 340" role="img" aria-labelledby="flow-title flow-desc">
+            <title id="flow-title">Order-to-cash document flow for sales order 0000010452</title>
+            <desc id="flow-desc">Sales order 0000010452 and delivery 0080010317 make no ledger entry. Goods issue debits cost of goods sold 531000 and credits finished goods 132000 for 14,50,000. The invoice 1800000205 debits the customer 22,89,200 and sales deductions 60,000, and credits sales 20,00,000 and output GST 3,49,200. The payment 1400000088 debits bank clearing 22,48,460, cash discount 38,800 and TDS receivable 1,940, and credits the customer 22,89,200, so the customer item is cleared.</desc>
+            <defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="arrow" d="M0,0 L10,5 L0,10 z"/></marker></defs>
+
+            <rect class="box" x="12" y="16" width="150" height="84" rx="6"/>
+            <text class="tc" x="26" y="38">VA01</text>
+            <text class="t1" x="26" y="58">Sales order</text>
+            <text class="t2" x="26" y="76">0000010452</text>
+            <text class="t2" x="26" y="92">01.10 · credit check</text>
+
+            <path class="edge" d="M162 58 H190" marker-end="url(#ah)"/>
+            <rect class="box" x="192" y="16" width="150" height="84" rx="6"/>
+            <text class="tc" x="206" y="38">VL01N</text>
+            <text class="t1" x="206" y="58">Delivery</text>
+            <text class="t2" x="206" y="76">0080010317</text>
+            <text class="t2" x="206" y="92">05.10 · 1,000 EA</text>
+
+            <path class="edge" d="M342 58 H370" marker-end="url(#ah)"/>
+            <rect class="box key" x="372" y="16" width="150" height="84" rx="6"/>
+            <text class="tc" x="386" y="38">VL02N · 601</text>
+            <text class="t1" x="386" y="58">Goods issue</text>
+            <text class="t2" x="386" y="76">4900000612</text>
+            <text class="t2" x="386" y="92">05.10.2026</text>
+
+            <path class="edge" d="M522 58 H550" marker-end="url(#ah)"/>
+            <rect class="box key" x="552" y="16" width="150" height="84" rx="6"/>
+            <text class="tc" x="566" y="38">VF01 · F2</text>
+            <text class="t1" x="566" y="58">Invoice</text>
+            <text class="t2" x="566" y="76">1800000205</text>
+            <text class="t2" x="566" y="92">05.10 · IGST 18%</text>
+
+            <path class="edge" d="M702 58 H730" marker-end="url(#ah)"/>
+            <rect class="box key" x="732" y="16" width="150" height="84" rx="6"/>
+            <text class="tc" x="746" y="38">F-28</text>
+            <text class="t1" x="746" y="58">Payment</text>
+            <text class="t2" x="746" y="76">1400000088</text>
+            <text class="t2" x="746" y="92">14.10 · day 9</text>
+
+            <path class="edge" d="M87 100 V138"/><path class="edge" d="M267 100 V138"/>
+            <rect class="box ref" x="12" y="140" width="330" height="62" rx="6"/>
+            <text class="t1" x="28" y="166">No ledger entry</text>
+            <text class="t2" x="28" y="186">Order and delivery are logistics documents only</text>
+
+            <path class="edge" d="M447 100 V138" marker-end="url(#ah)"/>
+            <rect class="box" x="372" y="140" width="150" height="62" rx="6"/>
+            <text class="m dr" x="386" y="164">Dr 531000</text><text class="m" x="510" y="164" text-anchor="end">14,50,000</text>
+            <text class="m cr" x="386" y="186">Cr 132000</text><text class="m" x="510" y="186" text-anchor="end">14,50,000</text>
+
+            <path class="edge" d="M627 100 V138" marker-end="url(#ah)"/>
+            <rect class="box" x="552" y="140" width="150" height="112" rx="6"/>
+            <text class="m dr" x="566" y="164">Dr 200001</text><text class="m" x="690" y="164" text-anchor="end">22,89,200</text>
+            <text class="m dr" x="566" y="186">Dr 412000</text><text class="m" x="690" y="186" text-anchor="end">60,000</text>
+            <text class="m cr" x="566" y="208">Cr 411000</text><text class="m" x="690" y="208" text-anchor="end">20,00,000</text>
+            <text class="m cr" x="566" y="230">Cr 221000</text><text class="m" x="690" y="230" text-anchor="end">3,49,200</text>
+
+            <path class="edge" d="M807 100 V138" marker-end="url(#ah)"/>
+            <rect class="box" x="732" y="140" width="150" height="112" rx="6"/>
+            <text class="m dr" x="746" y="164">Dr 171200</text><text class="m" x="870" y="164" text-anchor="end">22,48,460</text>
+            <text class="m dr" x="746" y="186">Dr 663000</text><text class="m" x="870" y="186" text-anchor="end">38,800</text>
+            <text class="m dr" x="746" y="208">Dr 162000</text><text class="m" x="870" y="208" text-anchor="end">1,940</text>
+            <text class="m cr" x="746" y="230">Cr 200001</text><text class="m" x="870" y="230" text-anchor="end">22,89,200</text>
+
+            <path class="edge key" d="M627 252 V286 H807 V252"/>
+            <text class="tc" x="717" y="306" text-anchor="middle">Customer 200001: Dr 22,89,200 at billing,</text>
+            <text class="tc" x="717" y="322" text-anchor="middle">Cr 22,89,200 at payment → cleared</text>
+          </svg>
+        </div>
+        <p class="note">Goods issue values the drums at the ₹1,450 standard cost, so the sale earns ₹19,40,000 − ₹14,50,000 = ₹4,90,000 gross margin (25.3%). Blue lines are debits and orange lines are credits.</p>
+      </div>
+
+      <!-- ============================================================ -->
+      <div class="cs-section" id="workbook">
+        <p class="eyebrow">Deliverable · configuration workbook</p>
+        <h2>Configuration steps, in dependency order</h2>
+        <p>These steps build on Part 1's company code, periods and tolerance groups, and on Part 2's plant IN11 and valuation settings. Each row states what was configured for IN10 and why.</p>
+        <div class="table-wrap"><table class="data">
+          <thead><tr><th>#</th><th>T-code</th><th>Object</th><th>IN10 value</th><th>Why</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td class="tc">OVX5 / OVX3</td><td>Sales organisation</td><td>IN10 → company code IN10</td><td>The unit that sells and is liable for the sale. Its company code decides whose books get the revenue.</td></tr>
+            <tr><td>2</td><td class="tc">OVXI / OVXB / OVXG</td><td>Channel, division, sales area</td><td>Channel 10 direct to OEMs, division 00; sales area IN10/10/00</td><td>Pricing, customer data and reporting all hang off the sales area.</td></tr>
+            <tr><td>3</td><td class="tc">OVX6</td><td>Plant to sales area</td><td>IN11 → IN10/10</td><td>A sales area can only deliver from plants assigned to it.</td></tr>
+            <tr><td>4</td><td class="tc">OVXD / OVXC / OVL2</td><td>Shipping point</td><td>IN11 Pune dispatch bay → plant IN11, determined by shipping condition and loading group</td><td>The delivery needs a shipping point before it can be created.</td></tr>
+            <tr><td>5</td><td class="tc">OB45 / OB38 / UKM</td><td>Credit control</td><td>Credit control area IN10 → company code; credit segment IN10</td><td>SAP Credit Management keeps limits and exposure per segment.</td></tr>
+            <tr><td>6</td><td class="tc">OVAK / OVAD</td><td>Credit check on documents</td><td>Order type OR: check D (SAP Credit Management); delivery LF: credit group 02</td><td>Switches the check on for sales orders and again at delivery.</td></tr>
+            <tr><td>7</td><td class="tc">BP (UKM000)</td><td>Credit master</td><td>Limits: 200001 ₹52 lakh, 200002 ₹40 lakh, 200003 ₹25 lakh, 200004 ₹20 lakh; rule: block if an item is over 60 days overdue</td><td>The limit and the overdue rule are checked on every save.</td></tr>
+            <tr><td>8</td><td class="tc">OMSK / MM01</td><td>Material master</td><td>FG-2001, type FERT, valuation class 7920, price control S at ₹1,450; account assignment group 01; tax classification 1</td><td>Valuation class drives OBYC; the account assignment group drives VKOA.</td></tr>
+            <tr><td>9</td><td class="tc">BP (FLCU00/FLCU01)</td><td>Customer master</td><td>200001–200004: recon 141000, terms IN02, tolerance group IN10, account assignment group 01, region</td><td>Region decides IGST or CGST + SGST; recon account links AR to the G/L.</td></tr>
+            <tr><td>10</td><td class="tc">V/08 / OVKK</td><td>Pricing procedure</td><td>ZIN001 (copy of RVAA01): PR00, K007, JOCG, JOSG, JOIG; determined for IN10/10/00, document procedure A, customer procedure 1</td><td>Each condition carries the account key that sends it to the G/L.</td></tr>
+            <tr><td>11</td><td class="tc">VK11</td><td>Condition records</td><td>PR00 ₹2,000/EA; K007 3% (200001), 2% (200002); GST by region</td><td>The actual prices, discounts and tax rates.</td></tr>
+            <tr><td>12</td><td class="tc">FS00 / OB58</td><td>New G/L accounts, FSV</td><td>162000, 171200, 412000, 531000, 663000, 664000; INS3 gets a new item for 531000</td><td>531000 falls outside every Part 5 range (see the <a href="#order">integration rules</a>).</td></tr>
+            <tr><td>13</td><td class="tc">VKOA</td><td>Revenue account determination</td><td>KOFI, table 001 (customer and material account assignment groups): ERL → 411000, ERS → 412000</td><td>Billing finds revenue accounts on its own.</td></tr>
+            <tr><td>14</td><td class="tc">OBYC</td><td>Goods issue accounts</td><td>BSX 7920 → 132000; GBB modifier VAX → 531000</td><td>Movement 601 credits FG stock and debits cost of goods sold.</td></tr>
+            <tr><td>15</td><td class="tc">OB40</td><td>Output tax accounts</td><td>JOI, JOC, JOS → 221000</td><td>Output GST collects in one liability account for the GST return.</td></tr>
+            <tr><td>16</td><td class="tc">VOFA / OBA7 / FBN1</td><td>Document types</td><td>Billing F2 → RV (range 18, shared with DR); goods issue WL → range 49 for FY 2026</td><td>Extends <a href="../fi-enterprise-structure/#documents">Part 1's document control</a> to SD documents.</td></tr>
+            <tr><td>17</td><td class="tc">OBB8 / OBY6</td><td>Payment terms</td><td>IN02: 2% within 10 days, net 30; discount base is net of tax</td><td>Rewards early payment; the discount is not worked out on GST.</td></tr>
+            <tr><td>18</td><td class="tc">OBXI / OBXL</td><td>Discount and difference accounts</td><td>SKT → 663000; ZDI → 664000</td><td>F-28 posts discounts and small differences without a manual line.</td></tr>
+            <tr><td>19</td><td class="tc">OBA3</td><td>Customer tolerance group</td><td>IN10: payment difference ₹500 or 0.5%, whichever is lower</td><td>Small bank charges are written off; bigger gaps become residual items.</td></tr>
+            <tr><td>20</td><td class="tc">WHT / OBWW</td><td>Customer TDS</td><td>WHT type QC, 194Q deducted by customers, 0.1% → 162000</td><td>Buyers with turnover above ₹10 crore deduct TDS on purchases above ₹50 lakh from one seller; IN10 claims it back against its own income tax. (IN10 itself is below ₹10 crore, so it deducts none in Part 2.)</td></tr>
+          </tbody>
+        </table></div>
+      </div>
+
+      <!-- ============================================================ -->
+      <div class="cs-section" id="order">
+        <div class="callout">
+          <p class="eyebrow">Rule · SD–FI integration</p>
+          <ol>
+            <li><b>Assign the sales area before master data.</b> A customer can't be extended to IN10/10/00, and an order can't be delivered from IN11, until the sales org belongs to IN10 and the plant is assigned in OVX6.</li>
+            <li><b>VKOA before the first billing.</b> If KOFI finds no account, billing doesn't fail. It saves the invoice and quietly leaves it out of accounting (O2C-09). I check VFX3 daily during go-live so nothing sits there unbilled in FI.</li>
+            <li><b>FSV before the first goods issue.</b> Part 5's expense items cover 511000–519999 and, across several items, 611000–679999, so 531000 would land in <i>Not assigned</i> and the P&amp;L would stop balancing with no error. Following rule INS3-01, I added item <i>Changes in inventories of finished goods</i> (PL.EXP.CHI) with range 0000531000–0000539999 in OB58 and re-ran the check: 0 not assigned. 171200 needed no change, because Part 2 already added 0000171100–0000171999.</li>
+          </ol>
+        </div>
+      </div>
+
+      <!-- ============================================================ -->
+      <div class="cs-section" id="vkoa">
+        <p class="eyebrow">VKOA · OBYC · OB40 · OBXI · OBXL · OBWW</p>
+        <h2>Where every automatic line goes</h2>
+        <div class="table-wrap"><table class="data">
+          <thead><tr><th>Source</th><th>Key</th><th>Meaning</th><th>Modifier</th><th>G/L</th><th>Posted by</th></tr></thead>
+          <tbody>
+            <tr><td class="tc">VKOA</td><td class="acct">ERL</td><td>Revenue</td><td>Cust 01 / mat 01</td><td class="acct">411000</td><td>VF01 (PR00)</td></tr>
+            <tr><td class="tc">VKOA</td><td class="acct">ERS</td><td>Sales deductions</td><td>Cust 01 / mat 01</td><td class="acct">412000</td><td>VF01 (K007)</td></tr>
+            <tr><td class="tc">OB40</td><td class="acct">JOI / JOC / JOS</td><td>Output IGST / CGST / SGST</td><td>Tax condition</td><td class="acct">221000</td><td>VF01</td></tr>
+            <tr><td class="tc">OBYC</td><td class="acct">BSX</td><td>Finished goods stock</td><td class="acct">0001 / 7920</td><td class="acct">132000</td><td>VL02N goods issue</td></tr>
+            <tr><td class="tc">OBYC</td><td class="acct">GBB-VAX</td><td>Cost of goods sold</td><td class="acct">0001 / 7920</td><td class="acct">531000</td><td>VL02N goods issue</td></tr>
+            <tr><td class="tc">OBXI</td><td class="acct">SKT</td><td>Cash discount allowed</td><td></td><td class="acct">663000</td><td>F-28</td></tr>
+            <tr><td class="tc">OBXL</td><td class="acct">ZDI</td><td>Payment differences</td><td></td><td class="acct">664000</td><td>F-28</td></tr>
+            <tr><td class="tc">OBWW</td><td class="acct">QC</td><td>TDS deducted by customer</td><td>WHT type QC</td><td class="acct">162000</td><td>F-28</td></tr>
+          </tbody>
+        </table></div>
+        <p class="note">412000 sits inside the revenue range, so Revenue from operations is shown net of customer discounts. 531000, 663000 and 664000 are cost accounts (field status G004); their cost center comes from the OKB9 default. All six new accounts except 162000 and 171200 are "post automatically only".</p>
+      </div>
+
+      <!-- ============================================================ -->
+      <div class="cs-section" id="postings">
+        <p class="eyebrow">Deliverable · journal entries</p>
+        <h2>The ledger side of sales order 0000010452</h2>
+        <div class="table-wrap"><table class="data">
+          <thead><tr><th>Doc</th><th>Type · date</th><th>PK</th><th>Account</th><th class="num">Debit ₹</th><th class="num">Credit ₹</th></tr></thead>
+          <tbody>
+            <tr><td class="acct">4900000612</td><td>WL · 05.10.2026</td><td class="acct">81</td><td><span class="acct">531000</span> Cost of Goods Sold: 1,000 × ₹1,450</td><td class="num acct">14,50,000</td><td></td></tr>
+            <tr class="sub"><td></td><td>PGI · movement 601</td><td class="acct">99</td><td><span class="acct">132000</span> Finished Goods Inventory</td><td></td><td class="num acct">14,50,000</td></tr>
+            <tr><td class="acct">1800000205</td><td>RV · 05.10.2026</td><td class="acct">01</td><td><span class="acct">200001</span> Kalinga Auto Components (recon 141000)</td><td class="num acct">22,89,200</td><td></td></tr>
+            <tr class="sub"><td></td><td>Billing 0090010288</td><td class="acct">50</td><td><span class="acct">411000</span> Sales: PR00 1,000 × ₹2,000</td><td></td><td class="num acct">20,00,000</td></tr>
+            <tr class="sub"><td></td><td></td><td class="acct">40</td><td><span class="acct">412000</span> Sales Deductions: K007 3%</td><td class="num acct">60,000</td><td></td></tr>
+            <tr class="sub"><td></td><td></td><td class="acct">50</td><td><span class="acct">221000</span> GST Output Payable: IGST 18% × 19,40,000</td><td></td><td class="num acct">3,49,200</td></tr>
+            <tr><td class="acct">1400000088</td><td>DZ · 14.10.2026</td><td class="acct">40</td><td><span class="acct">171200</span> HDFC Bank: Incoming Payments</td><td class="num acct">22,48,460</td><td></td></tr>
+            <tr class="sub"><td></td><td>F-28 by MGR01</td><td class="acct">40</td><td><span class="acct">663000</span> Cash Discount Allowed: 2% × 19,40,000</td><td class="num acct">38,800</td><td></td></tr>
+            <tr class="sub"><td></td><td></td><td class="acct">40</td><td><span class="acct">162000</span> TDS Receivable: 194Q, 0.1% × 19,40,000</td><td class="num acct">1,940</td><td></td></tr>
+            <tr class="sub"><td></td><td></td><td class="acct">15</td><td><span class="acct">200001</span> Kalinga Auto Components: clears 1800000205</td><td></td><td class="num acct">22,89,200</td></tr>
+          </tbody>
+        </table></div>
+        <p class="note">Invoice total: ₹20,00,000 − ₹60,000 + IGST ₹3,49,200 = ₹22,89,200. The customer paid ₹22,89,200 − ₹38,800 − ₹1,940 = ₹22,48,460. When HDFC's statement shows the credit, 171200 is cleared against 171000. The ₹3,49,200 is reported in GSTR-1 for October and set off against input GST (161000, see Part 2) in GSTR-3B.</p>
+      </div>
+
+      <!-- ============================================================ -->
+      <div class="cs-section" id="pricing">
+        <p class="eyebrow">V/08 · VK11 · GST</p>
+        <h2>Pricing procedure ZIN001 and place of supply</h2>
+        <p>The pricing procedure works out the invoice line by line. Tax follows the place of supply: the plant is in Maharashtra (region 27), so a customer in another state pays IGST and a customer in Maharashtra pays CGST + SGST. The total is the same 18%; only the split and the government that receives it change.</p>
+        <div class="table-wrap"><table class="data">
+          <thead><tr><th>Step</th><th>Condition</th><th>Account key</th><th class="num">200001 Kalinga, Odisha (O2C-01)</th><th class="num">200002 Pune Precision, Maharashtra (O2C-02)</th></tr></thead>
+          <tbody>
+            <tr><td>10</td><td>PR00 price, 1,000 × ₹2,000</td><td class="acct">ERL</td><td class="num acct">20,00,000</td><td class="num acct">20,00,000</td></tr>
+            <tr><td>20</td><td>K007 customer discount</td><td class="acct">ERS</td><td class="num acct">−60,000 (3%)</td><td class="num acct">−40,000 (2%)</td></tr>
+            <tr><td></td><td>Net value</td><td></td><td class="num acct">19,40,000</td><td class="num acct">19,60,000</td></tr>
+            <tr><td>100–120</td><td>JOIG 18% / JOCG 9% + JOSG 9%</td><td class="acct">JOI / JOC, JOS</td><td class="num acct">3,49,200 IGST</td><td class="num acct">1,76,400 + 1,76,400</td></tr>
+          </tbody>
+          <tfoot><tr><td colspan="3">Invoice total</td><td class="num acct">22,89,200</td><td class="num acct">23,12,800</td></tr></tfoot>
+        </table></div>
+      </div>
+
+      <!-- ============================================================ -->
+      <div class="cs-section" id="credit">
+        <p class="eyebrow">SAP Credit Management · UKM_BP · UKM_MY_DCDS</p>
+        <h2>Credit check on the sales order</h2>
+        <p>When the order is saved, SAP adds its value (including GST) to what the customer already owes and compares the total with the credit limit. A second rule blocks any customer whose oldest open item is more than 60 days overdue, however much room is left. A blocked order is saved but can't be delivered until the credit manager releases it.</p>
+        <div class="table-wrap"><table class="data">
+          <thead><tr><th>Customer</th><th class="num">Limit ₹</th><th class="num">Open AR 30.09 ₹</th><th class="num">Oldest overdue</th><th>Order tested</th><th>Result</th></tr></thead>
+          <tbody>
+            <tr><td>200001 Kalinga</td><td class="num acct">52,00,000</td><td class="num acct">28,32,000</td><td class="num">0 days</td><td>1,000 EA · ₹22,89,200 → 98%</td><td class="res-posted">Passed (O2C-01)</td></tr>
+            <tr><td>200001 Kalinga</td><td class="num acct">52,00,000</td><td class="num acct">28,32,000</td><td class="num">0 days</td><td>1,050 EA · ₹24,03,660 → ₹52,35,660</td><td class="res-warn">Blocked: limit (O2C-03)</td></tr>
+            <tr><td>200002 Pune Precision</td><td class="num acct">40,00,000</td><td class="num acct">14,16,000</td><td class="num">35 days</td><td>1,000 EA · ₹23,12,800 → 93%</td><td class="res-posted">Passed (O2C-02)</td></tr>
+            <tr><td>200004 Nashik Pumps</td><td class="num acct">20,00,000</td><td class="num acct">12,88,000</td><td class="num">81 days</td><td>300 EA · ₹7,08,000 → ₹19,96,000</td><td class="res-warn">Blocked: overdue (O2C-05)</td></tr>
+          </tbody>
+        </table></div>
+        <p class="note">O2C-04 releases the O2C-03 order in UKM_MY_DCDS and it runs through to cash. Released or not, the ₹24,03,660 receipt still has to fit the finance manager's ₹25,00,000 per-open-item limit from <a href="../fi-enterprise-structure/#tolerance">Part 1's OBA4</a>, which it does.</p>
+      </div>
+
+      <!-- ============================================================ -->
+      <div class="cs-section" id="receipt">
+        <p class="eyebrow">F-28 · OBB8 · OBA3 · OBA4</p>
+        <h2>Incoming payment: discount, TDS and differences</h2>
+        <ol class="steps">
+          <li><span class="tc">Discount</span><span>Terms IN02 give 2% if paid within 10 days of the invoice (by 15.10.2026). OBY6 is set so the discount base is the net value, not the GST-inclusive total: 2% × ₹19,40,000 = ₹38,800.</span></li>
+          <li><span class="tc">TDS</span><span>Kalinga's own turnover is above ₹10 crore and it has bought more than ₹50 lakh from IN10 this year, so as the buyer it deducts TDS under 194Q: 0.1% × ₹19,40,000 = ₹1,940. IN10 books it to 162000 and claims it against its own income tax once it shows in Form 26AS.</span></li>
+          <li><span class="tc">Tolerance</span><span>What's left over is compared with the smaller of ₹500 and 0.5% of the invoice (OBA3 group IN10). Within it, F-28 writes the gap off to 664000 (O2C-12, ₹250 bank charge). Above it, the invoice is cleared and a residual item stays open (O2C-11).</span></li>
+          <li><span class="tc">Authority</span><span>The receipt clears a ₹22,89,200 customer item. AR clerk CLERK01's OBA4 limits are ₹5,00,000 per document and ₹2,00,000 per customer item, so large receipts are posted by MGR01 (O2C-10).</span></li>
+        </ol>
+        <p class="note">O2C-11: Kalinga pays on day 15 but still deducts ₹38,800. SAP allows no discount after day 10, so ₹38,800 is left as a residual item (PK 06) with reference to the original invoice. The AR team then decides: chase it, or approve a credit note if sales agrees to honour the late discount.</p>
+      </div>
+
+      <!-- ============================================================ -->
+      <div class="cs-section" id="aging">
+        <p class="eyebrow">Month-end · FBL5N · S_ALR_87012178 · link to Part 5</p>
+        <h2>Customer open items at 30 September</h2>
+        <p>The ageing list at the September close shows what the ₹64,80,000 debit on 141000 in <a href="../fsv-month-end-close/#data">Part 5's trial balance</a> is made of. It is also the "open AR" the credit check uses on 1 October.</p>
+        <div class="table-wrap"><table class="data">
+          <thead><tr><th>Document</th><th>Customer</th><th>Date</th><th class="num">Amount ₹</th><th class="num">Days overdue</th><th>Bucket</th></tr></thead>
+          <tbody>
+            <tr><td class="acct">1800000189</td><td>200001 Kalinga</td><td>08.09.2026</td><td class="num acct">16,52,000</td><td class="num">0</td><td>Not due</td></tr>
+            <tr><td class="acct">1800000198</td><td>200001 Kalinga</td><td>22.09.2026</td><td class="num acct">11,80,000</td><td class="num">0</td><td>Not due</td></tr>
+            <tr><td class="acct">1800000184</td><td>200003 Deccan Tractors</td><td>15.08.2026</td><td class="num acct">9,44,000</td><td class="num">16</td><td>1–30</td></tr>
+            <tr><td class="acct">1800000176</td><td>200002 Pune Precision</td><td>28.07.2026</td><td class="num acct">14,16,000</td><td class="num">34</td><td>31–60</td></tr>
+            <tr><td class="acct">1800000160</td><td>200004 Nashik Pumps</td><td>03.07.2026</td><td class="num acct">5,90,000</td><td class="num">59</td><td>31–60</td></tr>
+            <tr><td class="acct">1400000059</td><td>200004 Nashik Pumps</td><td>12.06.2026</td><td class="num acct">6,98,000</td><td class="num">80</td><td>61–90 (residual item)</td></tr>
+          </tbody>
+          <tfoot><tr><td colspan="3">Balance of 141000 = Part 5 trial balance</td><td class="num acct">64,80,000</td><td colspan="2"></td></tr></tfoot>
+        </table></div>
+        <ul>
+          <li><b>Buckets:</b> not due ₹28,32,000 · 1–30 days ₹9,44,000 · 31–60 days ₹20,06,000 · 61–90 days ₹6,98,000. Nothing is over 90 days.</li>
+          <li><b>DSO:</b> ₹64.8 lakh against ₹3.82 crore of GST-inclusive sales in 183 days is about 31 days, in line with 30-day terms. The 31–60 bucket is where collection effort should go.</li>
+          <li><b>Why the order was in October.</b> Every case-study document is dated October, so the ₹64,80,000 at 30 September is untouched and still ties to Part 5. Nashik's 80-day residual item is exactly what the credit rule catches in O2C-05.</li>
+        </ul>
+      </div>
+
+      <!-- ============================================================ -->
+      <div class="cs-section" id="tests">
+        <p class="eyebrow">Deliverable · unit test script</p>
+        <h2>Twelve tests across order, delivery, billing and cash</h2>
+        <p>Every case runs in the <a href="simulator.html">O2C simulator</a> with one click. A Python script computed the expected results, and the simulator's separate JavaScript logic reproduces all twelve.</p>
+        <div class="table-wrap"><table class="data">
+          <thead><tr><th>ID</th><th>Scenario</th><th>Key input</th><th>Expected result</th></tr></thead>
+          <tbody>
+            <tr><td class="acct">O2C-01</td><td>Happy path</td><td>200001 · 1,000 EA · paid day 9</td><td class="res-posted">Cleared 1400000088 · ₹22,48,460 received</td></tr>
+            <tr><td class="acct">O2C-02</td><td>Intra-state customer</td><td>200002 Pune · K007 2%</td><td class="res-posted">Cleared · CGST + SGST ₹3,52,800</td></tr>
+            <tr><td class="acct">O2C-03</td><td>Credit limit exceeded</td><td>1,050 EA → ₹52,35,660</td><td class="res-warn">Order saved · credit block</td></tr>
+            <tr><td class="acct">O2C-04</td><td>Same, released</td><td>UKM_MY_DCDS release</td><td class="res-posted">Cleared · ₹23,60,883 received</td></tr>
+            <tr><td class="acct">O2C-05</td><td>Overdue items</td><td>200004 · oldest 81 days</td><td class="res-warn">Order saved · credit block</td></tr>
+            <tr><td class="acct">O2C-06</td><td>Not enough stock</td><td>800 EA unrestricted</td><td class="res-error">Goods issue fails: deficit of 200 EA</td></tr>
+            <tr><td class="acct">O2C-07</td><td>Goods issue in a closed MM period</td><td>PGI 02.11.2026</td><td class="res-error">MM period: only 2026/07 and 2026/06</td></tr>
+            <tr><td class="acct">O2C-08</td><td>Billing before goods issue</td><td>No PGI</td><td class="res-error">Delivery not due for billing</td></tr>
+            <tr><td class="acct">O2C-09</td><td>Missing account assignment group</td><td>Material group blank</td><td class="res-error">Billing saved, not posted to FI (VFX3)</td></tr>
+            <tr><td class="acct">O2C-10</td><td>Receipt by AR clerk</td><td>CLERK01 · limit ₹5,00,000</td><td class="res-error">OBA4 tolerance exceeded</td></tr>
+            <tr><td class="acct">O2C-11</td><td>Late payment, discount taken</td><td>Paid 20.10 (day 15)</td><td class="res-warn">Cleared with residual item ₹38,800</td></tr>
+            <tr><td class="acct">O2C-12</td><td>Small short payment</td><td>₹250 short</td><td class="res-posted">Cleared · ₹250 to 664000</td></tr>
+          </tbody>
+        </table></div>
+        <p class="note">Each test runs on its own, starting from the number ranges as they stood before sales order 0000010452. That's why every successful test shows the same document numbers as the case study. Simulator state is 01.10.2026, after MMPV moved the MM period to 2026/07; OB52 is open for 006–007. Messages are simulated in plain language and aren't copied from SAP message texts.</p>
+      </div>
+
+      <!-- ============================================================ -->
+      <div class="cs-section" id="business">
+        <p class="eyebrow">Business impact</p>
+        <h2>Why O2C controls matter</h2>
+        <p>Receivables are IN10's biggest current asset: ₹64.8 lakh, more than its cash and fixed deposit together. The credit check stops new sales to customers who are already stretched or seriously late, before the goods leave the plant. Delivery-related billing means nothing is invoiced that wasn't shipped, and nothing shipped goes unbilled. Early-payment discounts turn a 30-day receivable into a 9-day one at a known cost (₹38,800 on this invoice). Tolerances clear the small differences automatically and put the large ones in front of a person, and the ageing list tells the collections team exactly where to call.</p>
+      </div>
+
+      <!-- ============================================================ -->
+      <div class="cs-section" id="interview">
+        <p class="eyebrow">Interview guide</p>
+        <h2>How I present it in 90 seconds</h2>
+        <ol>
+          <li><b>Scope:</b> "I ran order-to-cash end to end for company code IN10: a sales order with a credit check, delivery and goods issue, a GST invoice from billing, and an incoming payment with cash discount and the customer's TDS."</li>
+          <li><b>Integration:</b> "Sales org IN10 posts to company code IN10. Goods issue uses OBYC, so stock is credited and COGS debited; billing uses VKOA for revenue and discounts, and OB40 for output GST."</li>
+          <li><b>Controls:</b> "SAP Credit Management blocks orders over the limit or with items 60 days overdue, OB52 and the MM period guard the dates, and OBA3 and OBA4 decide what F-28 can clear automatically."</li>
+          <li><b>Proof:</b> "Twelve unit tests and a simulator. And it ties back: the customer open items at 30 September add up to exactly the ₹64,80,000 of receivables in the trial balance of my month-end close (Part 5)."</li>
+        </ol>
+        <div class="qa">
+          <details><summary>Which O2C steps create an accounting entry?</summary><p>Goods issue (Dr COGS, Cr stock), billing (Dr customer, Cr revenue and output tax) and the payment (Dr bank, Cr customer). The sales order and the delivery don't post to FI.</p></details>
+          <details><summary>What is VKOA and what does it depend on?</summary><p>Revenue account determination for billing. With condition type KOFI it looks up the chart of accounts, sales org, customer account assignment group, material account assignment group and account key (ERL revenue, ERS deductions) and returns a G/L account.</p></details>
+          <details><summary>A billing document isn't in FI. What do you check?</summary><p>VFX3 shows billing documents blocked for accounting and the reason. Most often it's account determination (a missing account assignment group, or a missing VKOA entry), a closed posting period or a missing cost center. Fix the cause and release it from VFX3.</p></details>
+          <details><summary>How does the credit check work in S/4HANA?</summary><p>SAP Credit Management: the BP has a credit segment with a limit and a risk class. On saving an order, the check rule adds the order value to the open receivables and open orders and blocks if the limit is exceeded or if an item is overdue beyond the set days. Blocked orders are released in UKM_MY_DCDS (VKM1 in older systems).</p></details>
+          <details><summary>Why IGST for one customer and CGST + SGST for another?</summary><p>GST follows the place of supply. The plant is in Maharashtra; a Maharashtra customer is intra-state (CGST + SGST), an Odisha customer is inter-state (IGST). The pricing procedure picks the condition from the regions.</p></details>
+          <details><summary>What happens if a customer pays short?</summary><p>F-28 compares the gap with the tolerance (the lower of the OBA3 customer group and the user's OBA4 limits). Within it, the difference is written off automatically; above it, you post a residual or partial payment, or leave it on account.</p></details>
+        </div>
+      </div>
+
+      <!-- ============================================================ -->
+      <div class="cs-section" id="data">
+        <p class="eyebrow">Data</p>
+        <h2>Download the configuration and documents</h2>
+        <p>A Python script generated these files. It asserts that every document balances, that the open items at 30.09.2026 equal Part 5's trial balance for 141000, that 531000 is unassigned in the old FSV and assigned after the OB58 change, that 171200 is covered by Part 2's range, and that all document numbers fall inside their FBN1 ranges.</p>
+        <div class="downloads">
+          <a href="data/01_org_objects_sd.csv">01_org_objects_sd.csv <span>8 rows</span></a>
+          <a href="data/02_gl_accounts_added.csv">02_gl_accounts_added.csv <span>6</span></a>
+          <a href="data/03_account_determination.csv">03_account_determination.csv <span>11</span></a>
+          <a href="data/04_customer_master_BP.csv">04_customer_master_BP.csv <span>4</span></a>
+          <a href="data/05_pricing_conditions.csv">05_pricing_conditions.csv <span>6</span></a>
+          <a href="data/06_credit_management.csv">06_credit_management.csv <span>4</span></a>
+          <a href="data/07_document_flow.csv">07_document_flow.csv <span>5 steps</span></a>
+          <a href="data/08_journal_entries.csv">08_journal_entries.csv <span>10 lines</span></a>
+          <a href="data/09_ar_open_items_300926.csv">09_ar_open_items_300926.csv <span>6</span></a>
+          <a href="data/10_unit_tests.csv">10_unit_tests.csv <span>12 tests</span></a>
+        </div>
+      </div>
+    </article>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <span>© <span data-year>2026</span> Ananya Patel · <a href="../../">Home</a></span>
+    <span>Fictional company code IN10. Not affiliated with SAP SE.</span>
+  </div>
+</footer>
+</body>
+</html>

@@ -1,0 +1,12 @@
+Source,Key,Description,Modifier,GL_Account
+VKOA,ERL,"Revenue (PR00), KOFI: IN10 / cust grp 01 / mat grp 01",INCA / IN10,411000
+VKOA,ERS,"Sales deductions (K007), same access",INCA / IN10,412000
+OB40,JOI,Output IGST (condition JOIG),,221000
+OB40,JOC,Output CGST (condition JOCG),,221000
+OB40,JOS,Output SGST (condition JOSG),,221000
+OBYC,BSX,"Inventory posting, finished goods",0001 / 7920,132000
+OBYC,GBB-VAX,Goods issue for sales order (movement 601),0001 / 7920,531000
+OBXI,SKT,Cash discount allowed to customers,,663000
+OBXL,ZDI,Payment differences written off,,664000
+OBWW,QC,TDS 194Q deducted by customers,WHT type QC,162000
+FI12,HDFC1/CUR01,Incoming payments clearing,,171200

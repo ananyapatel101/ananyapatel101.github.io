@@ -1,13 +1,13 @@
 Test_ID,Scenario,Doc_Type,Posting_Date,Special_Period,User,Dr_Account,Dr_Cost_Center,Cr_Account,Amount,Currency,Config_Change,Expected_Result,Expected_Document,Stops_At
-UT-01,Happy path: G/L accrual in open period 06,SA,2026-09-30,,CLERK01,621000,4100,219500,120000,INR,,Posted,0100000467,posted
+UT-01,Happy path: G/L accrual in open period 06,SA,2026-09-30,,CLERK01,621000,4100,219500,120000,INR,,Posted,0100000451,posted
 UT-02,Posting into period 07 before it is opened,SA,2026-10-01,,CLERK01,621000,4100,219500,120000,INR,,Error: posting period (OB52),,ob52
-UT-02b,Same posting after OB52 extends the open interval to period 07,SA,2026-10-01,,CLERK01,621000,4100,219500,120000,INR,OB52: open period 07,Posted,0100000467,posted
+UT-02b,Same posting after OB52 extends the open interval to period 07,SA,2026-10-01,,CLERK01,621000,4100,219500,120000,INR,OB52: open period 07,Posted,0100000451,posted
 UT-03,Cost account posted without a cost center (G004),SA,2026-09-30,,CLERK01,621000,,219500,120000,INR,,Error: field status (OBC4),,obc4
 UT-04,Clerk posts above the per-document limit,SA,2026-09-30,,CLERK01,621000,4100,219500,600000,INR,,Error: tolerance limit (OBA4),,oba4
 UT-05,Vendor line on a G/L document type (SA),SA,2026-09-30,,CLERK01,219500,,100001,120000,INR,,Error: account type not allowed (OBA7),,oba7
-UT-06,Vendor invoice on the correct document type (KR),KR,2026-09-30,,CLERK01,621000,4100,100001,123500,INR,,Posted,1900000124,posted
-UT-07,Prior-year audit adjustment in special period 13 by a clerk,SA,2026-03-31,13,CLERK01,321000,,219500,250000,INR,,Error: posting period (OB52),,ob52
-UT-08,Same adjustment by a closing-team manager (auth group FICL),SA,2026-03-31,13,MGR01,321000,,219500,250000,INR,,Posted,0100009833,posted
+UT-06,Vendor invoice on the correct document type (KR),KR,2026-09-30,,CLERK01,621000,4100,100001,123500,INR,,Posted,1900000123,posted
+UT-07,Prior-year audit adjustment in special period 13 by a clerk,SA,2026-03-31,13,CLERK01,631000,4300,219500,250000,INR,,Error: posting period (OB52),,ob52
+UT-08,Same adjustment by a closing-team manager (auth group FICL),SA,2026-03-31,13,MGR01,631000,4300,219500,250000,INR,,Posted,0100009833,posted
 UT-09,Foreign-currency posting in EUR with no exchange rate,SA,2026-09-30,,CLERK01,621000,4100,219500,1500,EUR,,Error: exchange rate missing (OB08),,ob08
-UT-10,USD posting translated at the September rate,SA,2026-09-30,,CLERK01,621000,4100,219500,1500,USD,,Posted,0100000467,posted
+UT-10,USD posting translated at the September rate,SA,2026-09-30,,CLERK01,621000,4100,219500,1500,USD,,Posted,0100000451,posted
 UT-11,Unassigned user falls back to the blank tolerance group,SA,2026-09-30,,TEMP01,621000,4100,219500,150000,INR,,Error: tolerance limit (OBA4),,oba4

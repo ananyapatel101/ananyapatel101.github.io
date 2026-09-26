@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>IN10 Asset Simulator · Ananya Patel</title>
+<meta name="description" content="Run an asset through acquisition into an AUC (F-90), settlement (AIBU), sale or scrapping (F-92 / ABAVN) and the depreciation run (AFAB) in company code IN10, and see which control posts, holds or stops it.">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Carlito:ital,wght@0,400;0,700;1,400&display=swap">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script src="../../assets/js/main.js"></script>
+<style>
+  :root { --warning-text: #8a5a00; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --warning-text: #fab219; } }
+  :root[data-theme="dark"] { --warning-text: #fab219; }
+
+  .dash { display: grid; gap: var(--s-5); padding-block: var(--s-6) 0; }
+  .panel { background: var(--surface); border: 1px solid var(--rule); border-radius: var(--radius); padding: var(--s-4); display: grid; gap: var(--s-3); min-width: 0; align-content: start; }
+  .panel h2 { font-size: var(--t-lg); }
+  .panel-head { display: flex; justify-content: space-between; align-items: baseline; gap: var(--s-3); flex-wrap: wrap; }
+  .ctl-label { font: 500 var(--t-xs)/1 var(--f-mono); color: var(--ink-3); }
+  .layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr); gap: var(--s-4); align-items: start; }
+  @media (max-width: 960px) { .layout { grid-template-columns: 1fr; } }
+
+  .presets { display: flex; flex-wrap: wrap; gap: .4rem; }
+  .preset { border: 1px solid var(--rule-strong); background: var(--surface); color: var(--ink-2); border-radius: 999px; padding: .35rem .65rem; font: 500 var(--t-xs)/1 var(--f-mono); cursor: pointer; display: inline-flex; gap: .35rem; align-items: center; }
+  .preset::before { content: ""; width: .45rem; height: .45rem; border-radius: 50%; background: var(--ink-3); }
+  .preset.exp-posted::before { background: var(--good); }
+  .preset.exp-held::before { background: var(--warning); }
+  .preset.exp-error::before { background: var(--critical); }
+  .preset[aria-pressed="true"] { border-color: var(--accent); color: var(--ink); background: var(--accent-wash); }
+  .preset-desc { font-size: var(--t-sm); color: var(--ink-2); min-height: 1.4em; }
+
+  .form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-3) var(--s-4); }
+  .field { display: grid; gap: .3rem; }
+  .field label { font-size: var(--t-xs); color: var(--ink-3); font-family: var(--f-mono); }
+  .field select, .field input:not([type="checkbox"]) {
+    font: 400 var(--t-sm)/1.3 var(--f-body); color: var(--ink); background: var(--paper); border: 1px solid var(--rule-strong);
+    border-radius: var(--radius); padding: .55rem .6rem; width: 100%; min-width: 0;
+  }
+  .field input[type="number"], 
+  .line-head { grid-column: 1 / -1; display: flex; gap: .5rem; align-items: baseline; border-top: 1px solid var(--rule); padding-top: var(--s-3); }
+  .line-head b { font-family: var(--f-mono); color: var(--accent); }
+  .switch { display: flex; gap: .55rem; align-items: flex-start; font-size: var(--t-sm); color: var(--ink-2); cursor: pointer; grid-column: 1 / -1; }
+  .switch input { margin-top: .2rem; accent-color: var(--accent); }
+  .fixed { grid-column: 1 / -1; font-size: var(--t-xs); color: var(--ink-3); font-family: var(--f-mono); }
+  @media (max-width: 520px) { .form { grid-template-columns: 1fr; } }
+
+  .banner { border-radius: var(--radius); padding: var(--s-4); display: grid; gap: .35rem; border: 2px solid; }
+  .banner.ok { border-color: var(--good); }
+  .banner.warn { border-color: var(--warning); }
+  .banner.bad { border-color: var(--critical); }
+  .banner .pill { display: inline-flex; align-items: center; gap: .45rem; font: 700 var(--t-lg)/1.2 var(--f-display); }
+  .banner .ico { width: 1.5rem; height: 1.5rem; border-radius: 50%; display: inline-grid; place-items: center; color: #fff; font-size: .9rem; flex: none; }
+  .banner.ok .ico { background: var(--good); } .banner.ok .pill { color: var(--good-text); }
+  .banner.warn .ico { background: var(--warning); color: #15201e; } .banner.warn .pill { color: var(--warning-text); }
+  .banner.bad .ico { background: var(--critical); } .banner.bad .pill { color: var(--critical); }
+  .banner p { color: var(--ink-2); font-size: var(--t-sm); }
+
+  .tiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s-2); }
+  .tile { border: 1px solid var(--rule); border-radius: var(--radius); padding: var(--s-2) var(--s-3); display: grid; gap: .2rem; }
+  .tile span { font: 500 var(--t-xs)/1.2 var(--f-mono); color: var(--ink-3); }
+  .tile b { font: 600 var(--t-md)/1.2 var(--f-mono); font-variant-numeric: tabular-nums; }
+  @media (max-width: 520px) { .tiles { grid-template-columns: 1fr; } }
+
+  .stage-h { font: 600 var(--t-xs)/1 var(--f-mono); color: var(--accent); margin-top: var(--s-2); }
+  .checks { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; border-top: 1px solid var(--rule); }
+  .checks li { display: grid; grid-template-columns: 1.6rem minmax(0, 1fr); gap: .6rem; padding-block: .55rem; border-bottom: 1px solid var(--rule); }
+  .checks .st { width: 1.3rem; height: 1.3rem; border-radius: 50%; display: grid; place-items: center; font-size: .75rem; color: #fff; margin-top: .1rem; }
+  .checks .pass .st { background: var(--good); }
+  .checks .fail .st { background: var(--critical); }
+  .checks .warn .st { background: var(--warning); color: #15201e; }
+  .checks .skip .st { background: transparent; border: 1.5px dashed var(--rule-strong); color: var(--ink-3); }
+  .checks b { font-weight: 600; font-size: var(--t-sm); }
+  .checks .skip b { color: var(--ink-3); font-weight: 500; }
+  .checks p { font-size: var(--t-sm); color: var(--ink-2); }
+  .checks .fail p, .checks .warn p { color: var(--ink); }
+
+  .docs { display: grid; gap: var(--s-3); }
+  .doc-h { display: flex; justify-content: space-between; gap: var(--s-3); flex-wrap: wrap; font: 500 var(--t-xs)/1.3 var(--f-mono); color: var(--ink-2); padding-bottom: .3rem; border-bottom: 1px solid var(--rule-strong); }
+  .doc-h b { color: var(--ink); }
+  table.stmt { width: 100%; border-collapse: collapse; font-size: var(--t-sm); }
+  table.stmt th, table.stmt td { padding: .4rem .5rem; border-bottom: 1px solid var(--rule); text-align: left; vertical-align: top; }
+  table.stmt thead th { font: 500 var(--t-xs)/1.3 var(--f-mono); color: var(--ink-3); white-space: nowrap; }
+  table.stmt td.num, table.stmt th.num { text-align: right; font-family: var(--f-mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  table.stmt td.mono { font-family: var(--f-mono); white-space: nowrap; }
+  table.stmt td small { display: block; color: var(--ink-3); font-size: var(--t-xs); }
+  .scroll-x { overflow-x: auto; }
+
+  .meter { display: grid; gap: .4rem; }
+  .meter-bar { height: .7rem; border-radius: 999px; background: var(--surface-2); display: flex; overflow: hidden; border: 1px solid var(--rule); }
+  .meter-bar span { display: block; height: 100%; }
+  .meter-bar .m-acc { background: var(--ink-3); }
+  .meter-bar .m-nbv { background: var(--accent); }
+  .key { display: inline-block; width: .6rem; height: .6rem; border-radius: 2px; margin: 0 .3rem 0 .2rem; vertical-align: baseline; }
+  .key.k-acc { background: var(--ink-3); } .key.k-nbv { background: var(--accent); }
+  fieldset.grp { display: contents; border: 0; margin: 0; padding: 0; }
+  fieldset.grp[disabled] .field, fieldset.grp[disabled] .switch { opacity: .45; }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../../">Ananya Patel<span>.</span></a>
+    <nav class="nav" aria-label="Main">
+      <a href="./">Case study</a>
+      <a href="../../#projects" class="hide-sm">Projects</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap dash">
+  <div style="display:grid;gap:var(--s-2)">
+    <p class="eyebrow">SAP FICO self project · Part 4 of 5 · Company code IN10 · Chart of depreciation IN10 · Areas 01 and 15</p>
+    <h1>IN10 asset accounting simulator</h1>
+    <p class="muted prose">One asset runs through master data, acquisition into an asset under construction, settlement, retirement and the October depreciation run, in the order SAP applies the controls. Choose a unit test to load its data, or change any field and see which control posts, holds or stops the document.</p>
+  </div>
+
+  <div class="panel">
+    <span class="ctl-label">Unit tests · green = posted, amber = held, red = stopped</span>
+    <div class="presets" id="presets"></div>
+    <p class="preset-desc" id="preset-desc"></p>
+  </div>
+
+  <div class="layout">
+    <section class="panel" aria-labelledby="in-title">
+      <div class="panel-head"><h2 id="in-title">Asset, acquisition, retirement &amp; run</h2><span class="small muted">AS01 · F-90 · AIBU · F-92 · AFAB</span></div>
+      <form class="form" id="form" autocomplete="off">
+        <div class="line-head"><b>AS01</b><span class="small muted">Asset master · AO90 account determination</span></div>
+        <div class="field" style="grid-column:1/-1"><label for="f-asset">Asset</label><select id="f-asset"></select></div>
+        <fieldset class="grp" id="g-new">
+          <div class="field" style="grid-column:1/-1"><label for="f-cls">Asset class of the new machine</label>
+            <select id="f-cls"><option value="1100">1100 · Plant &amp; machinery</option><option value="1200">1200 · Office equipment</option><option value="1300">1300 · Vehicles (no AO90 entry yet)</option></select></div>
+
+          <div class="line-head"><b>F-90</b><span class="small muted">Acquisition from vendors into AUC 4000001 · transaction type 100</span></div>
+          <div class="field"><label for="f-machine">Machine ₹ (vendor 100003)</label><input id="f-machine" type="number" min="0" step="10000"></div>
+          <div class="field"><label for="f-invDate">Machine invoice date</label><input id="f-invDate" type="date"></div>
+          <div class="field"><label for="f-install">Installation ₹ (vendor 100004)</label><input id="f-install" type="number" min="0" step="1000"></div>
+          <div class="field"><label for="f-instDate">Installation invoice date</label><input id="f-instDate" type="date"></div>
+
+          <div class="line-head"><b>AIBU</b><span class="small muted">Settle AUC 4000001 to asset 1100008</span></div>
+          <div class="field"><label for="f-capDate">Capitalisation date</label><input id="f-capDate" type="date"></div>
+          <label class="switch" for="f-settle"><input type="checkbox" id="f-settle"><span>Machine is ready for use and the AUC is settled this month.</span></label>
+        </fieldset>
+        <div class="field" style="grid-column:1/-1"><label for="f-poster">Posted by (F-90 / F-92)</label>
+          <select id="f-poster"><option value="MGR01">MGR01 · finance manager</option><option value="CLERK01">CLERK01 · accounts clerk</option></select></div>
+
+        <div class="line-head"><b>RET</b><span class="small muted">F-92 sale to customer 200005 · ABAVN scrapping</span></div>
+        <div class="field" style="grid-column:1/-1"><label for="f-ret">Retirement</label>
+          <select id="f-ret"><option value="none">None</option><option value="sale">Sale (F-92, trans. type 210)</option><option value="scrap">Scrapping (ABAVN, trans. type 200)</option></select></div>
+        <div class="field"><label for="f-retPost">Posting date</label><input id="f-retPost" type="date"></div>
+        <div class="field"><label for="f-retValue">Asset value date</label><input id="f-retValue" type="date"></div>
+        <div class="field"><label for="f-saleValue">Sale value ₹ (before GST)</label><input id="f-saleValue" type="number" min="0" step="10000"></div>
+
+        <div class="line-head"><b>AFAB</b><span class="small muted">Month-end depreciation run</span></div>
+        <div class="field"><label for="f-afabPer">Run for period</label>
+          <select id="f-afabPer"><option value="7">007/2026 · October</option><option value="8">008/2026 · November</option></select></div>
+        <p class="fixed">Fixed: posted AFAB to 006/2026 · OB52 open 006–007/2026 for +, A, D, K, S · AA fiscal year 2026 open, 2025 closed · GST 18% · TDS 194C 2% · area 15: 15% WDV</p>
+      </form>
+    </section>
+
+    <section class="panel" aria-labelledby="res-title" aria-live="polite">
+      <div class="panel-head"><h2 id="res-title">System response</h2><span class="small muted">Updates as you edit</span></div>
+      <div id="banner"></div>
+      <div class="tiles" id="tiles"></div>
+      <div class="meter" id="meter"></div>
+      <div id="checks"></div>
+    </section>
+  </div>
+
+  <section class="panel" aria-labelledby="je-title">
+    <div class="panel-head"><h2 id="je-title">Accounting documents</h2><span class="small muted">Accounts from AO90; AFAB shows this asset's share of the run</span></div>
+    <div class="docs" id="docs"></div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <span>© <span data-year>2026</span> Ananya Patel · <a href="./">Back to case study</a></span>
+    <span>Simulated responses in plain language, not SAP message texts. Fictional data.</span>
+  </div>
+</footer>
+
+<script src="data/aa_data.js"></script>
+<script src="aa-core.js"></script>
+<script src="simulator.js"></script>
+</body>
+</html>

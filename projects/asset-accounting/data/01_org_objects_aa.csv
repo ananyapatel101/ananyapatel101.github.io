@@ -1,0 +1,12 @@
+Object,ID,Description,TCode,Assigned_To
+Chart of depreciation,IN10,Copy of India reference chart 1IN,EC08,Company code IN10 (OAOB)
+Depreciation area,01,"Book depreciation, Companies Act (posts in real time to ledger 0L)",OADB,"Accounting principle IND-GAAP, ledger group 0L"
+Depreciation area,15,"Income Tax Act (values only, no posting)",OADB,Chart of depreciation IN10
+Asset class,1100,Plant & machinery,OAOA,"Account determination 11000, number range 11"
+Asset class,1200,Office equipment,OAOA,"Account determination 12000, number range 12"
+Asset class,1500,"Low-value assets (up to Rs 5,000 each)",OAOA / OAYK,"Account determination 11000, number range 15, LVA max Rs 5,000"
+Asset class,4000,Assets under construction,OAOA,"Account determination 40000, number range 40, line item settlement (AIAB / AIBU)"
+Vendor,100003,"Bharat CNC Machines Pvt Ltd, Bengaluru (Karnataka)",BP (FLVN00/01),"Recon 211000, terms NT30, no WHT"
+Vendor,100004,"Sahyadri Engineering Services, Pune (Maharashtra)",BP (FLVN00/01),"Recon 211000, terms NT30, WHT 194C 2%"
+Customer,200005,"Chakan Machine Traders, Chakan (Maharashtra)",BP (FLCU00/01),"Recon 141000, terms 0001 immediate, tolerance grp IN10"
+Asset fiscal year,2026,Opened by AJRW; 2025 closed by AJAB,AJRW / AJAB,Company code IN10

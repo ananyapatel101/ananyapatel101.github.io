@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>IN10 O2C Simulator · Ananya Patel</title>
+<meta name="description" content="Run a sales order item through the credit check (VA01), post goods issue, billing (VF01) and the incoming payment (F-28) in company code IN10, and see which control posts, holds or stops it.">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Carlito:ital,wght@0,400;0,700;1,400&display=swap">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script src="../../assets/js/main.js"></script>
+<style>
+  :root { --warning-text: #8a5a00; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --warning-text: #fab219; } }
+  :root[data-theme="dark"] { --warning-text: #fab219; }
+
+  .dash { display: grid; gap: var(--s-5); padding-block: var(--s-6) 0; }
+  .panel { background: var(--surface); border: 1px solid var(--rule); border-radius: var(--radius); padding: var(--s-4); display: grid; gap: var(--s-3); min-width: 0; align-content: start; }
+  .panel h2 { font-size: var(--t-lg); }
+  .panel-head { display: flex; justify-content: space-between; align-items: baseline; gap: var(--s-3); flex-wrap: wrap; }
+  .ctl-label { font: 500 var(--t-xs)/1 var(--f-mono); color: var(--ink-3); }
+  .layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr); gap: var(--s-4); align-items: start; }
+  @media (max-width: 960px) { .layout { grid-template-columns: 1fr; } }
+
+  .presets { display: flex; flex-wrap: wrap; gap: .4rem; }
+  .preset { border: 1px solid var(--rule-strong); background: var(--surface); color: var(--ink-2); border-radius: 999px; padding: .35rem .65rem; font: 500 var(--t-xs)/1 var(--f-mono); cursor: pointer; display: inline-flex; gap: .35rem; align-items: center; }
+  .preset::before { content: ""; width: .45rem; height: .45rem; border-radius: 50%; background: var(--ink-3); }
+  .preset.exp-cleared::before { background: var(--good); }
+  .preset.exp-blocked::before, .preset.exp-residual::before { background: var(--warning); }
+  .preset.exp-error::before { background: var(--critical); }
+  .preset[aria-pressed="true"] { border-color: var(--accent); color: var(--ink); background: var(--accent-wash); }
+  .preset-desc { font-size: var(--t-sm); color: var(--ink-2); min-height: 1.4em; }
+
+  .form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-3) var(--s-4); }
+  .field { display: grid; gap: .3rem; }
+  .field label { font-size: var(--t-xs); color: var(--ink-3); font-family: var(--f-mono); }
+  .field select, .field input:not([type="checkbox"]) {
+    font: 400 var(--t-sm)/1.3 var(--f-body); color: var(--ink); background: var(--paper); border: 1px solid var(--rule-strong);
+    border-radius: var(--radius); padding: .55rem .6rem; width: 100%; min-width: 0;
+  }
+  .field input[type="number"], 
+  .line-head { grid-column: 1 / -1; display: flex; gap: .5rem; align-items: baseline; border-top: 1px solid var(--rule); padding-top: var(--s-3); }
+  .line-head b { font-family: var(--f-mono); color: var(--accent); }
+  .switch { display: flex; gap: .55rem; align-items: flex-start; font-size: var(--t-sm); color: var(--ink-2); cursor: pointer; grid-column: 1 / -1; }
+  .switch input { margin-top: .2rem; accent-color: var(--accent); }
+  .fixed { grid-column: 1 / -1; font-size: var(--t-xs); color: var(--ink-3); font-family: var(--f-mono); }
+  @media (max-width: 520px) { .form { grid-template-columns: 1fr; } }
+
+  .banner { border-radius: var(--radius); padding: var(--s-4); display: grid; gap: .35rem; border: 2px solid; }
+  .banner.ok { border-color: var(--good); }
+  .banner.warn { border-color: var(--warning); }
+  .banner.bad { border-color: var(--critical); }
+  .banner .pill { display: inline-flex; align-items: center; gap: .45rem; font: 700 var(--t-lg)/1.2 var(--f-display); }
+  .banner .ico { width: 1.5rem; height: 1.5rem; border-radius: 50%; display: inline-grid; place-items: center; color: #fff; font-size: .9rem; flex: none; }
+  .banner.ok .ico { background: var(--good); } .banner.ok .pill { color: var(--good-text); }
+  .banner.warn .ico { background: var(--warning); color: #15201e; } .banner.warn .pill { color: var(--warning-text); }
+  .banner.bad .ico { background: var(--critical); } .banner.bad .pill { color: var(--critical); }
+  .banner p { color: var(--ink-2); font-size: var(--t-sm); }
+
+  .tiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s-2); }
+  .tile { border: 1px solid var(--rule); border-radius: var(--radius); padding: var(--s-2) var(--s-3); display: grid; gap: .2rem; }
+  .tile span { font: 500 var(--t-xs)/1.2 var(--f-mono); color: var(--ink-3); }
+  .tile b { font: 600 var(--t-md)/1.2 var(--f-mono); font-variant-numeric: tabular-nums; }
+  @media (max-width: 520px) { .tiles { grid-template-columns: 1fr; } }
+
+  .stage-h { font: 600 var(--t-xs)/1 var(--f-mono); color: var(--accent); margin-top: var(--s-2); }
+  .checks { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; border-top: 1px solid var(--rule); }
+  .checks li { display: grid; grid-template-columns: 1.6rem minmax(0, 1fr); gap: .6rem; padding-block: .55rem; border-bottom: 1px solid var(--rule); }
+  .checks .st { width: 1.3rem; height: 1.3rem; border-radius: 50%; display: grid; place-items: center; font-size: .75rem; color: #fff; margin-top: .1rem; }
+  .checks .pass .st { background: var(--good); }
+  .checks .fail .st { background: var(--critical); }
+  .checks .warn .st { background: var(--warning); color: #15201e; }
+  .checks .skip .st { background: transparent; border: 1.5px dashed var(--rule-strong); color: var(--ink-3); }
+  .checks b { font-weight: 600; font-size: var(--t-sm); }
+  .checks .skip b { color: var(--ink-3); font-weight: 500; }
+  .checks p { font-size: var(--t-sm); color: var(--ink-2); }
+  .checks .fail p, .checks .warn p { color: var(--ink); }
+
+  .docs { display: grid; gap: var(--s-3); }
+  .doc-h { display: flex; justify-content: space-between; gap: var(--s-3); flex-wrap: wrap; font: 500 var(--t-xs)/1.3 var(--f-mono); color: var(--ink-2); padding-bottom: .3rem; border-bottom: 1px solid var(--rule-strong); }
+  .doc-h b { color: var(--ink); }
+  table.stmt { width: 100%; border-collapse: collapse; font-size: var(--t-sm); }
+  table.stmt th, table.stmt td { padding: .4rem .5rem; border-bottom: 1px solid var(--rule); text-align: left; vertical-align: top; }
+  table.stmt thead th { font: 500 var(--t-xs)/1.3 var(--f-mono); color: var(--ink-3); white-space: nowrap; }
+  table.stmt td.num, table.stmt th.num { text-align: right; font-family: var(--f-mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  table.stmt td.mono { font-family: var(--f-mono); white-space: nowrap; }
+  table.stmt td small { display: block; color: var(--ink-3); font-size: var(--t-xs); }
+  .scroll-x { overflow-x: auto; }
+
+  .meter { display: grid; gap: .4rem; }
+  .meter-bar { position: relative; height: .7rem; border-radius: 999px; background: var(--surface-2); display: flex; overflow: visible; border: 1px solid var(--rule); }
+  .meter-bar span { display: block; height: 100%; }
+  .meter-bar .m-open { background: var(--ink-3); border-radius: 999px 0 0 999px; }
+  .meter-bar .m-new { background: var(--accent); }
+  .meter-bar .m-new.over { background: var(--critical); }
+  .meter-bar i { position: absolute; top: -.3rem; bottom: -.3rem; width: 2px; background: var(--ink); transform: translateX(-1px); }
+  .key { display: inline-block; width: .6rem; height: .6rem; border-radius: 2px; margin: 0 .3rem 0 .2rem; vertical-align: baseline; }
+  .key.k-open { background: var(--ink-3); } .key.k-new { background: var(--accent); }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../../">Ananya Patel<span>.</span></a>
+    <nav class="nav" aria-label="Main">
+      <a href="./">Case study</a>
+      <a href="../../#projects" class="hide-sm">Projects</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap dash">
+  <div style="display:grid;gap:var(--s-2)">
+    <p class="eyebrow">SAP FICO self project · Part 3 of 5 · Company code IN10 · Sales area IN10/10/00 · Plant IN11</p>
+    <h1>IN10 order-to-cash simulator</h1>
+    <p class="muted prose">One sales order item runs through the credit check, goods issue, billing and the incoming payment, in the order SAP applies the controls. Choose a unit test to load its data, or change any field and see which control posts, holds or stops the document.</p>
+  </div>
+
+  <div class="panel">
+    <span class="ctl-label">Unit tests · green = cleared, amber = needs follow-up, red = stopped</span>
+    <div class="presets" id="presets"></div>
+    <p class="preset-desc" id="preset-desc"></p>
+  </div>
+
+  <div class="layout">
+    <section class="panel" aria-labelledby="in-title">
+      <div class="panel-head"><h2 id="in-title">Order, delivery, invoice &amp; receipt</h2><span class="small muted">VA01 · VL02N · VF01 · F-28</span></div>
+      <form class="form" id="form" autocomplete="off">
+        <div class="line-head"><b>SO</b><span class="small muted">VA01 · type OR · FG-2001 Brake Drum BD-40</span></div>
+        <div class="field" style="grid-column:1/-1"><label for="f-customer">Sold-to customer</label><select id="f-customer"></select></div>
+        <div class="field"><label for="f-qty">Order qty (EA)</label><input id="f-qty" type="number" min="1" step="10"></div>
+        <div class="field"><label for="f-price">PR00 price ₹ / EA</label><input id="f-price" type="number" min="1" step="10"></div>
+        <div class="field"><label for="f-discPct">K007 customer discount %</label><input id="f-discPct" type="number" min="0" max="100" step="0.5"></div>
+        <div class="field"><label for="f-orderDate">Order date</label><input id="f-orderDate" type="date"></div>
+        <label class="switch" for="f-creditRelease"><input type="checkbox" id="f-creditRelease"><span>Credit manager released the order in UKM_MY_DCDS (only matters if the credit check blocks it).</span></label>
+
+        <div class="line-head"><b>PGI</b><span class="small muted">VL01N delivery · VL02N goods issue · movement 601</span></div>
+        <div class="field"><label for="f-stock">Unrestricted stock (EA)</label><input id="f-stock" type="number" min="0" step="10"></div>
+        <div class="field"><label for="f-pgiDate">Goods issue date</label><input id="f-pgiDate" type="date"></div>
+        <label class="switch" for="f-pgiDone"><input type="checkbox" id="f-pgiDone"><span>Warehouse posted goods issue before billing.</span></label>
+
+        <div class="line-head"><b>BILL</b><span class="small muted">VF01 · type F2 → accounting doc RV</span></div>
+        <div class="field"><label for="f-billDate">Billing date</label><input id="f-billDate" type="date"></div>
+        <div class="field"><label for="f-acctGroup">Material acct assignment grp</label>
+          <select id="f-acctGroup"><option value="01">01 · finished goods</option><option value="">(blank)</option></select></div>
+
+        <div class="line-head"><b>F-28</b><span class="small muted">Incoming payment · terms IN02: 2% in 10 days, net 30</span></div>
+        <div class="field"><label for="f-payDate">Payment date</label><input id="f-payDate" type="date"></div>
+        <div class="field"><label for="f-poster">Posted by</label>
+          <select id="f-poster"><option value="MGR01">MGR01 · finance manager</option><option value="CLERK01">CLERK01 · AR clerk</option></select></div>
+        <div class="field"><label for="f-shortPay">Paid short ₹ (− = over)</label><input id="f-shortPay" type="number" step="50"></div>
+        <label class="switch" for="f-discTaken"><input type="checkbox" id="f-discTaken"><span>Customer deducted the 2% cash discount from the payment.</span></label>
+        <label class="switch" for="f-tds"><input type="checkbox" id="f-tds"><span>Customer deducted TDS under section 194Q (0.1% of the value before GST).</span></label>
+        <p class="fixed">Fixed: FG standard price ₹1,450 · plant region 27 Maharashtra · OB52 open 006–007/2026 · MM period 2026/07 (06 allowed) · payment tolerance ₹500 or 0.5% · credit rule: 60 days overdue</p>
+      </form>
+    </section>
+
+    <section class="panel" aria-labelledby="res-title" aria-live="polite">
+      <div class="panel-head"><h2 id="res-title">System response</h2><span class="small muted">Updates as you edit</span></div>
+      <div id="banner"></div>
+      <div class="tiles" id="tiles"></div>
+      <div class="meter" id="meter"></div>
+      <div id="checks"></div>
+    </section>
+  </div>
+
+  <section class="panel" aria-labelledby="je-title">
+    <div class="panel-head"><h2 id="je-title">Accounting documents</h2><span class="small muted">Account determination from OBYC, VKOA, OB40, OBXI and OBXL</span></div>
+    <div class="docs" id="docs"></div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <span>© <span data-year>2026</span> Ananya Patel · <a href="./">Back to case study</a></span>
+    <span>Simulated responses in plain language, not SAP message texts. Fictional data.</span>
+  </div>
+</footer>
+
+<script src="data/o2c_data.js"></script>
+<script src="o2c-core.js"></script>
+<script src="simulator.js"></script>
+</body>
+</html>

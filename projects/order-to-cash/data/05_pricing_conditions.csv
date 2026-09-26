@@ -1,0 +1,7 @@
+Condition,Description,Key_Combination,Rate,Account_Key,Procedure_Step
+PR00,Price,Material FG-2001,2000 INR / EA,ERL,10
+K007,Customer discount,Customer 200001,-3%,ERS,20
+K007,Customer discount,Customer 200002,-2%,ERS,20
+JOCG,Output CGST,Plant region 27 = customer region 27,9%,JOC,100
+JOSG,Output SGST,Plant region 27 = customer region 27,9%,JOS,110
+JOIG,Output IGST,"Plant region 27, customer region other",18%,JOI,120

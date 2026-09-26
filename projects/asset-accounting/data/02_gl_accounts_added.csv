@@ -1,0 +1,5 @@
+GL_Account,Description,GL_Account_Type,Account_Group,Recon_Type,Open_Item_Mgmt,Field_Status_Group,Post_Automatically_Only,FSV_Item,OB58_Change
+119000,Capital Work-in-Progress,Balance Sheet Account,FA,A,,G007,,BS.A.NCA.CWIP,New item BS.A.NCA.CWIP 0000119000-0000119999; PPE range cut to 0000111000-0000118999
+219700,Asset Sale Clearing,Balance Sheet Account,CL,,X,G001,,BS.EL.CL.OCL,None: inside 0000219000-0000229999
+423000,Profit on Sale of Fixed Assets,Nonoperating Expense or Income,REV,,,G029,X,PL.OI,None: inside 0000421000-0000429999
+665000,Loss on Sale / Scrapping of Fixed Assets,Nonoperating Expense or Income,EXP,,,G004,X,PL.EXP.OTH,None: inside 0000661000-0000669999

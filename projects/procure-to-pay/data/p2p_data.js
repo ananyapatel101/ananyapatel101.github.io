@@ -149,7 +149,7 @@ var P2P_DATA = {
     "invRef": "SSS/26-27/0412",
     "invQty": 10,
     "invPrice": 58000,
-    "tds": true,
+    "tds": false,
     "mrbr": false
    },
    "expect": {
@@ -158,7 +158,7 @@ var P2P_DATA = {
     "grDoc": "5000000187",
     "irDoc": "5100000093",
     "payDoc": "1500000123",
-    "net": 683820,
+    "net": 684400,
     "grir": 0,
     "blocks": []
    }
@@ -176,7 +176,7 @@ var P2P_DATA = {
     "invRef": "SSS/26-27/0412",
     "invQty": 10,
     "invPrice": 58000,
-    "tds": true,
+    "tds": false,
     "mrbr": false
    },
    "expect": {
@@ -203,7 +203,7 @@ var P2P_DATA = {
     "invRef": "SSS/26-27/0412",
     "invQty": 10,
     "invPrice": 58000,
-    "tds": true,
+    "tds": false,
     "mrbr": false
    },
    "expect": {
@@ -230,7 +230,7 @@ var P2P_DATA = {
     "invRef": "SSS/26-27/0412",
     "invQty": 10,
     "invPrice": 58000,
-    "tds": true,
+    "tds": false,
     "mrbr": false
    },
    "expect": {
@@ -257,7 +257,7 @@ var P2P_DATA = {
     "invRef": "SSS/26-27/0412",
     "invQty": 10,
     "invPrice": 58000,
-    "tds": true,
+    "tds": false,
     "mrbr": false
    },
    "expect": {
@@ -266,7 +266,7 @@ var P2P_DATA = {
     "grDoc": "5000000187",
     "irDoc": "5100000093",
     "payDoc": null,
-    "net": 683820,
+    "net": 684400,
     "grir": 232000,
     "blocks": [
      "DQ"
@@ -286,7 +286,7 @@ var P2P_DATA = {
     "invRef": "SSS/26-27/0412",
     "invQty": 10,
     "invPrice": 58400,
-    "tds": true,
+    "tds": false,
     "mrbr": false
    },
    "expect": {
@@ -295,7 +295,7 @@ var P2P_DATA = {
     "grDoc": "5000000187",
     "irDoc": "5100000093",
     "payDoc": "1500000123",
-    "net": 688536,
+    "net": 689120,
     "grir": 0,
     "blocks": []
    }
@@ -313,7 +313,7 @@ var P2P_DATA = {
     "invRef": "SSS/26-27/0412",
     "invQty": 10,
     "invPrice": 58400,
-    "tds": true,
+    "tds": false,
     "mrbr": false
    },
    "expect": {
@@ -322,7 +322,7 @@ var P2P_DATA = {
     "grDoc": "5000000187",
     "irDoc": "5100000093",
     "payDoc": "1500000123",
-    "net": 688536,
+    "net": 689120,
     "grir": 0,
     "blocks": []
    }
@@ -340,7 +340,7 @@ var P2P_DATA = {
     "invRef": "SSS/26-27/0412",
     "invQty": 10,
     "invPrice": 58900,
-    "tds": true,
+    "tds": false,
     "mrbr": false
    },
    "expect": {
@@ -349,7 +349,7 @@ var P2P_DATA = {
     "grDoc": "5000000187",
     "irDoc": "5100000093",
     "payDoc": null,
-    "net": 694431,
+    "net": 695020,
     "grir": 0,
     "blocks": [
      "PP"
@@ -369,7 +369,7 @@ var P2P_DATA = {
     "invRef": "SSS/26-27/0412",
     "invQty": 10,
     "invPrice": 58900,
-    "tds": true,
+    "tds": false,
     "mrbr": true
    },
    "expect": {
@@ -378,7 +378,7 @@ var P2P_DATA = {
     "grDoc": "5000000187",
     "irDoc": "5100000093",
     "payDoc": "1500000123",
-    "net": 694431,
+    "net": 695020,
     "grir": 0,
     "blocks": [
      "PP"
@@ -398,7 +398,7 @@ var P2P_DATA = {
     "invRef": "SSS/26-27/0398",
     "invQty": 10,
     "invPrice": 58000,
-    "tds": true,
+    "tds": false,
     "mrbr": false
    },
    "expect": {
@@ -425,7 +425,7 @@ var P2P_DATA = {
     "invRef": "SSS/26-27/0412",
     "invQty": 10,
     "invPrice": 58000,
-    "tds": true,
+    "tds": false,
     "mrbr": false
    },
    "expect": {
@@ -434,7 +434,7 @@ var P2P_DATA = {
     "grDoc": "5000000187",
     "irDoc": "5100000093",
     "payDoc": null,
-    "net": 683820,
+    "net": 684400,
     "grir": 0,
     "blocks": []
    }
@@ -452,7 +452,7 @@ var P2P_DATA = {
     "invRef": "SSS/26-27/0412",
     "invQty": 10,
     "invPrice": 58000,
-    "tds": true,
+    "tds": false,
     "mrbr": false
    },
    "expect": {

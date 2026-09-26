@@ -1,13 +1,13 @@
 Test_ID,Scenario,Price_Control,GR_Qty,GR_Date,Inv_Date,Inv_Ref,Inv_Qty,Inv_Price,MRBR_Release,Outcome,Stops_At,GR_Doc,IR_Doc,Payment_Doc,Vendor_Net_INR,Blocks
-P2P-01,"Happy path: 10 MT received, invoiced at PO price, paid by F110",V,10,2026-09-18,2026-09-20,SSS/26-27/0412,10,58000,,paid,paid,5000000187,5100000093,1500000123,683820,
+P2P-01,"Happy path: 10 MT received, invoiced at PO price, paid by F110",V,10,2026-09-18,2026-09-20,SSS/26-27/0412,10,58000,,paid,paid,5000000187,5100000093,1500000123,684400,
 P2P-02,Goods receipt dated 01.10.2026 before MMPV moves the MM period,V,10,2026-10-01,2026-09-20,SSS/26-27/0412,10,58000,,error,mmper,,,,,
 P2P-03,Over-delivery: 10.5 MT received against 10 MT ordered,V,10.5,2026-09-18,2026-09-20,SSS/26-27/0412,10,58000,,error,overdel,,,,,
 P2P-04,Invoice arrives before any goods receipt (GR-based IV),V,0,,2026-09-20,SSS/26-27/0412,10,58000,,error,grbiv,,,,,
-P2P-05,"Partial receipt of 6 MT, invoice for the full 10 MT",V,6,2026-09-18,2026-09-20,SSS/26-27/0412,10,58000,,blocked,block,5000000187,5100000093,,683820,DQ
-P2P-06,"Price ₹58,400 per MT: within tolerance, moving average price",V,10,2026-09-18,2026-09-20,SSS/26-27/0412,10,58400,,paid,paid,5000000187,5100000093,1500000123,688536,
-P2P-07,Same price variance with standard price control (S),S,10,2026-09-18,2026-09-20,SSS/26-27/0412,10,58400,,paid,paid,5000000187,5100000093,1500000123,688536,
-P2P-08,"Price ₹58,900 per MT: ₹9,000 breaches the ₹5,000 PP limit",V,10,2026-09-18,2026-09-20,SSS/26-27/0412,10,58900,,blocked,block,5000000187,5100000093,,694431,PP
-P2P-09,Same blocked invoice after release in MRBR,V,10,2026-09-18,2026-09-20,SSS/26-27/0412,10,58900,X,paid,paid,5000000187,5100000093,1500000123,694431,PP
+P2P-05,"Partial receipt of 6 MT, invoice for the full 10 MT",V,6,2026-09-18,2026-09-20,SSS/26-27/0412,10,58000,,blocked,block,5000000187,5100000093,,684400,DQ
+P2P-06,"Price ₹58,400 per MT: within tolerance, moving average price",V,10,2026-09-18,2026-09-20,SSS/26-27/0412,10,58400,,paid,paid,5000000187,5100000093,1500000123,689120,
+P2P-07,Same price variance with standard price control (S),S,10,2026-09-18,2026-09-20,SSS/26-27/0412,10,58400,,paid,paid,5000000187,5100000093,1500000123,689120,
+P2P-08,"Price ₹58,900 per MT: ₹9,000 breaches the ₹5,000 PP limit",V,10,2026-09-18,2026-09-20,SSS/26-27/0412,10,58900,,blocked,block,5000000187,5100000093,,695020,PP
+P2P-09,Same blocked invoice after release in MRBR,V,10,2026-09-18,2026-09-20,SSS/26-27/0412,10,58900,X,paid,paid,5000000187,5100000093,1500000123,695020,PP
 P2P-10,Duplicate: vendor reference SSS/26-27/0398 already posted,V,10,2026-09-18,2026-09-20,SSS/26-27/0398,10,58000,,error,dup,5000000187,,,,
-P2P-11,Invoice dated 30.09.2026 is not yet due at the 20.10.2026 run,V,10,2026-09-18,2026-09-30,SSS/26-27/0412,10,58000,,notdue,due,5000000187,5100000093,,683820,
+P2P-11,Invoice dated 30.09.2026 is not yet due at the 20.10.2026 run,V,10,2026-09-18,2026-09-30,SSS/26-27/0412,10,58000,,notdue,due,5000000187,5100000093,,684400,
 P2P-12,Invoice keyed with posting date 31.08.2026 (closed period 005),V,10,2026-09-18,2026-08-31,SSS/26-27/0412,10,58000,,error,ob52ir,5000000187,,,,

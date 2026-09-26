@@ -4,10 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Procure-to-Pay · Ananya Patel</title>
-<meta name="description" content="SAP S/4HANA case study: procure-to-pay in company code IN10, from purchase requisition to F110 payment, with OBYC account determination, three-way match tolerances, GST input credit, TDS 194Q and a 12-case unit-test script.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Schibsted+Grotesk:wght@600;700&display=swap">
+<meta name="description" content="SAP S/4HANA case study: procure-to-pay in company code IN10, from purchase requisition to F110 payment, with OBYC account determination, three-way match tolerances, GST input credit, a TDS 194Q applicability check and a 12-case unit-test script.">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Carlito:ital,wght@0,400;0,700;1,400&display=swap">
 <link rel="stylesheet" href="../../assets/css/style.css">
 <script src="../../assets/js/main.js"></script>
 <style>
@@ -39,22 +37,22 @@
     <a class="brand" href="../../">Ananya Patel<span>.</span></a>
     <nav class="nav" aria-label="Main">
       <a href="../../#projects">Projects</a>
+      <a href="../../resume.html" class="hide-sm">Résumé</a>
       <a href="simulator.html">P2P simulator</a>
       <a href="../../#contact" class="hide-sm">Contact</a>
     </nav>
-    <button class="theme-btn" type="button" data-theme-toggle>Dark mode</button>
   </div>
 </header>
 
 <main>
   <section class="cs-hero">
     <div class="wrap">
-      <p class="eyebrow">Project 03 · SAP S/4HANA MM–FI integration · Accounts Payable</p>
+      <p class="eyebrow">SAP FICO self project · Part 2 of 5 · SAP S/4HANA MM–FI integration · Accounts Payable</p>
       <h1>Procure-to-Pay (P2P)</h1>
-      <p class="muted prose" style="font-size:var(--t-lg)">I set up and ran the full purchase cycle for company code IN10: requisition, purchase order, two goods receipts, a three-way-matched invoice with GST input credit and TDS under section 194Q, and an F110 payment run. The work covers the org objects, OBYC account determination, invoice tolerances and the payment program, and a 12-case unit-test script proves each control. The GR/IR balance it leaves at 30 September is the ₹3,40,000 in Project 01's trial balance.</p>
+      <p class="muted prose" style="font-size:var(--t-lg)">I set up and ran the full purchase cycle for company code IN10: requisition, purchase order, two goods receipts, a three-way-matched invoice with GST input credit, and an F110 payment run. The work covers the org objects, OBYC account determination, invoice tolerances and the payment program, and a 12-case unit-test script proves each control. The GR/IR balance it leaves at 30 September is the ₹3,40,000 in Part 5's trial balance.</p>
       <div class="cs-meta">
         <span class="chip strong">ME51N / ME21N</span><span class="chip strong">MIGO 101</span><span class="chip strong">MIRO</span><span class="chip strong">F110 / FBZP</span>
-        <span class="chip strong">OBYC</span><span class="chip strong">OMR6</span><span class="chip">MRBR</span><span class="chip">MB5S</span><span class="chip">FTXP</span><span class="chip">TDS 194Q</span>
+        <span class="chip strong">OBYC</span><span class="chip strong">OMR6</span><span class="chip">MRBR</span><span class="chip">MB5S</span><span class="chip">FTXP</span><span class="chip">GST input credit</span>
       </div>
       <div class="hero-actions">
         <a class="btn btn-primary" href="simulator.html">Open P2P simulator</a>
@@ -85,11 +83,11 @@
       <div class="cs-section" id="flow">
         <p class="eyebrow">Scenario</p>
         <h2>One purchase, five documents, three ledger entries</h2>
-        <p>The Pune plant (IN11) of Ananya Manufacturing (IN10) needs 10 MT of 2 mm hot-rolled steel coil. The buyer orders it from Shakti Steel Suppliers (vendor 100001, Maharashtra) at ₹58,000 per MT, which comes to ₹5,80,000 before GST. It arrives in two lots, the vendor bills once, and the payment run settles the net amount after TDS. All data is fictional.</p>
+        <p>The Pune plant (IN11) of XYZ Inc. (IN10) needs 10 MT of 2 mm hot-rolled steel coil. The buyer orders it from Shakti Steel Suppliers (vendor 100001, Maharashtra) at ₹58,000 per MT, which comes to ₹5,80,000 before GST. It arrives in two lots, the vendor bills once, and the payment run settles the full amount (no TDS applies, see configuration step 11). All data is fictional.</p>
         <div class="table-wrap" style="padding:var(--s-4)">
           <svg class="flow" viewBox="0 0 894 340" role="img" aria-labelledby="flow-title flow-desc">
             <title id="flow-title">Procure-to-pay document flow for PO 4500000118</title>
-            <desc id="flow-desc">Purchase requisition 0010000045 leads to purchase order 4500000118. Neither posts to the ledger. Two goods receipts debit inventory 131000 and credit GR/IR 219100 for 5,80,000 in total. The invoice 5100000093 debits GR/IR 5,80,000 and input GST 1,04,400, credits TDS 580 and the vendor 6,83,820. GR/IR nets to zero. Payment 1500000123 debits the vendor and credits bank clearing 171100 for 6,83,820.</desc>
+            <desc id="flow-desc">Purchase requisition 0010000045 leads to purchase order 4500000118. Neither posts to the ledger. Two goods receipts debit inventory 131000 and credit GR/IR 219100 for 5,80,000 in total. The invoice 5100000093 debits GR/IR 5,80,000 and input GST 1,04,400, and credits the vendor 6,84,400. GR/IR nets to zero. Payment 1500000123 debits the vendor and credits bank clearing 171100 for 6,84,400.</desc>
             <defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="arrow" d="M0,0 L10,5 L0,10 z"/></marker></defs>
 
             <rect class="box" x="12" y="16" width="150" height="84" rx="6"/>
@@ -137,21 +135,20 @@
             <text class="m cr" x="386" y="186">Cr 219100</text><text class="m" x="510" y="186" text-anchor="end">5,80,000</text>
 
             <path class="edge" d="M627 100 V138" marker-end="url(#ah)"/>
-            <rect class="box" x="552" y="140" width="150" height="112" rx="6"/>
+            <rect class="box" x="552" y="140" width="150" height="90" rx="6"/>
             <text class="m dr" x="566" y="164">Dr 219100</text><text class="m" x="690" y="164" text-anchor="end">5,80,000</text>
             <text class="m dr" x="566" y="186">Dr 161000</text><text class="m" x="690" y="186" text-anchor="end">1,04,400</text>
-            <text class="m cr" x="566" y="208">Cr 222000</text><text class="m" x="690" y="208" text-anchor="end">580</text>
-            <text class="m cr" x="566" y="230">Cr 100001</text><text class="m" x="690" y="230" text-anchor="end">6,83,820</text>
+            <text class="m cr" x="566" y="208">Cr 100001</text><text class="m" x="690" y="208" text-anchor="end">6,84,400</text>
 
             <path class="edge" d="M807 100 V138" marker-end="url(#ah)"/>
             <rect class="box" x="732" y="140" width="150" height="62" rx="6"/>
-            <text class="m dr" x="746" y="164">Dr 100001</text><text class="m" x="870" y="164" text-anchor="end">6,83,820</text>
-            <text class="m cr" x="746" y="186">Cr 171100</text><text class="m" x="870" y="186" text-anchor="end">6,83,820</text>
+            <text class="m dr" x="746" y="164">Dr 100001</text><text class="m" x="870" y="164" text-anchor="end">6,84,400</text>
+            <text class="m cr" x="746" y="186">Cr 171100</text><text class="m" x="870" y="186" text-anchor="end">6,84,400</text>
 
-            <path class="edge key" d="M447 202 V286 H627 V252"/>
+            <path class="edge key" d="M447 202 V286 H627 V230"/>
             <text class="tc" x="537" y="306" text-anchor="middle">GR/IR 219100: Cr 5,80,000 at GR,</text>
             <text class="tc" x="537" y="322" text-anchor="middle">Dr 5,80,000 at invoice → ₹0</text>
-            <path class="edge key" d="M702 230 H720 V218 H807 V202"/>
+            <path class="edge key" d="M702 204 H807 V202"/>
             <text class="tc" x="807" y="232" text-anchor="middle">vendor item</text>
             <text class="tc" x="807" y="246" text-anchor="middle">cleared</text>
           </svg>
@@ -163,7 +160,7 @@
       <div class="cs-section" id="workbook">
         <p class="eyebrow">Deliverable · configuration workbook</p>
         <h2>Configuration steps, in dependency order</h2>
-        <p>These steps build on Project 02's company code, periods and document control. Each row states what was configured for IN10 and why.</p>
+        <p>These steps build on Part 1's company code, periods and document control. Each row states what was configured for IN10 and why.</p>
         <div class="table-wrap"><table class="data">
           <thead><tr><th>#</th><th>T-code</th><th>Object</th><th>IN10 value</th><th>Why</th></tr></thead>
           <tbody>
@@ -175,14 +172,14 @@
             <tr><td>6</td><td class="tc">OX14 / OMWD</td><td>Valuation level &amp; grouping code</td><td>Valuation at plant level; IN11 → grouping code 0001</td><td>Plants with the same grouping code share one set of OBYC accounts.</td></tr>
             <tr><td>7</td><td class="tc">OMSK / MM01</td><td>Material master</td><td>RM-1001, type ROH, valuation class 3000, price control V</td><td>The valuation class links the material to G/L accounts. Price control decides where price differences land.</td></tr>
             <tr><td>8</td><td class="tc">OBYC</td><td>Automatic postings</td><td>BSX 131000 · WRX 219100 · PRD 512000</td><td>MIGO and MIRO find these accounts on their own, so users never choose them.</td></tr>
-            <tr><td>9</td><td class="tc">FS00 / OB58</td><td>New G/L accounts, FSV</td><td>171100 bank outgoing payments, 512000 price differences; INS3 extended</td><td>171100 sits outside Project 01's cash ranges, so the FSV must be extended before it gets a balance (see the <a href="#order">integration rules</a>).</td></tr>
+            <tr><td>9</td><td class="tc">FS00 / OB58</td><td>New G/L accounts, FSV</td><td>171100 bank outgoing payments, 512000 price differences; INS3 extended</td><td>171100 sits outside Part 5's cash ranges, so the FSV must be extended before it gets a balance (see the <a href="#order">integration rules</a>).</td></tr>
             <tr><td>10</td><td class="tc">FTXP / OB40</td><td>Tax code</td><td>I8: input CGST 9% + SGST 9% → 161000 (keys JIC, JIS)</td><td>An intra-state purchase: the vendor and the plant are both in Maharashtra.</td></tr>
-            <tr><td>11</td><td class="tc">WHT / OBWW</td><td>Extended withholding tax</td><td>Type Q1, code Q1: section 194Q, 0.1% at invoice → 222000</td><td>The buyer deducts TDS on goods once purchases from a seller pass ₹50 lakh in the year, which Shakti Steel has.</td></tr>
-            <tr><td>12</td><td class="tc">BP</td><td>Vendor master</td><td>100001: roles FLVN00/FLVN01, recon 211000, NT30, method T, WHT Q1, double-invoice check, GR-based IV</td><td>Master data carries the controls into every PO and invoice for this vendor.</td></tr>
+            <tr><td>11</td><td class="tc">WHT / OBWW</td><td>Extended withholding tax</td><td>Section 194Q checked and <b>not</b> activated for IN10: no WHT type on the vendors</td><td>194Q binds a buyer only if its turnover in the previous year was above ₹10 crore (and then only on purchases from one seller above ₹50 lakh). IN10 sells about ₹6.5 crore a year, so it doesn't deduct. If it crosses ₹10 crore, type/code Q1 at 0.1% → 222000 is added to the vendor master (the simulator has a what-if switch for it).</td></tr>
+            <tr><td>12</td><td class="tc">BP</td><td>Vendor master</td><td>100001: roles FLVN00/FLVN01, recon 211000, NT30, method T, no WHT type, double-invoice check, GR-based IV</td><td>Master data carries the controls into every PO and invoice for this vendor.</td></tr>
             <tr><td>13</td><td class="tc">OBB8</td><td>Payment terms</td><td>NT30: net 30 days from the invoice date</td><td>Sets the due date that F110 reads.</td></tr>
             <tr><td>14</td><td class="tc">OMR6</td><td>Invoice tolerances</td><td>PP: ₹5,000 or 2% upper · DQ: ₹0</td><td>Decides when MIRO posts the invoice with a payment block.</td></tr>
             <tr><td>15</td><td class="tc">OMRDC / OMRM</td><td>Duplicate invoice check</td><td>Company code + reference; message set to error</td><td>By default it's only a warning, which a busy clerk can click past.</td></tr>
-            <tr><td>16</td><td class="tc">OBA7 / FBN1</td><td>Document types</td><td>WE → range 50, RE → range 51 for FY 2026; F110 uses KZ (range 15)</td><td>Extends <a href="../fi-enterprise-structure/#documents">Project 02's document control</a> to logistics documents.</td></tr>
+            <tr><td>16</td><td class="tc">OBA7 / FBN1</td><td>Document types</td><td>WE → range 50, RE → range 51 for FY 2026; F110 uses KZ (range 15)</td><td>Extends <a href="../fi-enterprise-structure/#documents">Part 1's document control</a> to logistics documents.</td></tr>
             <tr><td>17</td><td class="tc">FI12</td><td>House bank</td><td>HDFC1, account ID CUR01 → G/L 171000</td><td>The bank account payments are made from.</td></tr>
             <tr><td>18</td><td class="tc">FBZP</td><td>Payment program</td><td>Paying company code IN10; method T (bank transfer, doc type KZ); T → HDFC1/CUR01, clearing account 171100</td><td>Tells F110 which methods, bank and accounts to use.</td></tr>
           </tbody>
@@ -196,7 +193,7 @@
           <ol>
             <li><b>Assign org units before creating master data.</b> A material can't be extended to plant IN11, and a PO can't be raised for it, until the plant belongs to IN10 and the purchasing org is assigned to both.</li>
             <li><b>OBYC before the first goods receipt.</b> If valuation class 3000 has no BSX account, MIGO fails with "account determination not possible". I test each key in OMWB (simulation) before go-live.</li>
-            <li><b>FSV before the first payment.</b> Project 01's cash item covers 0000171000 (debit only) and 0000172000–0000179999, so 171100 would land in <i>Not assigned</i> and the Balance Sheet would stop balancing without any error message. Following rule INS3-01, I added the range 0000171100–0000171999 (D and C) in OB58 and re-ran the assignment check: 0 not assigned. 512000 already falls inside 0000511000–0000519999.</li>
+            <li><b>FSV before the first payment.</b> Part 5's cash item covers 0000171000 (debit only) and 0000172000–0000179999, so 171100 would land in <i>Not assigned</i> and the Balance Sheet would stop balancing without any error message. Following rule INS3-01, I added the range 0000171100–0000171999 (D and C) in OB58 and re-ran the assignment check: 0 not assigned. 512000 already falls inside 0000511000–0000519999.</li>
           </ol>
         </div>
       </div>
@@ -212,11 +209,10 @@
             <tr><td class="tc">OBYC</td><td class="acct">WRX</td><td>GR/IR clearing</td><td class="acct">0001</td><td class="acct">219100</td><td>MIGO credit, MIRO debit</td></tr>
             <tr><td class="tc">OBYC</td><td class="acct">PRD</td><td>Price differences</td><td class="acct">0001 / 3000</td><td class="acct">512000</td><td>MIGO and MIRO if price control is S</td></tr>
             <tr><td class="tc">OB40</td><td class="acct">JIC / JIS</td><td>Input CGST / SGST</td><td>Tax code I8</td><td class="acct">161000</td><td>MIRO</td></tr>
-            <tr><td class="tc">OBWW</td><td class="acct">Q1</td><td>TDS 194Q to be paid over</td><td>WHT type Q1</td><td class="acct">222000</td><td>MIRO</td></tr>
             <tr><td class="tc">FBZP</td><td class="acct">HDFC1 / CUR01</td><td>Bank sub-account for method T</td><td>Payment method T</td><td class="acct">171100</td><td>F110</td></tr>
           </tbody>
         </table></div>
-        <p class="note">512000 is a cost account (field status G004), so its cost center comes from the OKB9 default rather than from the user. Both new accounts are set to "post automatically only", so nobody can post to them by hand in FB50.</p>
+        <p class="note">512000 is a cost account (field status G004), so its cost center comes from the OKB9 default rather than from the user. 512000 is also set to "post automatically only", so nobody can post a price difference by hand in FB50. 171100 stays open for manual posting, because bank reconciliation clears it against 171000.</p>
       </div>
 
       <!-- ============================================================ -->
@@ -233,13 +229,12 @@
             <tr><td class="acct">5100000093</td><td>RE · 20.09.2026</td><td class="acct">86</td><td><span class="acct">219100</span> GR/IR Clearing</td><td class="num acct">5,80,000</td><td></td></tr>
             <tr class="sub"><td></td><td>Ref SSS/26-27/0412</td><td class="acct">40</td><td><span class="acct">161000</span> Input GST: CGST 9%</td><td class="num acct">52,200</td><td></td></tr>
             <tr class="sub"><td></td><td></td><td class="acct">40</td><td><span class="acct">161000</span> Input GST: SGST 9%</td><td class="num acct">52,200</td><td></td></tr>
-            <tr class="sub"><td></td><td></td><td class="acct">50</td><td><span class="acct">222000</span> TDS Payable: 194Q, 0.1% × 5,80,000</td><td></td><td class="num acct">580</td></tr>
-            <tr class="sub"><td></td><td></td><td class="acct">31</td><td><span class="acct">100001</span> Shakti Steel Suppliers (recon 211000)</td><td></td><td class="num acct">6,83,820</td></tr>
-            <tr><td class="acct">1500000123</td><td>KZ · 20.10.2026</td><td class="acct">25</td><td><span class="acct">100001</span> Shakti Steel Suppliers: clears 5100000093</td><td class="num acct">6,83,820</td><td></td></tr>
-            <tr class="sub"><td></td><td>F110 run AP01</td><td class="acct">50</td><td><span class="acct">171100</span> HDFC Bank: Outgoing Payments</td><td></td><td class="num acct">6,83,820</td></tr>
+            <tr class="sub"><td></td><td></td><td class="acct">31</td><td><span class="acct">100001</span> Shakti Steel Suppliers (recon 211000)</td><td></td><td class="num acct">6,84,400</td></tr>
+            <tr><td class="acct">1500000123</td><td>KZ · 20.10.2026</td><td class="acct">25</td><td><span class="acct">100001</span> Shakti Steel Suppliers: clears 5100000093</td><td class="num acct">6,84,400</td><td></td></tr>
+            <tr class="sub"><td></td><td>F110 run AP01</td><td class="acct">50</td><td><span class="acct">171100</span> HDFC Bank: Outgoing Payments</td><td></td><td class="num acct">6,84,400</td></tr>
           </tbody>
         </table></div>
-        <p class="note">Invoice total: ₹5,80,000 + GST ₹1,04,400 = ₹6,84,400. TDS is worked out on the value before GST, so the vendor is owed ₹6,84,400 − ₹580 = ₹6,83,820. When HDFC's bank statement shows the debit, it clears 171100 against 171000. The ₹580 is deposited with the government by 7 October and reported in the quarterly TDS return (Form 26Q).</p>
+        <p class="note">Invoice total: ₹5,80,000 + GST ₹1,04,400 = ₹6,84,400, and the vendor is paid all of it, because IN10 is below the ₹10 crore turnover test for TDS under section 194Q. When HDFC's bank statement shows the debit, it clears 171100 against 171000. The ₹1,04,400 input GST is claimed in GSTR-3B once the vendor's invoice appears in GSTR-2B.</p>
       </div>
 
       <!-- ============================================================ -->
@@ -267,7 +262,7 @@
           <tbody>
             <tr><td>GR 10 MT</td><td>Dr 131000 5,80,000 · Cr 219100 5,80,000</td><td>Dr 131000 5,75,000 · Dr 512000 5,000 · Cr 219100 5,80,000</td></tr>
             <tr><td>Invoice price difference ₹4,000</td><td>Dr 131000 4,000: stock value and moving average price go up</td><td>Dr 512000 4,000: stock stays at standard; the variance hits the P&amp;L</td></tr>
-            <tr><td>Vendor net</td><td class="acct">6,88,536</td><td class="acct">6,88,536</td></tr>
+            <tr><td>Vendor net</td><td class="acct">6,89,120</td><td class="acct">6,89,120</td></tr>
           </tbody>
         </table></div>
         <p class="note">With V, if some of the steel has already been consumed when the invoice arrives, SAP posts that share of the difference to PRD rather than to stock. The simulator assumes all 10 MT are still in the store.</p>
@@ -281,7 +276,7 @@
           <li><span class="tc">Parameters</span><span>Run date 20.10.2026, ID AP01, company code IN10, payment method T, next posting date 27.10.2026, vendor 100001.</span></li>
           <li><span class="tc">Proposal</span><span>F110 selects open items that would be overdue by the next run: due date before 27.10.2026. Invoice 5100000093 is due 20.10.2026 (20.09 + 30 days), so it is selected.</span></li>
           <li><span class="tc">Review</span><span>The AP manager checks the proposal and the exception list. Blocked invoices (block R) and items not yet due appear there, not in the payment list.</span></li>
-          <li><span class="tc">Payment run</span><span>Posts KZ 1500000123: Dr vendor 100001, Cr 171100 ₹6,83,820, and clears the invoice.</span></li>
+          <li><span class="tc">Payment run</span><span>Posts KZ 1500000123: Dr vendor 100001, Cr 171100 ₹6,84,400, and clears the invoice.</span></li>
           <li><span class="tc">Medium</span><span>Creates the bank transfer file for HDFC (DMEE). The bank statement later clears 171100 against 171000.</span></li>
         </ol>
         <p class="note">An invoice dated 30.09.2026 would be due 30.10.2026. That's after the next run on 27.10, so AP01 leaves it for a later run (P2P-11). This logic, paying what would otherwise be late by the next run, is what keeps suppliers paid on time without paying early.</p>
@@ -289,20 +284,20 @@
 
       <!-- ============================================================ -->
       <div class="cs-section" id="grir">
-        <p class="eyebrow">Month-end · MB5S · link to Project 01</p>
+        <p class="eyebrow">Month-end · MB5S · link to Part 5</p>
         <h2>GR/IR at 30 September</h2>
-        <p>At the September close, the GR/IR list (MB5S) shows what the ₹3,40,000 credit on 219100 in <a href="../fsv-month-end-close/#data">Project 01's trial balance</a> is made of:</p>
+        <p>At the September close, the GR/IR list (MB5S) shows what the ₹3,40,000 credit on 219100 in <a href="../fsv-month-end-close/#data">Part 5's trial balance</a> is made of:</p>
         <div class="table-wrap"><table class="data">
           <thead><tr><th>PO</th><th>Vendor</th><th>Material</th><th class="num">GR ₹</th><th class="num">Invoiced ₹</th><th class="num">GR/IR ₹</th><th>Status</th></tr></thead>
           <tbody>
             <tr><td class="acct">4500000118</td><td>100001 Shakti Steel</td><td>RM-1001 · 10 MT</td><td class="num acct">5,80,000</td><td class="num acct">5,80,000</td><td class="num acct">0</td><td>Fully matched</td></tr>
             <tr><td class="acct">4500000121</td><td>100002 Deccan Paints</td><td>RM-2001 · 2,000 L</td><td class="num acct">3,40,000</td><td class="num acct">0</td><td class="num acct">3,40,000 Cr</td><td>Received 28.09, not invoiced</td></tr>
           </tbody>
-          <tfoot><tr><td colspan="5">Balance of 219100 = Project 01 trial balance</td><td class="num acct">3,40,000 Cr</td><td></td></tr></tfoot>
+          <tfoot><tr><td colspan="5">Balance of 219100 = Part 5 trial balance</td><td class="num acct">3,40,000 Cr</td><td></td></tr></tfoot>
         </table></div>
         <ul>
-          <li><b>GR/IR is an accrual the system makes on its own.</b> The ₹3,40,000 of primer is already a liability because it was received. No FBS1 accrual is needed, which is why Project 01's six accruals are all non-PO costs: power, audit fees and interest.</li>
-          <li><b>Presentation.</b> 219100 falls under <i>Other current liabilities</i> in FSV INS3. A debit GR/IR balance (invoiced but not received) should be shown as an asset. In classic SAP ERP the regrouping program F.19 does this.</li>
+          <li><b>GR/IR is an accrual the system makes on its own.</b> The ₹3,40,000 of primer is already a liability because it was received. No FBS1 accrual is needed, which is why Part 5's six accruals are all non-PO costs: power, audit fees and interest.</li>
+          <li><b>Presentation.</b> 219100 falls under <i>Other current liabilities</i> in FSV INS3. A debit GR/IR balance (invoiced but not received) should be shown as an asset. The GR/IR regrouping program F.19 (still used in S/4HANA) does this at period-end; at 30.09 the net balance is a credit, so nothing moves.</li>
           <li><b>Old differences.</b> Items that will never be settled, such as a short delivery the vendor won't send, are cleared with MR11 (GR/IR account maintenance), not with a manual journal.</li>
         </ul>
       </div>
@@ -315,7 +310,7 @@
         <div class="table-wrap"><table class="data">
           <thead><tr><th>ID</th><th>Scenario</th><th>Key input</th><th>Expected result</th></tr></thead>
           <tbody>
-            <tr><td class="acct">P2P-01</td><td>Happy path</td><td>GR 10 MT · invoice 10 × ₹58,000</td><td class="res-posted">Paid 1500000123 · ₹6,83,820</td></tr>
+            <tr><td class="acct">P2P-01</td><td>Happy path</td><td>GR 10 MT · invoice 10 × ₹58,000</td><td class="res-posted">Paid 1500000123 · ₹6,84,400</td></tr>
             <tr><td class="acct">P2P-02</td><td>GR before MMPV moves the MM period</td><td>GR 01.10.2026</td><td class="res-error">MM period: only 2026/06 and 2026/05</td></tr>
             <tr><td class="acct">P2P-03</td><td>Over-delivery</td><td>GR 10.5 MT, tolerance 2%</td><td class="res-error">Over-delivery: limit 10.2 MT</td></tr>
             <tr><td class="acct">P2P-04</td><td>Invoice before any receipt</td><td>GR 0 · GR-based IV</td><td class="res-error">No GR to match: park in MIR7</td></tr>
@@ -323,20 +318,20 @@
             <tr><td class="acct">P2P-06</td><td>Small price variance, price control V</td><td>₹58,400/MT · +₹4,000</td><td class="res-posted">Paid · ₹4,000 to 131000</td></tr>
             <tr><td class="acct">P2P-07</td><td>Same variance, price control S</td><td>₹58,400/MT · std ₹57,500</td><td class="res-posted">Paid · ₹5,000 + ₹4,000 to 512000</td></tr>
             <tr><td class="acct">P2P-08</td><td>Price variance above tolerance</td><td>₹58,900/MT · +₹9,000 (1.55%)</td><td class="res-warn">Posted · block R (PP)</td></tr>
-            <tr><td class="acct">P2P-09</td><td>Same, released in MRBR</td><td>MRBR release</td><td class="res-posted">Paid 1500000123 · ₹6,94,431</td></tr>
+            <tr><td class="acct">P2P-09</td><td>Same, released in MRBR</td><td>MRBR release</td><td class="res-posted">Paid 1500000123 · ₹6,95,020</td></tr>
             <tr><td class="acct">P2P-10</td><td>Duplicate vendor reference</td><td>SSS/26-27/0398</td><td class="res-error">Already posted as 5100000071</td></tr>
             <tr><td class="acct">P2P-11</td><td>Invoice not yet due</td><td>Invoice 30.09 → due 30.10</td><td class="res-warn">Posted · left for a later F110 run</td></tr>
             <tr><td class="acct">P2P-12</td><td>Invoice in a closed FI period</td><td>Posting date 31.08.2026 (period 005)</td><td class="res-error">Period 005 2026 not open (OB52)</td></tr>
           </tbody>
         </table></div>
-        <p class="note">Each test runs on its own, starting from the number ranges as they stood before PO 4500000118. That's why every successful test shows the same document numbers as the case study. Simulator state is 30.09.2026, after the Project 01 close opened period 007 in OB52. Messages are simulated in plain language and aren't copied from SAP message texts.</p>
+        <p class="note">Each test runs on its own, starting from the number ranges as they stood before PO 4500000118. That's why every successful test shows the same document numbers as the case study. Simulator state is 30.09.2026, after the Part 5 close opened period 007 in OB52. Messages are simulated in plain language and aren't copied from SAP message texts.</p>
       </div>
 
       <!-- ============================================================ -->
       <div class="cs-section" id="business">
         <p class="eyebrow">Business impact</p>
         <h2>Why P2P controls matter</h2>
-        <p>Purchases are a manufacturer's largest cash outflow: raw materials alone are ₹1.94 crore of IN10's ₹3.24 crore half-year revenue. The three-way match means the company pays only for goods it received, at the price it agreed. The duplicate check stops the same bill being paid twice. GR/IR books the liability the day the goods arrive, which makes the month-end close faster and more complete. And TDS and GST are worked out from configuration, not by hand, which protects the input tax credit and avoids interest for late or short deduction.</p>
+        <p>Purchases are a manufacturer's largest cash outflow: raw materials alone are ₹1.94 crore of IN10's ₹3.24 crore half-year revenue. The three-way match means the company pays only for goods it received, at the price it agreed. The duplicate check stops the same bill being paid twice. GR/IR books the liability the day the goods arrive, which makes the month-end close faster and more complete. And GST is worked out from the tax code, not by hand, which protects the input tax credit; checking TDS applicability up front avoids deducting tax the law doesn't require.</p>
       </div>
 
       <!-- ============================================================ -->
@@ -344,17 +339,17 @@
         <p class="eyebrow">Interview guide</p>
         <h2>How I present it in 90 seconds</h2>
         <ol>
-          <li><b>Scope:</b> "I ran procure-to-pay end to end for company code IN10: a requisition, a PO for 10 tonnes of steel, two goods receipts, a three-way-matched invoice with GST and TDS 194Q, and an F110 payment."</li>
+          <li><b>Scope:</b> "I ran procure-to-pay end to end for company code IN10: a requisition, a PO for 10 tonnes of steel, two goods receipts, a three-way-matched invoice with GST input credit, and an F110 payment."</li>
           <li><b>Integration:</b> "Plant IN11 and purchasing org IN10 are assigned to the company code. OBYC sends goods receipts to inventory and GR/IR, and price differences to PRD for standard-price materials."</li>
           <li><b>Controls:</b> "OMR6 tolerances put a payment block on invoices that don't match the PO or the receipt, the duplicate check is set to an error, and F110 pays only released items that are due."</li>
-          <li><b>Proof:</b> "Twelve unit tests and a simulator. And it ties back: the ₹3,40,000 GR/IR balance at 30 September is exactly the figure in my Project 01 trial balance."</li>
+          <li><b>Proof:</b> "Twelve unit tests and a simulator. And it ties back: the ₹3,40,000 GR/IR balance at 30 September is exactly the figure in the trial balance of my month-end close (Part 5)."</li>
         </ol>
         <div class="qa">
           <details><summary>What is GR/IR and why does it exist?</summary><p>A clearing account between goods receipt and invoice. The GR credits it, the invoice debits it, and when both match it's zero. A credit balance means goods received but not invoiced, which is a liability, and a debit balance means invoiced but not received.</p></details>
           <details><summary>What does OBYC do? Name the keys you used.</summary><p>It's MM account determination, set by transaction key, valuation grouping code and valuation class. BSX is inventory, WRX is GR/IR and PRD is price differences. Others you'll meet are GBB (offsetting entries for consumption) and KDM (exchange rate differences).</p></details>
           <details><summary>Price control V versus S?</summary><p>With V (moving average), price differences go into the stock value and the price moves. With S (standard), stock stays at standard and every difference goes to PRD. Raw materials usually use V, and finished goods use S for costing.</p></details>
           <details><summary>An invoice is blocked. What do you do?</summary><p>Find the cause in MRBR: price, quantity or date. Confirm with the buyer or the store, then release it or ask for a credit note. If it's a quantity block, it can release automatically when the goods receipt arrives.</p></details>
-          <details><summary>Why is TDS worked out on ₹5,80,000 and not on ₹6,84,400?</summary><p>Section 194Q applies to the purchase value. When GST is shown separately on the invoice, TDS is on the amount before GST.</p></details>
+          <details><summary>Why is there no TDS on this invoice?</summary><p>Section 194Q applies only to a buyer whose turnover in the previous year was above ₹10 crore, and then only on purchases from one seller above ₹50 lakh in the year. IN10 sells about ₹6.5 crore a year, so it doesn't deduct. If it did qualify, TDS would be 0.1% of the value before GST (here ₹580 on ₹5,80,000), set up as withholding tax type Q1 in OBWW and the vendor master.</p></details>
           <details><summary>How does F110 decide what to pay?</summary><p>It pays items that would be overdue, or would lose a cash discount, by the next run date. It skips blocked items and lists them as exceptions. Bank determination in FBZP chooses the house bank and the clearing account.</p></details>
         </div>
       </div>
@@ -363,7 +358,7 @@
       <div class="cs-section" id="data">
         <p class="eyebrow">Data</p>
         <h2>Download the configuration and documents</h2>
-        <p>A Python script generated these files. It asserts that every document balances, that GR/IR at 30.09.2026 equals Project 01's trial balance, that 171100 is unassigned in the old FSV and assigned after the OB58 change, and that all document numbers fall inside their FBN1 ranges.</p>
+        <p>A Python script generated these files. It asserts that every document balances, that GR/IR at 30.09.2026 equals Part 5's trial balance, that 171100 is unassigned in the old FSV and assigned after the OB58 change, and that all document numbers fall inside their FBN1 ranges.</p>
         <div class="downloads">
           <a href="data/01_org_objects_mm.csv">01_org_objects_mm.csv <span>8 rows</span></a>
           <a href="data/02_gl_accounts_added.csv">02_gl_accounts_added.csv <span>2</span></a>

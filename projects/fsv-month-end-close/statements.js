@@ -152,6 +152,11 @@
     var rows = ['<thead><tr><th>FSV item</th><th class="num">Current ₹</th><th class="num">Pre-close ₹</th><th class="num">Change</th></tr></thead><tbody>'];
     function walk(id, depth) {
       (children[id] || []).forEach(function (n) {
+        if (n.id === "PL.TAX") {
+          // Division I: IX. Profit before tax sits between expenses and X. Tax expense (no exceptional items)
+          var pbt = -r.pl + r.node["PL.TAX"], bpbt = -base.pl + base.node["PL.TAX"];
+          rows.push('<tr class="total"><td>IX. Profit before tax</td><td class="num">' + inr(pbt) + '</td><td class="num">' + inr(bpbt) + '</td><td class="num delta">' + signed(pbt - bpbt) + "</td></tr>");
+        }
         var v = shown(n.id, r.node[n.id]), pv = shown(n.id, base.node[n.id]), dv = v - pv;
         var accts = Object.keys(b).filter(function (a) { return r.acctNode[a] === n.id; });
         var label = esc(n.text);
@@ -181,9 +186,7 @@
       rows.push('<tr class="total"><td>Total assets</td><td class="num">' + inr(m.assets) + '</td><td class="num">' + inr(baseM.assets) + '</td><td class="num delta">' + signed(m.assets - baseM.assets) + "</td></tr>");
       rows.push('<tr class="total"><td>Total equity and liabilities</td><td class="num">' + inr(m.el) + '</td><td class="num">' + inr(baseM.el) + '</td><td class="num delta">' + signed(m.el - baseM.el) + "</td></tr>");
     } else {
-      var pbt = -r.pl + r.node["PL.TAX"], bpbt = -base.pl + base.node["PL.TAX"];
-      rows.push('<tr class="total"><td>V. Profit before tax</td><td class="num">' + inr(pbt) + '</td><td class="num">' + inr(bpbt) + '</td><td class="num delta">' + signed(pbt - bpbt) + "</td></tr>");
-      rows.push('<tr class="total"><td>VII. Profit for the period</td><td class="num">' + inr(-r.pl) + '</td><td class="num">' + inr(-base.pl) + '</td><td class="num delta">' + signed(-r.pl + base.pl) + "</td></tr>");
+      rows.push('<tr class="total"><td>XI. Profit for the period</td><td class="num">' + inr(-r.pl) + '</td><td class="num">' + inr(-base.pl) + '</td><td class="num delta">' + signed(-r.pl + base.pl) + "</td></tr>");
     }
     rows.push("</tbody>");
     document.getElementById(elId).innerHTML = rows.join("");
@@ -267,7 +270,7 @@
         },
         scales: {
           x: { grid: { color: grid }, border: { color: grid }, ticks: { color: ink2, callback: function (v) { return (v / 1000) + "k"; } } },
-          y: { grid: { display: false }, border: { color: grid }, ticks: { color: ink2, font: { family: "IBM Plex Mono", size: 11 } } }
+          y: { grid: { display: false }, border: { color: grid }, ticks: { color: ink2, font: { family: "Calibri", size: 11 } } }
         }
       }
     };

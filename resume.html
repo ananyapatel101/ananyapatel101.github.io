@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Résumé · Ananya Patel</title>
+<meta name="description" content="Résumé of Ananya Patel: MBA Finance & Marketing (Ravenshaw University), finance intern at Mahanadi Coalfields Limited, trained in SAP S/4HANA FICO.">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Carlito:ital,wght@0,400;0,700;1,400&display=swap">
+<link rel="stylesheet" href="assets/css/style.css">
+<script src="assets/js/main.js"></script>
+<style>
+  .cv { max-width: 52rem; margin-inline: auto; background: var(--surface); border: 1px solid var(--rule); border-radius: var(--radius); padding: clamp(1.25rem, 4vw, 3rem); display: grid; gap: var(--s-6); box-shadow: var(--shadow); }
+  .cv-head { display: grid; gap: var(--s-2); border-bottom: 2px solid var(--accent); padding-bottom: var(--s-4); }
+  .cv-head .contact { display: flex; flex-wrap: wrap; gap: .25rem 1.25rem; font: 400 var(--t-sm)/1.5 var(--f-mono); color: var(--ink-2); }
+  .cv-head .contact > * { overflow-wrap: anywhere; min-width: 0; }
+  .cv-sec { display: grid; gap: var(--s-3); padding-block: 0; }
+  .cv-sec > h2 { font: 700 var(--t-lg)/1.2 var(--f-display); color: var(--accent); border-bottom: 1px solid var(--rule); padding-bottom: var(--s-2); }
+  .cv-sec p, .cv-sec li { color: var(--ink-2); }
+  .cv-sec ul { margin: 0; padding-left: 1.1rem; display: grid; gap: .3rem; }
+  .cv-row { display: grid; gap: .3rem; }
+  .cv-row-top { display: flex; justify-content: space-between; gap: var(--s-3); flex-wrap: wrap; align-items: baseline; }
+  .cv-row-top h3 { font-size: var(--t-md); }
+  .cv-when { font: 500 var(--t-sm)/1.4 var(--f-mono); color: var(--ink-3); white-space: nowrap; }
+  .skills-dl { display: grid; grid-template-columns: 10rem minmax(0, 1fr); gap: var(--s-2) var(--s-4); margin: 0; }
+  .skills-dl dt { font-weight: 600; color: var(--ink); }
+  .skills-dl dd { margin: 0; color: var(--ink-2); }
+  @media (max-width: 600px) { .skills-dl { grid-template-columns: 1fr; gap: 0; } .skills-dl dd { margin-bottom: var(--s-3); } }
+  .cv-actions { max-width: 52rem; margin: var(--s-6) auto var(--s-4); display: flex; gap: var(--s-3); flex-wrap: wrap; justify-content: space-between; align-items: center; }
+  .cv-proj { display: grid; gap: .2rem; }
+  .cv-proj h3 { font-size: var(--t-md); }
+  .cv-proj h3 a { color: var(--ink); text-decoration: none; }
+  .cv-proj ul { gap: .15rem; }
+  .cv-proj ul a { color: var(--ink); }
+  .cv-proj ul.sub { margin-top: .15rem; list-style: circle; }
+  .print-only { display: none; }
+
+  @media print {
+    @page { size: A4; margin: 14mm 14mm; }
+    :root:root:root { color-scheme: light; --paper: #fff; --surface: #fff; --ink: #111; --ink-2: #333; --ink-3: #555; --rule: #ccc; --accent: #1f4e79; --shadow: none; }
+    html { font-size: 16px; }
+    body { padding: 0; line-height: 1.4; background: #fff; }
+    .site-header, .site-footer, .cv-actions { display: none !important; }
+    .cv { border: 0; padding: 0; gap: 8pt; max-width: none; }
+    .cv-sec { gap: 5pt; }
+    .cv-sec > h2, .cv-proj h3, .cv-proj > p { break-after: avoid; }
+    .cv-page2 { break-before: page; gap: 12pt; }
+    .cv-page2 li { margin-bottom: 5pt; }
+    .cv-proj li { break-inside: avoid; }
+    .cv a { color: inherit; text-decoration: none; }
+    .print-only { display: inline; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="./">Ananya Patel<span>.</span></a>
+    <nav class="nav" aria-label="Main">
+      <a href="./#projects">Projects</a>
+      <a href="resume.html" aria-current="page">Résumé</a>
+      <a href="./#contact" class="hide-sm">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="cv-actions">
+    <p class="eyebrow">Résumé</p>
+    <button class="btn btn-primary" type="button" onclick="window.print()">Print / save as PDF</button>
+  </div>
+
+  <article class="cv">
+    <header class="cv-head">
+      <h1 style="font-size:var(--t-2xl)">Ananya Patel</h1>
+      <p style="color:var(--ink-2)">Finance &amp; Accounting · Financial Analysis &amp; Market Research · MBA Finance &amp; Marketing, Ravenshaw University</p>
+      <p class="contact">
+        <a href="mailto:ananyaapatel101@gmail.com">ananyaapatel101@gmail.com</a>
+        <a href="https://www.linkedin.com/in/ananya-patel-894557263" target="_blank" rel="noopener">linkedin.com/in/ananya-patel-894557263</a>
+        <span>Bhubaneswar, India</span>
+      </p>
+    </header>
+
+    <section class="cv-sec" aria-labelledby="cv-summary">
+      <h2 id="cv-summary">Professional summary</h2>
+      <p>Finance and accounting postgraduate with hands-on ratio analysis, working-capital and operational-expenditure work from a summer internship at Mahanadi Coalfields Limited, a Coal India subsidiary. Trained in SAP FICO on S/4HANA, with a self-built, end-to-end SAP FICO implementation for one company code: FI configuration, procure-to-pay, order-to-cash, asset accounting, and month-end close with Schedule III reporting. Advanced Excel and Power BI.</p>
+    </section>
+
+    <section class="cv-sec" aria-labelledby="cv-skills">
+      <h2 id="cv-skills">Technical skills</h2>
+      <dl class="skills-dl">
+        <dt>Financial analysis</dt>
+        <dd>Ratio analysis (liquidity, profitability, solvency, efficiency), working capital and cash-conversion assessment, financial statement analysis, operational expenditure tracking, budgeting and variance review.</dd>
+        <dt>Accounting &amp; ERP</dt>
+        <dd>SAP S/4HANA (FICO): General Ledger, Accounts Payable, Accounts Receivable, Asset and Bank Accounting; enterprise structure and FI global settings, chart of accounts and Schedule III financial statement versions, month-end close (FBS1/F.81), MM–FI and SD–FI integration (OBYC, VKOA), GST tax codes, SAP Credit Management, Business Partner, automatic payment program (F110). Tally ERP.</dd>
+        <dt>Data &amp; reporting</dt>
+        <dd>Advanced Excel (pivot tables, VLOOKUP/XLOOKUP, financial functions, dashboards), Power BI, Tableau, SQL, PowerPoint reporting.</dd>
+        <dt>Research &amp; markets</dt>
+        <dd>Commodity and secondary market research, macroeconomic driver analysis (inflation, interest rates, exchange rates), demand–supply assessment, safe-haven and investment asset evaluation.</dd>
+      </dl>
+    </section>
+
+    <section class="cv-sec" aria-labelledby="cv-exp">
+      <h2 id="cv-exp">Work experience &amp; internships</h2>
+      <div class="cv-row">
+        <div class="cv-row-top">
+          <h3>Finance Intern · Mahanadi Coalfields Limited</h3>
+          <span class="cv-when">May 2025 – Jul 2025</span>
+        </div>
+        <p class="small">New Town, Kolkata, India · A Coal India subsidiary and one of India's largest coal producers.</p>
+        <ul>
+          <li>Assessed financial position through ratio analysis: liquidity, profitability, solvency and efficiency ratios from published statements, compared across periods to surface the underlying trends.</li>
+          <li>Calculated working capital and its components to gauge short-term liquidity and cash lock-up.</li>
+          <li>Tracked day-to-day operational expenditure and grouped it into recurring cost heads, giving a structured spend view for budgeting and variance review.</li>
+          <li>Built the Excel workbooks so every figure traced back to a source line in the financial statements.</li>
+        </ul>
+      </div>
+    </section>
+
+    
+
+    <section class="cv-sec" aria-labelledby="cv-edu">
+      <h2 id="cv-edu">Education</h2>
+      <div class="cv-row">
+        <div class="cv-row-top">
+          <h3>MBA (Finance &amp; Marketing) · Ravenshaw University</h3>
+          <span class="cv-when">Jul 2024 – Jun 2026</span>
+        </div>
+        <p class="small">Cuttack, India · Sports Secretary, 2024–2026. Coursework: Strategic Financial Management, Financial Management, Financial Markets &amp; Services, Accounting for Managers, Business Law, Marketing Management.</p>
+      </div>
+      <div class="cv-row">
+        <div class="cv-row-top">
+          <h3>BBA (Finance) · Ravenshaw University</h3>
+          <span class="cv-when">Jul 2021 – Jun 2024</span>
+        </div>
+        <p class="small">Cuttack, India</p>
+      </div>
+    </section>
+
+    <section class="cv-sec cv-page2" aria-labelledby="cv-proj">
+      <h2 id="cv-proj">Key projects</h2>
+
+      <div class="cv-proj">
+        <h3><a href="projects/gold-market-research/">1. Global Gold Market: Price Drivers and Investment Role</a></h3>
+        <p class="small"><em>MBA research project · Ravenshaw University (2024–2026)</em></p>
+        <ul>
+          <li>Studied how inflation, interest rates, exchange rates and economic uncertainty move the gold price, using secondary research on global demand and supply.</li>
+          <li>Assessed whether gold works as a safe haven and deserves a place in an investment portfolio.</li>
+        </ul>
+      </div>
+
+      <div class="cv-proj">
+        <h3>2. SAP S/4HANA FICO End-to-End Implementation: XYZ Inc.</h3>
+        <p class="small"><em>Self project · Sep 2026, during SAP FICO training (AppliSAP) · One fictional company code (IN10) with figures tied across every module</em></p>
+        <ul>
+          <li><a href="projects/fi-enterprise-structure/"><strong>Financial accounting setup</strong></a>: Configured the company code from scratch (ledger, April–March fiscal year, posting periods, document types, number ranges, user tolerance limits), so entries in closed months and postings above a user's approval limit are blocked; 12 test cases prove each control.
+            <ul class="sub"><li>Documented every setting in a configuration workbook, with the reason for each value, ready for sign-off.</li></ul>
+          </li>
+          <li><a href="projects/procure-to-pay/"><strong>Procure-to-pay (MM–FI)</strong></a>: Ran a purchase from requisition to a ₹6,84,400 payment run (F110), with automatic account postings (OBYC), a three-way match and GST input credit, so the company pays only for goods received, at the agreed price, and only once.
+            <ul class="sub"><li>12 test cases cover price and quantity blocks, duplicate invoices and payment due dates.</li></ul>
+          </li>
+          <li><a href="projects/order-to-cash/"><strong>Order-to-cash (SD–FI)</strong></a>: Ran a sale from sales order with a credit check to delivery, a GST invoice and customer payment with a 2% early-payment discount and the customer's TDS, so credit-limit breaches are stopped and short payments are cleared correctly.
+            <ul class="sub"><li>12 test cases cover credit blocks, stock availability, billing errors and payment tolerances.</li></ul>
+          </li>
+          <li><a href="projects/asset-accounting/"><strong>Asset accounting (FI-AA)</strong></a>: Set up Companies Act and Income Tax Act depreciation, capitalised a ₹21.60 lakh machine through assets under construction, sold an old lathe at a ₹44,000 profit and ran monthly depreciation (AFAB).
+            <ul class="sub"><li>12 test cases cover posting periods, tolerances and the year-end close; the 11-asset register ties to the ledger.</li></ul>
+          </li>
+          <li><a href="projects/fsv-month-end-close/"><strong>Month-end close and reporting</strong></a>: Built a 38-account chart of accounts and a Schedule III financial statement version, then closed September with six accruals and deferrals (FBS1, reversed with F.81); without them profit would have been overstated by ₹2.74 lakh. Results shown in a Power BI dashboard.
+            <ul class="sub"><li>Interactive statements let a reviewer switch each accrual on or off and watch the Balance Sheet, P&amp;L and ratios recompute.</li></ul>
+          </li>
+          <li><strong>One set of books</strong>: The goods-received-not-invoiced balance (₹3.40 lakh), customer balances (₹64.80 lakh) and the 11-asset register all tie to the 30 Sep 2026 Balance Sheet and P&amp;L. Full write-ups and live simulators are in the online portfolio.</li>
+        </ul>
+      </div>
+    </section>
+    <section class="cv-sec" aria-labelledby="cv-cert">
+      <h2 id="cv-cert">Certifications &amp; languages</h2>
+      <p>SAP FICO (Financial Accounting &amp; Controlling) on SAP S/4HANA · AppliSAP (expected Sep 2026)<br>English (C2, proficient) · Hindi (proficient) · Odia (proficient)</p>
+    </section>
+  </article>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <span>© <span data-year>2026</span> Ananya Patel</span>
+    <a href="./">← Home</a>
+  </div>
+</footer>
+</body>
+</html>

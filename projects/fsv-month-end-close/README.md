@@ -1,4 +1,4 @@
-# Project 01: Financial Statement Version & Month-End Close (SAP S/4HANA FI-GL)
+# Part 5: Financial Statement Version & Month-End Close (SAP S/4HANA FI-GL)
 
 **Goal:** structure a chart of accounts, group it into a Schedule III Financial Statement Version so SAP produces a compliant Balance Sheet and P&L, and run a month-end close with accruals and deferrals (FBS1 → F.81).
 
@@ -8,7 +8,7 @@ Web version: [`index.html`](index.html) · Interactive: [`statements.html`](stat
 
 | Object | Value |
 |---|---|
-| Company code | IN10 Ananya Manufacturing Pvt Ltd |
+| Company code | IN10 XYZ Inc. |
 | Chart of accounts | INCA (6-digit, stored 10-digit) |
 | Fiscal year variant | V3 (April–March) |
 | FSV | INS3, Schedule III, Companies Act 2013 (Division I) |
@@ -21,7 +21,7 @@ Web version: [`index.html`](index.html) · Interactive: [`statements.html`](stat
 |---|---|---|
 | 1 | OB13 | Create COA INCA |
 | 2 | OB62 | Assign INCA to IN10 |
-| 3 | OBD4 | Account groups and number ranges (FA, CA, BANK, CL, LOAN, EQ, REV, EXP) |
+| 3 | OBD4 | Account groups and number ranges (FA, CA, BANK, CL, LOAN, EQ, REV, EXP, plus RECN for 141000 and 211000) |
 | 4 | OB53 | Retained earnings account 321000 for P&L statement account type X |
 | 5 | OB52 | Open periods 06 and 07 |
 | 6 | FS00 | Create each account centrally: G/L account type, account group, texts, currency, open item / line item flags, recon type, sort key, field status group |
@@ -57,7 +57,7 @@ Web version: [`index.html`](index.html) · Interactive: [`statements.html`](stat
 | D1 | 0100000455 | 422000 Rental Income | 219600 Income Received in Advance | 1,50,000 | October rent |
 | D2 | 0100000456 | 151000 Prepaid Expenses | 624000 Software Subscription | 90,000 | October subscription |
 
-**F.81**, 01.10.2026: reversal documents 0100000461–466 swap each Dr/Cr. The October true-up for 621000 is FB60 ₹1,23,500 minus the F.81 reversal ₹1,20,000, leaving ₹3,500 net.
+**F.81**, 01.10.2026: reversal documents 0100000461–466 (doc type AB, the OBA7 reverse type for SA) swap each Dr/Cr. The October true-up for 621000 is FB60 ₹1,23,500 minus the F.81 reversal ₹1,20,000, leaving ₹3,500 net.
 
 ## Result
 

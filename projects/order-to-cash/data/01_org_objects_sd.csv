@@ -1,0 +1,9 @@
+Object,ID,Description,TCode,Assigned_To
+Sales organisation,IN10,Domestic sales IN10,OVX5,Company code IN10 (OVX3)
+Distribution channel,10,Direct to OEM customers,OVXI,Sales org IN10 (OVXK)
+Division,00,Common division,OVXB,Sales org IN10 (OVXA)
+Sales area,IN10/10/00,Sales org + channel + division,OVXG,Plant IN11 via OVX6
+Shipping point,IN11,Pune dispatch bay,OVXD,Plant IN11 (OVXC)
+Credit control area,IN10,"Credit control for IN10, INR",OB45,Company code IN10 (OB38)
+Credit segment,IN10,SAP Credit Management segment,UKM_SEGMENT,Credit control area IN10
+MM period,2026/07,"After MMPV on 01.10.2026, previous allowed",OMSY / MMPV,Company code IN10
