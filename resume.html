@@ -37,8 +37,10 @@
   @media print {
     @page { size: A4; margin: 14mm 14mm; }
     :root:root:root { color-scheme: light; --paper: #fff; --surface: #fff; --ink: #111; --ink-2: #333; --ink-3: #555; --rule: #ccc; --accent: #1f4e79; --shadow: none; }
-    html { font-size: 16px; }
-    body { padding: 0; line-height: 1.4; background: #fff; }
+    :root:root:root { --f-mono: var(--f-body); }
+    html { font-size: 12.5px; }
+    body { padding: 0; line-height: 1.38; background: #fff; }
+    .cv-head h1 { font-size: 2rem !important; }
     .site-header, .site-footer, .cv-actions { display: none !important; }
     .cv { border: 0; padding: 0; gap: 8pt; max-width: none; width: auto; box-shadow: none; }
     .cv-sec { gap: 5pt; }
@@ -67,7 +69,10 @@
 <main>
   <div class="cv-actions">
     <p class="eyebrow">Résumé</p>
-    <button class="btn btn-primary" type="button" onclick="window.print()">Print / save as PDF</button>
+    <div class="hero-actions" style="margin:0">
+      <a class="btn btn-primary" href="assets/files/Ananya_Patel_Resume.docx" download>Download résumé (.docx)</a>
+      <button class="btn btn-ghost" type="button" onclick="window.print()">Print / save as PDF</button>
+    </div>
   </div>
 
   <article class="cv">
