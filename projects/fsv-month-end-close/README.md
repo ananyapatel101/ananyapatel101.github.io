@@ -8,7 +8,7 @@ Web version: [`index.html`](index.html) · Interactive: [`statements.html`](stat
 
 | Object | Value |
 |---|---|
-| Company code | IN10 XYZ Inc. |
+| Company code | IN10 XYZ Pvt Ltd |
 | Chart of accounts | INCA (6-digit, stored 10-digit) |
 | Fiscal year variant | V3 (April–March) |
 | FSV | INS3, Schedule III, Companies Act 2013 (Division I) |

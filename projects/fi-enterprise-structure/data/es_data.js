@@ -568,7 +568,7 @@ var ES_DATA = {
   {
    "Object": "Company code",
    "ID": "IN10",
-   "Description": "XYZ Inc., Pune, IN, INR, EN",
+   "Description": "XYZ Pvt Ltd, Pune, IN, INR, EN",
    "TCode": "OX02",
    "Assigned_To": "Company IN00 (OX16)"
   },

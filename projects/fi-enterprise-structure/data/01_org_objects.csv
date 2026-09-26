@@ -1,7 +1,7 @@
 Object,ID,Description,TCode,Assigned_To
 Client,100,XYZ group client,SCC4,
 Company,IN00,XYZ Group,OX15,Client 100
-Company code,IN10,"XYZ Inc., Pune, IN, INR, EN",OX02,Company IN00 (OX16)
+Company code,IN10,"XYZ Pvt Ltd, Pune, IN, INR, EN",OX02,Company IN00 (OX16)
 Leading ledger,0L,"Leading ledger, accounting principle IND-GAAP",FINSC_LEDGER,All company codes
 Currency type,10,Company code currency INR,FINSC_CMP_CODE,IN10 / 0L
 Chart of accounts,INCA,"Operating COA, 6-digit accounts",OB13,IN10 (OB62)

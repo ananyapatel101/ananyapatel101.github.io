@@ -2,7 +2,7 @@
 window.FSV_DATA = {
  "asOf": "2026-09-30",
  "companyCode": "IN10",
- "company": "XYZ Inc. (fictional)",
+ "company": "XYZ Pvt Ltd (fictional)",
  "coa": "INCA",
  "fsv": "INS3",
  "accounts": [
